@@ -1,6 +1,7 @@
 package com.example.trading.economy;
 
 import lombok.Getter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -11,8 +12,13 @@ import java.util.UUID;
 public class ResourceEconomy {
     @Id
     @Getter
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int economyId;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID economyId;
+
+    private int roundCount;
+    private int demand;
 
     @ElementCollection
     @CollectionTable(name="history")
@@ -22,13 +28,25 @@ public class ResourceEconomy {
 
     public ResourceEconomy() {
         this.history = new HashMap<>();
+        this.roundCount = 5;
+        this.demand = 10;
     }
 
     public void addHistory(int roundNumber, int amount) {
         this.history.put(roundNumber, amount);
     }
 
-    public int calculateNewPrice() {
-        return 1;
+    public float calculateNewPriceFactor(int currentRound) {
+        int boughtAmount = 0;
+
+        for (int i = 0; i < this.roundCount; i++) {
+            if (this.history.containsKey(currentRound - i)) {
+                boughtAmount += this.history.get(currentRound - i);
+            }
+        }
+
+        float factor = this.demand / (float)boughtAmount;
+        if (factor < 1) return factor;
+        else return 1;
     }
 }

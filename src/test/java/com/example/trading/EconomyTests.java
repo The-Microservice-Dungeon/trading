@@ -4,6 +4,7 @@ import com.example.trading.economy.ItemEconomy;
 import com.example.trading.item.Item;
 import com.example.trading.item.ItemService;
 import com.example.trading.player.PlayerService;
+import com.example.trading.resource.Resource;
 import com.example.trading.resource.ResourceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +28,24 @@ public class EconomyTests {
     @Test
     @Transactional
     public void calculateNewItemPriceTest() {
-//        itemService.calculateNewItemPrice(1);
-        ItemEconomy economy = new ItemEconomy();
-        economy.addHistory(1, 1);
-        economy.addHistory(1, 1);
-        economy.addHistory(2, 5);
-        economy.addHistory(3, 6);
-        economy.addHistory(4, 3);
-        economy.addHistory(5, 4);
+        Item item = new Item("Test", "desc", 20);
 
-        System.out.println(economy.calculateNewPrice(5));
+        for (int i = 0; i < 12; i++) {
+            item.addHistory(1);
+        }
+
+        item.calculateNewPrice(5);
     }
 
     @Test
     @Transactional
     public void calculateNewResourcePriceTest() {
+        Resource resource = new Resource("Test", 20);
 
+        resource.addHistory(0, 1);
+        resource.addHistory(10, 2);
+        resource.addHistory(0, 3);
+
+        resource.calculateNewPrice(5);
     }
 }

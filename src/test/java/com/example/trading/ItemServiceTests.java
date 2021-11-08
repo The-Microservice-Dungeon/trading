@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,7 +30,7 @@ public class ItemServiceTests {
     @Test
     @Transactional
     public void itemCreationTest() {
-        Integer newItemId = this.itemService.createItem("Pistol", "Can shoot", 50);
+        UUID newItemId = this.itemService.createItem("Pistol", "Can shoot", 50);
         Optional<Item> item = this.itemRepository.findById(newItemId);
         assertEquals(newItemId, item.get().getItemId());
     }
@@ -37,8 +38,8 @@ public class ItemServiceTests {
     @Test
     @Transactional
     public void getItemListTest() {
-        Integer item1 = this.itemService.createItem("Mini Gun", "Can shoot a lot", 50);
-        Integer item2 = this.itemService.createItem("Nuke", "I am become death", 200);
+        UUID item1 = this.itemService.createItem("Mini Gun", "Can shoot a lot", 50);
+        UUID item2 = this.itemService.createItem("Nuke", "I am become death", 200);
 
         assertEquals(
                 "mini gun: 50;\nnuke: 200;\n",
@@ -49,7 +50,7 @@ public class ItemServiceTests {
     @Test
     @Transactional
     public void buyNonExistentItemTest() {
-        Integer playerId = this.playerService.createPlayer(200);
+        UUID playerId = this.playerService.createPlayer(200);
 
         assertThrows(
                 RuntimeException.class,
@@ -60,8 +61,8 @@ public class ItemServiceTests {
     @Test
     @Transactional
     public void buyItemWithoutEnoughMoneyTest() {
-        Integer playerId = this.playerService.createPlayer(200);
-        Integer itemId = this.itemService.createItem("Special Lemonade", "It's special. That's it.", 250);
+        UUID playerId = this.playerService.createPlayer(200);
+        UUID itemId = this.itemService.createItem("Special Lemonade", "It's special. That's it.", 250);
 
         Integer price = this.itemService.buyItem(playerId, "Special Lemonade", 1);
         assertEquals(-1, price);
@@ -70,8 +71,8 @@ public class ItemServiceTests {
     @Test
     @Transactional
     public void buyItemSuccessfullyTest() {
-        Integer playerId = this.playerService.createPlayer(200);
-        Integer itemId = this.itemService.createItem("A Rock", "Because it's the only thing you can afford.", 2);
+        UUID playerId = this.playerService.createPlayer(200);
+        UUID itemId = this.itemService.createItem("A Rock", "Because it's the only thing you can afford.", 2);
 
         Integer newPlayerMoney = this.itemService.buyItem(playerId, "A Rock", 1);
         assertEquals(198, newPlayerMoney);

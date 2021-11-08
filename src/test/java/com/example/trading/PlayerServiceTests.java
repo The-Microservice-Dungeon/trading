@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,28 +26,28 @@ class PlayerServiceTests {
 
     @Test
     public void playerCreationTest() {
-        Integer newPlayerId = this.playerService.createPlayer(200);
+        UUID newPlayerId = this.playerService.createPlayer(200);
         Optional<Player> player = this.playerRepository.findById(newPlayerId);
         assertEquals(newPlayerId, player.get().getPlayerId());
     }
 
     @Test
     public void playerGetMoneyTest() {
-        Integer newPlayerId = this.playerService.createPlayer(200);
+        UUID newPlayerId = this.playerService.createPlayer(200);
         Integer moneyAmount = this.playerService.getCurrentMoneyAmount(newPlayerId);
         assertEquals(200, moneyAmount);
     }
 
     @Test
     public void playerReduceMoneyTest() {
-        Integer newPlayerId = this.playerService.createPlayer(200);
+        UUID newPlayerId = this.playerService.createPlayer(200);
         Integer newMoneyAmount = this.playerService.reduceMoney(newPlayerId, 150);
         assertEquals(50, newMoneyAmount);
     }
 
     @Test
     public void playerReduceTooMuchMoneyTest() {
-        Integer newPlayerId = this.playerService.createPlayer(200);
+        UUID newPlayerId = this.playerService.createPlayer(200);
         assertThrows(
                 RuntimeException.class,
                 () -> this.playerService.reduceMoney(newPlayerId, 250)
@@ -55,7 +56,7 @@ class PlayerServiceTests {
 
     @Test
     public void playerAddMoneyTest() {
-        Integer newPlayerId = this.playerService.createPlayer(200);
+        UUID newPlayerId = this.playerService.createPlayer(200);
         Integer newMoneyAmount = this.playerService.addMoney(newPlayerId, 150);
         assertEquals(350, newMoneyAmount);
     }

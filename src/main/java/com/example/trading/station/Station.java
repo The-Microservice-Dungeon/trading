@@ -1,19 +1,19 @@
 package com.example.trading.station;
 
 import lombok.Getter;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
 public class Station {
     @Id
     @Getter
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int stationId;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID stationId;
 
     @Getter
     private int x;

@@ -1,5 +1,6 @@
 Gun , 20 Geld
 Nuke, 30 Geld
+
 Coal, 5 Geld
 Platin, 20 Geld
 

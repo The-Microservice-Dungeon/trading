@@ -1,6 +1,7 @@
 package com.example.trading.economy;
 
 import lombok.Getter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -11,8 +12,10 @@ import java.util.UUID;
 public class ItemEconomy {
     @Id
     @Getter
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int economyId;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID economyId;
 
     private int roundCount;
     private int stock;
@@ -38,7 +41,7 @@ public class ItemEconomy {
         }
     }
 
-    public int calculateNewPrice(int currentRound) {
+    public float calculateNewPriceFactor(int currentRound) {
         int soldStock = 0;
 
         for (int i = 0; i < this.roundCount; i++) {
@@ -47,6 +50,8 @@ public class ItemEconomy {
             }
         }
 
-        return soldStock;
+        float factor = soldStock / (float)this.stock;
+        if (factor > 1) return factor;
+        else return 1;
     }
 }

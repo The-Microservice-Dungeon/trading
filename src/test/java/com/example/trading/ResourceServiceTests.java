@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +33,7 @@ public class ResourceServiceTests {
     @Test
     @Transactional
     public void resourceCreationTest() {
-        Integer newResourceId = this.resourceService.createResource("Coal", 5);
+        UUID newResourceId = this.resourceService.createResource("Coal", 5);
         Optional<Resource> resource = this.resourceRepository.findById(newResourceId);
         assertEquals(newResourceId, resource.get().getResourceId());
     }
@@ -40,8 +41,8 @@ public class ResourceServiceTests {
     @Test
     @Transactional
     public void resourceItemListTest() {
-        Integer resource1 = this.resourceService.createResource("Iron", 10);
-        Integer resource2 = this.resourceService.createResource("Gold", 20);
+        UUID resource1 = this.resourceService.createResource("Iron", 10);
+        UUID resource2 = this.resourceService.createResource("Gold", 20);
 
         assertEquals(
                 "iron: 10;\ngold: 20;\n",
@@ -52,7 +53,7 @@ public class ResourceServiceTests {
     @Test
     @Transactional
     public void sellNonExistentResourceTest() {
-        Integer playerId = this.playerService.createPlayer(200);
+        UUID playerId = this.playerService.createPlayer(200);
 
         assertThrows(
                 RuntimeException.class,
@@ -63,8 +64,8 @@ public class ResourceServiceTests {
     @Test
     @Transactional
     public void sellResourceSuccessfullyTest() {
-        Integer playerId = this.playerService.createPlayer(200);
-        Integer resourceId = this.resourceService.createResource("Diamond", 100);
+        UUID playerId = this.playerService.createPlayer(200);
+        UUID resourceId = this.resourceService.createResource("Diamond", 100);
 
         Integer newPlayerMoney = this.resourceService.sellResource(playerId, "Diamond", 2, 1);
         assertEquals(400, newPlayerMoney);

@@ -1,10 +1,12 @@
 package com.example.trading.item;
 
 import com.example.trading.player.PlayerService;
+import com.example.trading.station.StationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ItemService {
@@ -15,18 +17,32 @@ public class ItemService {
     @Autowired
     private PlayerService playerService;
 
-    public int createItem(String name, String description, int price) {
+    @Autowired
+    private StationService stationService;
+
+    public UUID createItem(String name, String description, int price) {
         Item newItem = new Item(name, description, price);
         itemRepository.save(newItem);
         return newItem.getItemId();
     }
 
-    public int buyItem(int playerId, String itemName, int currentRound) {
-        Optional<Item> item = this.itemRepository.findByName(itemName.toLowerCase());
+    public int buyItem(UUID playerId, String itemName, int currentRound) {
+        Optional<Item> item = this.itemRepository.findByName(itemName);
         if (item.isEmpty()) throw new IllegalArgumentException("Item does not exist");
+
+        // check position
+//        if (stationService.checkIfGivenPositionIsOneOfTheStations(x , y))
+//            return -2;
 
         if (!this.playerService.checkPlayerForMoney(playerId, item.get().getCurrentPrice()))
             return -1;
+
+        // rest call to robot form buy
+
+        // get response for error
+        // return error
+
+        // else
 
         item.get().addHistory(currentRound);
 
@@ -53,5 +69,6 @@ public class ItemService {
         for (Item item : items) {
             item.calculateNewPrice(currentRound);
         }
+
     }
 }

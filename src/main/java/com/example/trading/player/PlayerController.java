@@ -17,13 +17,13 @@ public class PlayerController {
     @Autowired
     private PlayerService playerService;
 
-    @GetMapping("/player/{id}/money")
-    public ResponseEntity<Integer> getCurrentPlayerMoneyAmount(@PathVariable int id) {
-        try {
-            Integer moneyAmount = this.playerService.getCurrentMoneyAmount(id);
-            return new ResponseEntity<Integer>(moneyAmount, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-    }
+//    @GetMapping("/player/{id}/money")
+//    public ResponseEntity<Integer> getCurrentPlayerMoneyAmount(@PathVariable int id) {
+//        try {
+//            Integer moneyAmount = this.playerService.getCurrentMoneyAmount(id);
+//            return new ResponseEntity<Integer>(moneyAmount, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+//        }
+//    }
 }

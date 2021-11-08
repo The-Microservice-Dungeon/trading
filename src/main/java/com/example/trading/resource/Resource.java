@@ -3,6 +3,7 @@ package com.example.trading.resource;
 import com.example.trading.economy.ResourceEconomy;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Locale;
@@ -12,8 +13,10 @@ import java.util.UUID;
 public class Resource {
     @Id
     @Getter
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int resourceId;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID resourceId;
 
     @Getter
     private String name;
@@ -39,5 +42,12 @@ public class Resource {
 
     public void addHistory(int amount, int roundNumber) {
         this.economy.addHistory(roundNumber, amount);
+    }
+
+    public void calculateNewPrice(int currentRound) {
+        float priceFactor = this.economy.calculateNewPriceFactor(currentRound);
+        System.out.println("PriceFactor: " + priceFactor);
+        this.currentPrice = (int)Math.ceil(this.originalPrice * priceFactor);
+        System.out.println("NewPrice: " + this.currentPrice);
     }
 }
