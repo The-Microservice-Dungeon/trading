@@ -1,0 +1,16 @@
+Service: Trading
+Build: Maven
+Framework: Spring Boot v2.5.6
+Tech: Java
+Version: Java 11
+Other:
+    - database:
+        - MySQL
+    - dependencies:
+        - Spring Boot DevTools
+        - Lombok
+        - Spring Web
+        - Rest Repositories
+        - MySQL Driver
+        - Spring for Apache Kafka
+        - Spring Data JPA

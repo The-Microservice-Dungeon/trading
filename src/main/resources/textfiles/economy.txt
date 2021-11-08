@@ -1,0 +1,55 @@
+Gun , 20 Geld
+Nuke, 30 Geld
+Coal, 5 Geld
+Platin, 20 Geld
+
+
+Daten die wir irgendwie festlegen müssen:
+- RundenCount über welchen wir hinweg analysieren wollen
+- Bestände der Items
+- Bedarf der Resourcen
+
+
+Schritte Für Items:
+- Bestand definieren
+- Zeitspanne definieren
+- Gesamtmenge aus Zeitspanne summieren
+- Gesamtemenge durch Bestand teilen
+- Ergebnis ist Faktor für Preisberechnung
+
+    Beispiel 1
+    - Bestand Gun 5
+    - Zeitspanne 5 Runden
+    - Gesamtmenge 3
+    - 3 / 5 = 0,6
+    - 0,6 < 1 => Preis bleibt gleich
+
+    Beispiel 2
+    - Bestand Gun 2
+    - Zeitspanne 5 Runden
+    - Gesamtmenge 3
+    - 3 / 2 = 1,5
+    - 1,5 > 1 => Preis verändert sich um Faktor 1,5
+
+Schritte Für Resourcen:
+- Bedarf definieren?
+- Zeitspanne definieren
+- Gesamtmenge aus Zeitspanne summieren
+- Bedarf durch Gesamtmenge teilen
+- Ergebnis ist Faktor für Preisberechnung
+
+    Beispiel 1
+    - Bedarf 10 Coal
+    - Zeitspanne 5 Runden
+    - Gesamtmenge 3
+    - 10 / 3 = 3,33
+    - 3,33 > 1 => Preis bleibt gleich
+
+    Beispiel 2
+    - Bedarf 10 Coal
+    - Zeitspanne 5 Runden
+    - Gesamtmenge 15
+    - 10 / 15 = 0,66
+    - 0,66 < 1 => Preis verändert sich um Faktor 0,66
+
+

@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "spring.jpa.hibernate.ddl-auto.naming.implicit-strategy",
+      "type": "java.lang.String",
+      "description": "Description for spring.jpa.hibernate.ddl-auto.naming.implicit-strategy."
+    },
+    {
+      "name": "spring",
+      "type": "java.lang.String",
+      "description": "Description for spring."
+    }
+  ] }
