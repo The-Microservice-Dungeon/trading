@@ -1,0 +1,262 @@
+openapi: 3.0.1
+info:
+  title: Trading API
+  description: REST Endpoints for the Trading service
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://localhost:3000/trading
+- url: http://localhost:3000/trading
+tags:
+- name: buying
+  description: Buying Items, Upgrades and Robots
+- name: selling
+  description: Selling Ressources
+- name: balances
+  description: Players Account Balances
+paths:
+  /items/{item-name}:
+    get:
+      tags:
+      - buying
+      summary: Information about one specific Item
+      parameters:
+      - name: item-name
+        in: path
+        description: Name of Item to buy
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        404:
+          description: Item not found
+        500:
+          description: Internal Server Error
+        503:
+          description: Service not Initialized
+          content: {}
+    post:
+      tags:
+      - buying
+      summary: Buy an Item
+      operationId: buyItem
+      parameters:
+      - name: item-name
+        in: path
+        description: ID of Item to buy
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        description: Information about the Robot, that sends the Command
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Robot'
+        required: true
+      responses:
+        200:
+          description: Command successful
+          content: {}
+        400:
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                - Invalid Robot Position
+                - Not enough Money
+                - Inventory full
+                - Invalid Upgrade
+                - Other error
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}
+      x-codegen-request-body-name: robot
+  /items:
+    get:
+      tags:
+      - buying
+      summary: Information about all avaliable Items
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}
+  /ressources:
+    get:
+      tags:
+      - selling
+      summary: Current Ressource Prices
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ressource'
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}
+    post:
+      tags:
+      - selling
+      summary: Sell all of the Robots Ressources
+      requestBody:
+        description: Information about the Robot, that sends the Command
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Robot'
+        required: true
+      responses:
+        200:
+          description: Command successful - Ressources Sold
+          content: 
+            application/json:
+              schema:
+                type: number
+                example: 200.12
+        400:
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                - Invalid Robot Position
+                - Not enough Money
+                - Inventory full
+                - Invalid Upgrade
+                - Other error
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}
+      x-codegen-request-body-name: robot
+  /balances:
+    get:
+      tags:
+      - balances
+      summary: Get all Players Account Balances
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Balance'
+        403:
+          description: Forbidden
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        item-name:
+          type: string
+          description: Name of the Item
+          example: ROCKET
+        price:
+          type: number
+          description: Current Price of the Item
+          format: double
+          example: 200.2
+        type:
+          type: string
+          example: item
+          enum:
+          - item
+          - robot
+          - upgrade
+          - heath
+          - energy
+    Ressource:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the Ressource
+          format: uuid
+        name:
+          type: string
+          description: Name of the Ressource
+          example: Gold
+        price:
+          type: number
+          description: Current Price of the Item per Unit
+          format: double
+          example: 200.2
+    Robot:
+      required:
+      - player-id
+      - robot-id
+      type: object
+      properties:
+        robot-id:
+          type: string
+          description: ID of the Robot, that sends the Command
+          format: uuid
+        player-id:
+          type: string
+          description: ID of the Player, that sends the Command
+          format: uuid
+        planet-id:
+          type: string
+          description: ID of the Planet, the Robot is standing on
+          format: uuid
+    Balance:
+      required:
+      - player-id
+      - balance
+      properties:
+        player-id:
+          type: string
+          description: ID of the Player
+          format: uuid
+        balance:
+          type: number
+          description: The Players Account Balance
+          format: double
+          example: 30002.20
+          
