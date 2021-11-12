@@ -1,10 +1,14 @@
 package com.example.trading.item;
 
+import ch.qos.logback.core.encoder.EchoEncoder;
 import com.example.trading.player.PlayerService;
 import com.example.trading.station.StationService;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,8 +24,16 @@ public class ItemService {
     @Autowired
     private StationService stationService;
 
-    public UUID createItem(String name, String description, int price) {
-        Item newItem = new Item(name, description, price);
+    public UUID createItem(String name, String description, String type, int price) {
+        ItemType itemType;
+
+        try {
+            itemType = ItemType.valueOf(type.toUpperCase());
+        } catch (Exception E) {
+            throw new IllegalArgumentException("ItemType is not valid");
+        }
+
+        Item newItem = new Item(name, description, itemType, price);
         itemRepository.save(newItem);
         return newItem.getItemId();
     }
@@ -49,26 +61,38 @@ public class ItemService {
         return this.playerService.reduceMoney(playerId, item.get().getCurrentPrice());
     }
 
-    public String getItemPriceList() {
-        Iterable<Item> items = this.itemRepository.findAll();
-        StringBuilder list = new StringBuilder();
-
-        for (Item item : items) {
-            list.append(item.getName())
-                .append(": ")
-                .append(item.getCurrentPrice())
-                .append(";\n");
-        }
-
-        return list.toString();
-    }
-
-    public void calculateNewItemPrice(int currentRound) {
+    public JSONArray getItems() {
         Iterable<Item> items = this.itemRepository.findAll();
 
+        JSONArray itemArray = new JSONArray();
+
         for (Item item : items) {
-            item.calculateNewPrice(currentRound);
+            JSONObject jsonItem = new JSONObject();
+            jsonItem.put("id", item.getName());
+            jsonItem.put("price", item.getCurrentPrice());
+            jsonItem.put("type", item.getItemType());
+            itemArray.appendElement(jsonItem);
         }
 
+        return itemArray;
     }
+
+    public JSONObject getItem(String name) {
+        Optional<Item> item = this.itemRepository.findByName(name);
+        if (item.isEmpty()) throw new IllegalArgumentException("Item does not exist");
+
+        JSONObject returnItem = new JSONObject();
+        returnItem.put("id", item.get().getName());
+        returnItem.put("price", item.get().getCurrentPrice());
+        return returnItem;
+    }
+
+//    public void calculateNewItemPrice(int currentRound) {
+//        Iterable<Item> items = this.itemRepository.findAll();
+//
+//        for (Item item : items) {
+//            item.calculateNewPrice(currentRound);
+//        }
+//
+//    }
 }

@@ -3,6 +3,7 @@ package com.example.trading;
 import com.example.trading.economy.ItemEconomy;
 import com.example.trading.item.Item;
 import com.example.trading.item.ItemService;
+import com.example.trading.item.ItemType;
 import com.example.trading.player.PlayerService;
 import com.example.trading.resource.Resource;
 import com.example.trading.resource.ResourceService;
@@ -28,7 +29,7 @@ public class EconomyTests {
     @Test
     @Transactional
     public void calculateNewItemPriceTest() {
-        Item item = new Item("Test", "desc", 20);
+        Item item = new Item("Test", "desc", ItemType.ITEM, 20);
 
         for (int i = 0; i < 12; i++) {
             item.addHistory(1);

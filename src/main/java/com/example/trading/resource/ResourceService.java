@@ -2,6 +2,8 @@ package com.example.trading.resource;
 
 import com.example.trading.player.PlayerService;
 import com.example.trading.station.StationService;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,17 +49,18 @@ public class ResourceService {
         return this.playerService.addMoney(playerId, fullPrice);
     }
 
-    public String getResourcePriceList() {
+    public JSONArray getResources() {
         Iterable<Resource> resources = this.resourceRepository.findAll();
-        StringBuilder list = new StringBuilder();
+
+        JSONArray resourceArray = new JSONArray();
 
         for (Resource resource : resources) {
-            list.append(resource.getName())
-                .append(": ")
-                .append(resource.getCurrentPrice())
-                .append(";\n");
+            JSONObject jsonResource = new JSONObject();
+            jsonResource.put("id", resource.getName());
+            jsonResource.put("price", resource.getCurrentPrice());
+            resourceArray.appendElement(jsonResource);
         }
 
-        return list.toString();
+        return resourceArray;
     }
 }

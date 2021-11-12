@@ -4,6 +4,7 @@ import com.example.trading.item.Item;
 import com.example.trading.item.ItemRepository;
 import com.example.trading.item.ItemService;
 import com.example.trading.player.PlayerService;
+import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,20 +31,29 @@ public class ItemServiceTests {
     @Test
     @Transactional
     public void itemCreationTest() {
-        UUID newItemId = this.itemService.createItem("Pistol", "Can shoot", 50);
+        UUID newItemId = this.itemService.createItem("Pistol", "Can shoot", "item", 50);
         Optional<Item> item = this.itemRepository.findById(newItemId);
         assertEquals(newItemId, item.get().getItemId());
     }
 
     @Test
     @Transactional
-    public void getItemListTest() {
-        UUID item1 = this.itemService.createItem("Mini Gun", "Can shoot a lot", 50);
-        UUID item2 = this.itemService.createItem("Nuke", "I am become death", 200);
+    public void createItemWithInCorrectTypeTest() {
+        assertThrows(
+                RuntimeException.class, () -> {
+                    UUID newItemId = this.itemService.createItem("Pistol", "Can shoot", "meti", 50);
+                }
+        );
+    }
+
+    @Test
+    @Transactional
+    public void getItemInformationTest() {
+        UUID item1 = this.itemService.createItem("Mini Gun", "Can shoot a lot", "item", 50);
 
         assertEquals(
-                "mini gun: 50;\nnuke: 200;\n",
-                this.itemService.getItemPriceList()
+                "[{\"price\":50,\"id\":\"Mini Gun\",\"type\":\"ITEM\"}]",
+                this.itemService.getItems().toString()
         );
     }
 
@@ -62,7 +72,7 @@ public class ItemServiceTests {
     @Transactional
     public void buyItemWithoutEnoughMoneyTest() {
         UUID playerId = this.playerService.createPlayer(200);
-        UUID itemId = this.itemService.createItem("Special Lemonade", "It's special. That's it.", 250);
+        UUID itemId = this.itemService.createItem("Special Lemonade", "It's special. That's it.", "item",250);
 
         Integer price = this.itemService.buyItem(playerId, "Special Lemonade", 1);
         assertEquals(-1, price);
@@ -72,7 +82,7 @@ public class ItemServiceTests {
     @Transactional
     public void buyItemSuccessfullyTest() {
         UUID playerId = this.playerService.createPlayer(200);
-        UUID itemId = this.itemService.createItem("A Rock", "Because it's the only thing you can afford.", 2);
+        UUID itemId = this.itemService.createItem("A Rock", "Because it's the only thing you can afford.", "item", 2);
 
         Integer newPlayerMoney = this.itemService.buyItem(playerId, "A Rock", 1);
         assertEquals(198, newPlayerMoney);

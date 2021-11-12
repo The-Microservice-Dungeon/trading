@@ -31,17 +31,26 @@ public class Item {
     @Getter
     private int originalPrice;
 
+    @Getter
+    private ItemType itemType;
+
     @OneToOne(cascade = CascadeType.ALL)
     private ItemEconomy economy;
 
     public Item() {}
 
-    public Item(String name, String description, int price) {
+    public Item(String name, String description, ItemType type, int price) {
         this.name = name;
         this.description = description;
+        this.itemType = type;
         this.currentPrice = price;
         this.originalPrice = price;
-        this.economy = new ItemEconomy();
+
+        // only "real" items need an economy
+        // rest are static prices
+        if (this.itemType == ItemType.ITEM) {
+            this.economy = new ItemEconomy();
+        }
     }
 
     public void addHistory(int roundNumber) {

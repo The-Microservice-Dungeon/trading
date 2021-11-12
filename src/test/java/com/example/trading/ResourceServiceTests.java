@@ -40,13 +40,12 @@ public class ResourceServiceTests {
 
     @Test
     @Transactional
-    public void resourceItemListTest() {
+    public void getResourceInformationTest() {
         UUID resource1 = this.resourceService.createResource("Iron", 10);
-        UUID resource2 = this.resourceService.createResource("Gold", 20);
 
         assertEquals(
-                "iron: 10;\ngold: 20;\n",
-                this.resourceService.getResourcePriceList()
+                "[{\"price\":10,\"id\":\"iron\"}]",
+                this.resourceService.getResources().toString()
         );
     }
 
