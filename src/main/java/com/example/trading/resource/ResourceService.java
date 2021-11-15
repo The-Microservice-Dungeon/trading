@@ -37,7 +37,7 @@ public class ResourceService {
 //        if (stationService.checkIfGivenPositionIsOneOfTheStations(x , y))
 //            return -2;
 
-        // request to robot for inventory
+        // rest call!!! to robot for inventory
 
         // basically no errors
         // get response with all resources and amounts

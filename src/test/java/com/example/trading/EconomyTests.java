@@ -43,7 +43,7 @@ public class EconomyTests {
     public void calculateNewResourcePriceTest() {
         Resource resource = new Resource("Test", 20);
 
-        resource.addHistory(0, 1);
+        resource.addHistory(9, 1);
         resource.addHistory(10, 2);
         resource.addHistory(0, 3);
 
