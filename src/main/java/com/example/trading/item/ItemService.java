@@ -1,14 +1,12 @@
 package com.example.trading.item;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
 import com.example.trading.player.PlayerService;
-import com.example.trading.station.StationService;
+import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,7 +20,7 @@ public class ItemService {
     private PlayerService playerService;
 
     @Autowired
-    private StationService stationService;
+    private PlanetService planetService;
 
     public UUID createItem(String name, String description, String type, int price) {
         ItemType itemType;
@@ -43,7 +41,7 @@ public class ItemService {
         if (item.isEmpty()) throw new IllegalArgumentException("Item does not exist");
 
         // check position
-//        if (stationService.checkIfGivenPositionIsOneOfTheStations(x , y))
+//        if (planetService.checkIfGivenPlanetIsAStation(planetId))
 //            return -2;
 
         if (!this.playerService.checkPlayerForMoney(playerId, item.get().getCurrentPrice()))

@@ -1,7 +1,7 @@
 package com.example.trading.resource;
 
 import com.example.trading.player.PlayerService;
-import com.example.trading.station.StationService;
+import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class ResourceService {
     private PlayerService playerService;
 
     @Autowired
-    private StationService stationService;
+    private PlanetService stationService;
 
     public UUID createResource(String name, int price) {
         Resource newResource = new Resource(name, price);
@@ -34,7 +34,7 @@ public class ResourceService {
         if (resource.isEmpty()) throw new IllegalArgumentException("Resource does not exist");
 
         // check position
-//        if (stationService.checkIfGivenPositionIsOneOfTheStations(x , y))
+//        if (stationService.checkIfGivenPlanetIsAStation(planetId))
 //            return -2;
 
         // rest call!!! to robot for inventory
