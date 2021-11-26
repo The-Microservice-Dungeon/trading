@@ -14,12 +14,12 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class PlanetServiceTests {
+public class TradingPlanetServiceTests {
     private final PlanetService planetService;
     private final PlanetRepository planetRepository;
 
     @Autowired
-    public PlanetServiceTests(PlanetService planetService, PlanetRepository planetRepository) {
+    public TradingPlanetServiceTests(PlanetService planetService, PlanetRepository planetRepository) {
         this.planetService = planetService;
         this.planetRepository = planetRepository;
     }

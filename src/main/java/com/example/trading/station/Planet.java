@@ -25,6 +25,7 @@ public class Planet {
     public Planet() {}
 
     public Planet(UUID originalPlanetId, String type) {
+        this.planetId = UUID.randomUUID();
         this.originalPlanetId = originalPlanetId;
         this.type = type;
     }

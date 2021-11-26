@@ -7,24 +7,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class PlayerServiceTests {
+class TradingPlayerServiceTests {
 
     private final PlayerService playerService;
     private final PlayerRepository playerRepository;
 
     @Autowired
-    public PlayerServiceTests(PlayerService service, PlayerRepository repository) {
+    public TradingPlayerServiceTests(PlayerService service, PlayerRepository repository) {
         this.playerService = service;
         this.playerRepository = repository;
     }
 
     @Test
+    @Transactional
     public void playerCreationTest() {
         UUID newPlayerId = this.playerService.createPlayer(200);
         Optional<Player> player = this.playerRepository.findById(newPlayerId);
@@ -32,6 +34,7 @@ class PlayerServiceTests {
     }
 
     @Test
+    @Transactional
     public void playerGetMoneyTest() {
         UUID newPlayerId = this.playerService.createPlayer(200);
         Integer moneyAmount = this.playerService.getCurrentMoneyAmount(newPlayerId);
@@ -39,6 +42,7 @@ class PlayerServiceTests {
     }
 
     @Test
+    @Transactional
     public void playerReduceMoneyTest() {
         UUID newPlayerId = this.playerService.createPlayer(200);
         Integer newMoneyAmount = this.playerService.reduceMoney(newPlayerId, 150);
@@ -46,6 +50,7 @@ class PlayerServiceTests {
     }
 
     @Test
+    @Transactional
     public void playerReduceTooMuchMoneyTest() {
         UUID newPlayerId = this.playerService.createPlayer(200);
         assertThrows(
@@ -55,10 +60,22 @@ class PlayerServiceTests {
     }
 
     @Test
+    @Transactional
     public void playerAddMoneyTest() {
         UUID newPlayerId = this.playerService.createPlayer(200);
         Integer newMoneyAmount = this.playerService.addMoney(newPlayerId, 150);
         assertEquals(350, newMoneyAmount);
+    }
+
+    @Test
+    @Transactional
+    public void getAllPlayerBalancesTest() {
+        UUID newPlayerId = this.playerService.createPlayer(500);
+
+        assertEquals(
+                "[{\"balance\":500,\"player-id\":\"" + newPlayerId + "\"}]",
+                this.playerService.getAllPlayerBalances().toString()
+        );
     }
 
 }

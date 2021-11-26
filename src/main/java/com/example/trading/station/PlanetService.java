@@ -11,10 +11,10 @@ public class PlanetService {
     @Autowired
     private PlanetRepository planetRepository;
 
-    public UUID createNewPlanet(UUID planetId, String type) {
-        Planet planet = new Planet(planetId, type);
+    public UUID createNewPlanet(UUID orgPlanetId, String type) {
+        Planet planet = new Planet(orgPlanetId, type);
         this.planetRepository.save(planet);
-        return planet.getPlanetId();
+        return planet.getOriginalPlanetId();
     }
 
     public boolean checkIfGivenPlanetIsAStation(UUID planetId) {

@@ -7,6 +7,7 @@ import com.example.trading.player.PlayerService;
 import com.example.trading.resource.Resource;
 import com.example.trading.resource.ResourceRepository;
 import com.example.trading.resource.ResourceService;
+import com.example.trading.station.PlanetService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,16 +19,18 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class ResourceServiceTests {
+public class TradingResourceServiceTests {
     private final ResourceService resourceService;
     private final ResourceRepository resourceRepository;
     private final PlayerService playerService;
+    private final PlanetService planetService;
 
     @Autowired
-    public ResourceServiceTests(ResourceService service, ResourceRepository repository, PlayerService playerService) {
+    public TradingResourceServiceTests(ResourceService service, ResourceRepository repository, PlayerService playerService, PlanetService planetService) {
         this.resourceService = service;
         this.resourceRepository = repository;
         this.playerService = playerService;
+        this.planetService = planetService;
     }
 
     @Test
@@ -51,22 +54,24 @@ public class ResourceServiceTests {
 
     @Test
     @Transactional
-    public void sellNonExistentResourceTest() {
+    public void sellResourceOnNonStationPlanetTest() {
         UUID playerId = this.playerService.createPlayer(200);
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "planet");
 
-        assertThrows(
-                RuntimeException.class,
-                () -> this.resourceService.sellResource(playerId, "resource which does not exist", 100, 1)
-        );
+        int price = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, 1);
+        assertEquals(-2, price);
     }
 
     @Test
     @Transactional
     public void sellResourceSuccessfullyTest() {
         UUID playerId = this.playerService.createPlayer(200);
-        UUID resourceId = this.resourceService.createResource("Diamond", 100);
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "station");
+        UUID coal = this.resourceService.createResource("COAL", 5);
+        UUID iron = this.resourceService.createResource("IRON", 10);
 
-        Integer newPlayerMoney = this.resourceService.sellResource(playerId, "Diamond", 2, 1);
-        assertEquals(400, newPlayerMoney);
+        // mock data is 5x coal, 2x iron => 45 overall
+        Integer newPlayerMoney = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, 1);
+        assertEquals(245, newPlayerMoney);
     }
 }

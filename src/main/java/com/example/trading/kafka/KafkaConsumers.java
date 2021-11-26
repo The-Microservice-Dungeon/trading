@@ -22,15 +22,20 @@
 //    @Autowired
 //    private ItemService itemService;
 //
-//    @KafkaListener(topics = "player created")
+//    @KafkaListener(topics = "player joined")
 //    public void listenToPlayerCreation(String msg) {
 //        UUID player = this.playerService.createPlayer(200);
 ////        confirm message?
 //    }
 //
-//    @KafkaListener(topics = "planet created")
-//    public void listenToPlanetCreation(String msg) {
+//    @KafkaListener(topics = "spawn created")
+//    public void listenToSpawnCreation(String msg) {
 //        UUID planet = this.planetService.createNewPlanet(planetId, planetType);
+//    }
+//
+//    @KafkaListener(topics = "spacestation created")
+//    public void listenToStationCreation(String msg) {
+//        UUID planet = this.planetService.createNewPlanet(plnetId, planetType);
 //    }
 //
 //    @KafkaListener(topics = "resource created")
@@ -41,5 +46,20 @@
 //    @KafkaListener(topics = "item created")
 //    public void listenToItemCreation(String msg) {
 //        UUID item = this.itemService.createItem(name, desc, type, price);
+//    }
+//
+//    @KafkaListener(topics = "round started")
+//    public void listenToRoundStart(String msg) {
+//
+//    }
+//
+//    @KafkaListener(topics = "round ended")
+//    public void listenToRoundEnd(String msg) {
+//
+//    }
+//
+//    @KafkaListener(topics = "game ended")
+//    public void listenToGameEnd(String msg) {
+//
 //    }
 //}

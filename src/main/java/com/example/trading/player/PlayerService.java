@@ -1,5 +1,7 @@
 package com.example.trading.player;
 
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -20,30 +22,45 @@ public class PlayerService {
     }
 
     public boolean checkPlayerForMoney(UUID playerId, int neededAmount) {
-        Optional<Player> player = playerRepository.findById(playerId);
+        Optional<Player> player = this.playerRepository.findById(playerId);
         if (player.isEmpty()) throw new IllegalArgumentException("The given player does not exist.");
 
         return player.get().getMoneyAmount() >= neededAmount;
     }
 
     public int reduceMoney(UUID playerId, int amount) {
-        Optional<Player> player = playerRepository.findById(playerId);
+        Optional<Player> player = this.playerRepository.findById(playerId);
         if (player.isEmpty()) throw new IllegalArgumentException("The given player does not exist.");
 
         return player.get().reduceMoney(amount);
     }
 
     public int addMoney(UUID playerId, int amount) {
-        Optional<Player> player = playerRepository.findById(playerId);
+        Optional<Player> player = this.playerRepository.findById(playerId);
         if (player.isEmpty()) throw new IllegalArgumentException("The given player does not exist.");
 
         return player.get().addMoney(amount);
     }
 
     public int getCurrentMoneyAmount(UUID playerId) {
-        Optional<Player> player = playerRepository.findById(playerId);
+        Optional<Player> player = this.playerRepository.findById(playerId);
         if (player.isEmpty()) throw new IllegalArgumentException("The given player does not exist.");
 
         return player.get().getMoneyAmount();
+    }
+
+    public JSONArray getAllPlayerBalances() {
+        Iterable<Player> players = this.playerRepository.findAll();
+
+        JSONArray balances = new JSONArray();
+
+        for (Player player : players) {
+            JSONObject jsonBalance = new JSONObject();
+            jsonBalance.put("player-id", player.getPlayerId().toString());
+            jsonBalance.put("balance", player.getMoneyAmount());
+            balances.appendElement(jsonBalance);
+        }
+
+        return balances;
     }
 }

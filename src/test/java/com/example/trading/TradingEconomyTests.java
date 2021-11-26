@@ -14,13 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.transaction.Transactional;
 
 @SpringBootTest
-public class EconomyTests {
+public class TradingEconomyTests {
     private final ItemService itemService;
     private final ResourceService resourceService;
     private final PlayerService playerService;
 
     @Autowired
-    public EconomyTests(ItemService itemService, ResourceService resourceService, PlayerService playerService) {
+    public TradingEconomyTests(ItemService itemService, ResourceService resourceService, PlayerService playerService) {
         this.itemService = itemService;
         this.resourceService = resourceService;
         this.playerService = playerService;

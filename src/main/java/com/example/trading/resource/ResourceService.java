@@ -1,13 +1,19 @@
 package com.example.trading.resource;
 
+import com.example.trading.item.Item;
 import com.example.trading.player.PlayerService;
 import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -20,7 +26,7 @@ public class ResourceService {
     private PlayerService playerService;
 
     @Autowired
-    private PlanetService stationService;
+    private PlanetService planetService;
 
     public UUID createResource(String name, int price) {
         Resource newResource = new Resource(name, price);
@@ -29,24 +35,41 @@ public class ResourceService {
     }
 
     // sell complete inventory
-    public int sellResource(UUID playerId, String resourceName, int amount, int currentRound) {
-        Optional<Resource> resource = resourceRepository.findByName(resourceName);
-        if (resource.isEmpty()) throw new IllegalArgumentException("Resource does not exist");
+    public int sellResources(UUID transactionId, UUID playerId, UUID robotId, UUID planetId, int currentRound) {
+        if (!this.planetService.checkIfGivenPlanetIsAStation(planetId)) return -2;
 
-        // check position
-//        if (stationService.checkIfGivenPlanetIsAStation(planetId))
-//            return -2;
-
+        // post to /robots/{robot-uuid}/inventory/clearResources
+        ResponseEntity<?> sellResponse;
         // rest call!!! to robot for inventory
 
-        // basically no errors
-        // get response with all resources and amounts
+        // mock data
+        JSONObject robotInventory = new JSONObject();
+        robotInventory.put("coal", 5);
+        robotInventory.put("iron", 2);
+        sellResponse = new ResponseEntity<>(robotInventory, HttpStatus.OK);
+//        sellResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
+//        sellResponse = new ResponseEntity<>("Robot not found", HttpStatus.NOT_FOUND);
 
-        int fullPrice = amount * resource.get().getCurrentPrice();
+        if (sellResponse.getStatusCode() != HttpStatus.OK) {
+            throw new IllegalArgumentException(sellResponse.getBody().toString());
+        }
 
-        resource.get().addHistory(amount, currentRound);
+        JSONObject responseBody = (JSONObject) sellResponse.getBody();
 
-        return this.playerService.addMoney(playerId, fullPrice);
+        if (responseBody == null) return this.playerService.getCurrentMoneyAmount(playerId);
+
+        int fullAmount = 0;
+
+        for (String key : responseBody.keySet()) {
+            Optional<Resource> resource = this.resourceRepository.findByName(key);
+            if (resource.isEmpty()) continue;
+
+            fullAmount += (Integer) responseBody.get(key) * resource.get().getCurrentPrice();
+            resource.get().addHistory((Integer) responseBody.get(key), currentRound);
+        }
+
+        int newAmount = this.playerService.addMoney(playerId, fullAmount);
+        return fullAmount;
     }
 
     public JSONArray getResources() {
@@ -56,7 +79,7 @@ public class ResourceService {
 
         for (Resource resource : resources) {
             JSONObject jsonResource = new JSONObject();
-            jsonResource.put("id", resource.getName());
+            jsonResource.put("name", resource.getName());
             jsonResource.put("price", resource.getCurrentPrice());
             resourceArray.appendElement(jsonResource);
         }
