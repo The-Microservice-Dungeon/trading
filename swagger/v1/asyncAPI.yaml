@@ -1,0 +1,129 @@
+asyncapi: '2.2.0'
+info:
+  title: Trading
+  version: '0.0.1'
+  description: |
+
+defaultContentType: application/json
+
+channels:
+  bank_created:
+    publish:
+      message:
+        $ref: '#/components/messages/playerBanks'
+  current_prices:
+    publish:
+      message:
+        $ref: '#/components/messages/currentPrices'     
+  trades:
+    publish:
+      message:
+        $ref: '#/components/messages/trades'    
+components:
+  messageTraits:
+    DefaultTradingKafkaMessage:
+      bindings:
+        kafka:
+          key:
+            type: string
+            format: uuid
+          bindingVersion: '0.1.0'
+      correlationId:
+        location: "$message.header#/transactionId"
+      headers:
+        type: object
+        required:
+          - eventId
+          - transactionId
+          - version
+          - timestamp
+          - type
+        properties:
+          eventId:
+            type: string
+            format: uuid
+            description: Generated UUID of the event
+            example: 5bc9f935-32f1-4d7b-a90c-ff0e6e34125a
+          transactionId:
+            type: string
+            format: uuid
+            description: TransactionID if available or UUID of the entity concerned
+            example: 0cfc04f1-6df5-42c6-a19a-146128b8a3b4
+          version:
+            type: integer
+            description: Consecutive number for the comparability of the actuality of the event
+            example: 42
+          timestamp:
+            type: string
+            format: date-time
+            description: >
+              timestamp as specified in [time-format-decision](https://the-microservice-dungeon.github.io/decisionlog/decisions/time-format.html)
+            example: 2020-01-10T12:00:00Z
+          type:
+            type: string
+            description: The type of event
+            example: event-example-uploaded
+  messages:
+    playerBanks:
+      description: >
+        If a player bank if initialized
+      traits:
+        - $ref: '#/components/messageTraits/DefaultTradingKafkaMessage'
+      payload:
+        type: object
+        properties:
+          playerId:
+            type: string
+            format: uuid
+            description: UUID of the player
+          money:
+            type: number
+            format: integer
+            description: Amount of money initially in the bank
+    currentPrices:
+      description: >
+        Announce new prices at the start of each round
+      traits:
+        - $ref: '#/components/messageTraits/DefaultTradingKafkaMessage'
+        - headers:
+            properties:
+              type:
+                type: string
+                description: Testytesttest
+                example: trading-current-price       
+      payload:
+        type: array
+        description: Array of all items and their prices
+        items:
+          allOf:
+            - type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the item
+                price:
+                  type: integer
+                  description: Price of the item
+    trades:
+      description: >
+        If a player bank if initialized
+      traits:
+        - $ref: '#/components/messageTraits/DefaultTradingKafkaMessage'
+      payload:
+        type: object
+        properties:
+          success:
+            type: boolean
+            description: Is true if the transaction succeeded
+          moneyChangedBy:
+            type: number
+            example: -500
+            description: Amount of how much the money changed
+          message:
+            type: string
+            example: Not enough money
+            description: Message to the player. Holds error information if the transaction did not succeed
+          data:          
+            type: object
+            description: Holds data relevant for the trade. E.g. new robot stats.
+ 
