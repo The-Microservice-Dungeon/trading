@@ -73,6 +73,7 @@ public class ResourceService {
             resource.get().addHistory(currentRound, (Integer) responseBody.get(key));
         }
 
+
         int newAmount = this.playerService.addMoney(playerId, fullAmount);
         return fullAmount;
     }

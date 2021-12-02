@@ -101,7 +101,7 @@ public class TradingItemServiceTests {
 
         assertThrows(
                 RuntimeException.class,
-                () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "PISTOL", 1)
+                () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "PISTOL",  1)
         );
     }
 

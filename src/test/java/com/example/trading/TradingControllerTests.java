@@ -23,6 +23,7 @@ import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -125,8 +126,8 @@ public class TradingControllerTests {
 
     @Test
     @Transactional
-    public void postBuyItemRestTest() throws Exception {
-        this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
+    public void postBuyNormalItemRestTest() throws Exception {
+        UUID itemId = this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
         UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "station");
         UUID playerId = this.playerService.createPlayer(200);
         UUID transactionId = UUID.randomUUID();
@@ -152,7 +153,39 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        System.out.println(result.getResponse().getContentAsString());
+        assertEquals(150, this.playerService.getCurrentMoneyAmount(playerId));
+    }
+
+    @Test
+    @Transactional
+    public void postSellInventoryRestTest() throws Exception {
+        UUID coalId = this.resourceService.createResource("coal", 5);
+        UUID ironId = this.resourceService.createResource("iron", 10);
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "station");
+        UUID playerId = this.playerService.createPlayer(200);
+        UUID transactionId = UUID.randomUUID();
+        UUID robotId = UUID.randomUUID();
+
+        JSONArray commandArray = new JSONArray();
+        JSONObject request = new JSONObject();
+        request.put("transactionId", transactionId.toString());
+        request.put("playerId", playerId.toString());
+        JSONObject payloadObject = new JSONObject();
+        payloadObject.put("commandType", "sell");
+        payloadObject.put("robotId", robotId.toString());
+        payloadObject.put("planetId", planetId.toString());
+        request.put("payload", payloadObject);
+        commandArray.appendElement(request);
+
+        MvcResult result = mockMvc
+                .perform(
+                        post("/commands")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(commandArray.toJSONString()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertEquals(245, this.playerService.getCurrentMoneyAmount(playerId));
     }
 
 }
