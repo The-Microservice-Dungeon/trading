@@ -10,23 +10,18 @@ import java.util.UUID;
 public class Planet {
     @Id
     @Getter
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+//    @GeneratedValue(generator = "uuid2")
+//    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     private UUID planetId;
-
-    @Getter
-    @Column(columnDefinition = "BINARY(16)")
-    private UUID originalPlanetId;
 
     @Getter
     private String type;
 
     public Planet() {}
 
-    public Planet(UUID originalPlanetId, String type) {
-        this.planetId = UUID.randomUUID();
-        this.originalPlanetId = originalPlanetId;
+    public Planet(UUID planetId, String type) {
+        this.planetId = planetId;
         this.type = type;
     }
 

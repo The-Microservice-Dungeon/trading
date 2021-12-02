@@ -11,9 +11,6 @@
 //
 //public class KafkaConsumers {
 //    @Autowired
-//    private PlayerService playerService;
-//
-//    @Autowired
 //    private PlanetService planetService;
 //
 //    @Autowired
@@ -22,21 +19,6 @@
 //    @Autowired
 //    private ItemService itemService;
 //
-//    @KafkaListener(topics = "player joined")
-//    public void listenToPlayerCreation(String msg) {
-//        UUID player = this.playerService.createPlayer(200);
-////        confirm message?
-//    }
-//
-//    @KafkaListener(topics = "spawn created")
-//    public void listenToSpawnCreation(String msg) {
-//        UUID planet = this.planetService.createNewPlanet(planetId, planetType);
-//    }
-//
-//    @KafkaListener(topics = "spacestation created")
-//    public void listenToStationCreation(String msg) {
-//        UUID planet = this.planetService.createNewPlanet(plnetId, planetType);
-//    }
 //
 //    @KafkaListener(topics = "resource created")
 //    public void listenToResourceCreation(String msg) {

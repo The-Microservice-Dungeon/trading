@@ -43,6 +43,19 @@ public class ItemService {
         return newItem.getItemId();
     }
 
+    public void createItem(ItemDto itemDto) {
+        ItemType itemType;
+
+        try {
+             itemType = ItemType.valueOf(itemDto.itemType.toUpperCase());
+        } catch (Exception E) {
+            throw new IllegalArgumentException("Given itemType is not valid");
+        }
+
+        Item item = new Item(itemDto.name, itemDto.description, itemType, itemDto.price);
+        this.itemRepository.save(item);
+    }
+
     public int buyItem(UUID transactionId, UUID playerId, UUID robotId, UUID planetId, String itemName, int currentRound) {
         Optional<Item> item = this.itemRepository.findByName(itemName);
         if (item.isEmpty())
@@ -90,7 +103,7 @@ public class ItemService {
 //            buyResponse = new ResponseEntity<>("Upgrade of robot <uuid> rejected. Current lvl of Energy capacity is <current-lvl>.", HttpStatus.CONFLICT);
         }
 
-        if (buyResponse.getStatusCode() != HttpStatus.OK || buyResponse.getStatusCode() != HttpStatus.CREATED) {
+        if (buyResponse.getStatusCode() != HttpStatus.OK && buyResponse.getStatusCode() != HttpStatus.CREATED) {
             throw new IllegalArgumentException(buyResponse.getBody().toString());
         }
 

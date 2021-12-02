@@ -47,7 +47,7 @@ public class TradingResourceServiceTests {
         UUID resource1 = this.resourceService.createResource("Iron", 10);
 
         assertEquals(
-                "[{\"price\":10,\"id\":\"iron\"}]",
+                "[{\"price\":10,\"name\":\"iron\"}]",
                 this.resourceService.getResources().toString()
         );
     }
@@ -72,6 +72,6 @@ public class TradingResourceServiceTests {
 
         // mock data is 5x coal, 2x iron => 45 overall
         Integer newPlayerMoney = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, 1);
-        assertEquals(245, newPlayerMoney);
+        assertEquals(45, newPlayerMoney);
     }
 }

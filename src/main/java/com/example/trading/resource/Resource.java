@@ -40,7 +40,7 @@ public class Resource {
         this.economy = new ResourceEconomy();
     }
 
-    public void addHistory(int amount, int roundNumber) {
+    public void addHistory(int roundNumber, int amount) {
         this.economy.addHistory(roundNumber, amount);
     }
 

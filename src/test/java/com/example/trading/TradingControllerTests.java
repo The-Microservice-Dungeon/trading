@@ -1,8 +1,11 @@
 package com.example.trading;
 
 import com.example.trading.item.ItemService;
+import com.example.trading.player.PlayerService;
 import com.example.trading.resource.ResourceService;
+import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,6 +21,7 @@ import javax.transaction.Transactional;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -26,16 +30,22 @@ public class TradingControllerTests {
 
     private final ResourceService resourceService;
     private final ItemService itemService;
+    private final PlayerService playerService;
+    private final PlanetService planetService;
 
     private final MockMvc mockMvc;
 
     @Autowired
     public TradingControllerTests(MockMvc mockMvc,
                                   ResourceService resourceService,
-                                  ItemService itemService) {
+                                  ItemService itemService,
+                                  PlayerService playerService,
+                                  PlanetService planetService) {
         this.mockMvc = mockMvc;
         this.resourceService = resourceService;
         this.itemService = itemService;
+        this.playerService = playerService;
+        this.planetService = planetService;
     }
 
     @Test
@@ -92,6 +102,53 @@ public class TradingControllerTests {
                 .perform(
                         get("/items/PISTOL")
                                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @Transactional
+    public void getBalancesRestTest() throws Exception {
+        UUID playerId = this.playerService.createPlayer(200);
+
+        MvcResult result = mockMvc
+                .perform(
+                        get("/balances")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @Transactional
+    public void postBuyItemRestTest() throws Exception {
+        this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "station");
+        UUID playerId = this.playerService.createPlayer(200);
+        UUID transactionId = UUID.randomUUID();
+        UUID robotId = UUID.randomUUID();
+
+        JSONArray commandArray = new JSONArray();
+        JSONObject request = new JSONObject();
+        request.put("transactionId", transactionId.toString());
+        request.put("playerId", playerId.toString());
+        JSONObject payloadObject = new JSONObject();
+        payloadObject.put("commandType", "buy");
+        payloadObject.put("robotId", robotId.toString());
+        payloadObject.put("planetId", planetId.toString());
+        payloadObject.put("itemName", "PISTOL");
+        request.put("payload", payloadObject);
+        commandArray.appendElement(request);
+
+        MvcResult result = mockMvc
+                .perform(
+                        post("/commands")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(commandArray.toJSONString()))
                 .andExpect(status().isOk())
                 .andReturn();
 

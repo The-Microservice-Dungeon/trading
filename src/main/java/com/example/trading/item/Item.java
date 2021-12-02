@@ -35,6 +35,7 @@ public class Item {
     private ItemType itemType;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @Getter
     private ItemEconomy economy;
 
     public Item() {}
