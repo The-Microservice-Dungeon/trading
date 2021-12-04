@@ -32,8 +32,7 @@ paths:
         description: Name of Item to buy
         required: true
         schema:
-          type: integer
-          format: int32
+          type: string
       responses:
         200:
           description: OK
@@ -62,6 +61,112 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Item'
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}
+  /items/{item-name}/economy:
+    patch:
+      tags:
+      - service routes
+      summary:  Patch the current item economy
+      parameters:
+      - name: item-name
+        in: path
+        description: Name of Item 
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/ItemEconomy'
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {} 
+    get:
+      tags:
+      - service routes
+      summary:  Get the current item economy
+      parameters:
+      - name: item-name
+        in: path
+        description: Name of Item 
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/ItemEconomy'
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}
+  /resources/{resource-name}/economy:
+    patch:
+      tags:
+      - service routes
+      summary:  Patch the current resource economy
+      parameters:
+      - name: resource-name
+        in: path
+        description: Name of resource 
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/ResourceEconomy'
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {} 
+    get:
+      tags:
+      - service routes
+      summary:  Get the current resource economy
+      parameters:
+      - name: resource-name
+        in: path
+        description: Name of resource 
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/ResourceEconomy'
         500:
           description: Internal Server Error
           content: {}
@@ -156,10 +261,42 @@ paths:
           content: {}
 components:
   schemas:
+    ResourceEconomy:
+      type: object
+      properties:
+        demand:
+          type: number
+          description: Demand of the item
+          example: 5
+        roundCount:
+          description: Current round number
+          type: integer
+          format: int32
+          example: 12
+        resourceName:
+          type: string
+          description: Name of the resource
+          example: COAL  
+    ItemEconomy:
+      type: object
+      properties:
+        stock:
+          type: number
+          description: Stock of the item
+          example: 5
+        roundCount:
+          description: Current round number
+          type: integer
+          format: int32
+          example: 12
+        itemName:
+          type: string
+          description: Name of the Item
+          example: ROCKET
     Item:
       type: object
       properties:
-        item-name:
+        itemName:
           type: string
           description: Name of the Item
           example: ROCKET
