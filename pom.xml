@@ -69,20 +69,11 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.22.2</version>
-                        <executions>
-                            <execution>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <excludes>
-                                        <exclude>**/*IntegrationTest.java</exclude>
-                                        <exclude>**/*ContractTest.java</exclude>
-                                    </excludes>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*IntegrationTest.java</exclude>
+                            </excludes>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
