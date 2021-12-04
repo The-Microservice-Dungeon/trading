@@ -29,9 +29,14 @@ public class ResourceService {
     private PlanetService planetService;
 
     public UUID createResource(String name, int price) {
-        Resource newResource = new Resource(name, price);
-        resourceRepository.save(newResource);
-        return newResource.getResourceId();
+        Resource resource = new Resource(name, price);
+        this.resourceRepository.save(resource);
+        return resource.getResourceId();
+    }
+
+    public void createResource(ResourceDto resourceDto) {
+        Resource resource = new Resource(resourceDto.name, resourceDto.price);
+        this.resourceRepository.save(resource);
     }
 
     // sell complete inventory
@@ -65,8 +70,9 @@ public class ResourceService {
             if (resource.isEmpty()) continue;
 
             fullAmount += (Integer) responseBody.get(key) * resource.get().getCurrentPrice();
-            resource.get().addHistory((Integer) responseBody.get(key), currentRound);
+            resource.get().addHistory(currentRound, (Integer) responseBody.get(key));
         }
+
 
         int newAmount = this.playerService.addMoney(playerId, fullAmount);
         return fullAmount;

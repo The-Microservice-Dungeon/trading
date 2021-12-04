@@ -11,14 +11,19 @@ public class PlanetService {
     @Autowired
     private PlanetRepository planetRepository;
 
-    public UUID createNewPlanet(UUID orgPlanetId, String type) {
-        Planet planet = new Planet(orgPlanetId, type);
+    public UUID createNewPlanet(UUID planetId, String type) {
+        Planet planet = new Planet(planetId, type);
         this.planetRepository.save(planet);
-        return planet.getOriginalPlanetId();
+        return planet.getPlanetId();
+    }
+
+    public void createNewPlanet(PlanetDto planetDto) {
+        Planet planet = new Planet(planetDto.id, planetDto.type);
+        this.planetRepository.save(planet);
     }
 
     public boolean checkIfGivenPlanetIsAStation(UUID planetId) {
-        Optional<Planet> planet = planetRepository.findByOriginalPlanetId(planetId);
+        Optional<Planet> planet = planetRepository.findById(planetId);
 
         if (planet.isEmpty()) throw new IllegalArgumentException("Planet does not exist or given ID is wrong");
 

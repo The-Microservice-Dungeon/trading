@@ -3,13 +3,18 @@ package com.example.trading;
 import com.example.trading.item.ItemService;
 import com.example.trading.player.PlayerService;
 import com.example.trading.resource.ResourceService;
+import com.fasterxml.jackson.core.JsonParser;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
+import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -47,30 +52,37 @@ public class TradingController {
 
     @GetMapping("/balances")
     public ResponseEntity<?> getAllPlayerBalances() {
-//        Autentifizierung
         JSONArray balances = this.playerService.getAllPlayerBalances();
         return new ResponseEntity<JSONArray>(balances, HttpStatus.OK);
     }
 
     @PostMapping("/commands")
-    public ResponseEntity<?> processInComingTradingCommands(@RequestBody JSONArray commands) {
-        for (int i = 0; i < commands.size(); i++) {
-            JSONObject command = (JSONObject) commands.get(i);
+    public ResponseEntity<?> processInComingTradingCommands(@RequestBody String commands) {
+        JSONParser parser = new JSONParser();
+        JSONArray commandsArray = new JSONArray();
+        try {
+            commandsArray = (JSONArray) parser.parse(commands);
+        } catch (Exception e) {
+            System.out.println("Cant Parse String: " + e.getMessage());
+        }
+
+        for (int i = 0; i < commandsArray.size(); i++) {
+            JSONObject command = (JSONObject) commandsArray.get(i);
             JSONObject payload = (JSONObject) command.get("payload");
-            int moneyChangeBy = 0;
+
+            int moneyChangedBy = 0;
 
             JSONObject response = new JSONObject();
             response.put("transactionId", command.get("transactionId"));
 
-            if (payload.get("commandType") == "buy") {
+            if (Objects.equals(payload.get("commandType"), "buy")) {
                 try {
-                    moneyChangeBy = this.itemService.buyItem(
+                    moneyChangedBy = this.itemService.buyItem(
                             UUID.fromString((String) command.get("transactionId")),
                             UUID.fromString((String) command.get("playerId")),
                             UUID.fromString((String) payload.get("robotId")),
                             UUID.fromString((String) payload.get("planetId")),
                             (String) payload.get("itemName"),
-//                            (Integer) payload.get("quantity"),
                             1
                     );
                 } catch (Exception e) {
@@ -79,10 +91,10 @@ public class TradingController {
                     response.put("message", e.getMessage());
 //                    kafka Produce
                 }
-
-            } else if (payload.get("commandType") == "sell") {
+//
+            } else if (Objects.equals(payload.get("commandType"), "sell")) {
                 try {
-                    moneyChangeBy = this.resourceService.sellResources(
+                    moneyChangedBy = this.resourceService.sellResources(
                             UUID.fromString((String) command.get("transactionId")),
                             UUID.fromString((String) command.get("playerId")),
                             UUID.fromString((String) payload.get("robotId")),
@@ -98,7 +110,7 @@ public class TradingController {
             }
 
             response.put("success", true);
-            response.put("moneyChangedBy", moneyChangeBy);
+            response.put("moneyChangedBy", moneyChangedBy);
             response.put("message", "success");
 //            Kafka produce
         }

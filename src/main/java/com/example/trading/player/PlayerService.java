@@ -14,11 +14,15 @@ public class PlayerService {
     @Autowired
     private PlayerRepository playerRepository;
 
-//    @KafkaListener(topics = "player created")
     public UUID createPlayer(int amount) {
         Player player = new Player(amount);
         this.playerRepository.save(player);
         return player.getPlayerId();
+    }
+
+    public void createPlayer(PlayerDto playerDto) {
+        Player player = new Player(playerDto.playerId, 200);
+        this.playerRepository.save(player);
     }
 
     public boolean checkPlayerForMoney(UUID playerId, int neededAmount) {

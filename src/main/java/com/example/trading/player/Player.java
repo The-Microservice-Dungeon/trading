@@ -31,6 +31,12 @@ public class Player {
         this.moneyAmount = startMoney;
     }
 
+    public Player(UUID playerId, int startMoney) {
+        this.playerId = playerId;
+        this.robotCount = 1;
+        this.moneyAmount = startMoney;
+    }
+
     public int reduceMoney(int amount) {
         if (amount > this.moneyAmount || amount < 0)
             throw new IllegalArgumentException("The amount of money can not be negative.");

@@ -86,8 +86,10 @@ public class TradingItemServiceTests {
         UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "planet");
         UUID newItemId = this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
 
-        int price = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "PISTOL", 1);
-        assertEquals(-2, price);
+        assertThrows(
+                RuntimeException.class,
+                () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "PISTOL", 1)
+        );
     }
 
     @Test
@@ -97,8 +99,10 @@ public class TradingItemServiceTests {
         UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "station");
         UUID newItemId = this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
 
-        int price = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "PISTOL", 1);
-        assertEquals(-1, price);
+        assertThrows(
+                RuntimeException.class,
+                () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "PISTOL",  1)
+        );
     }
 
     @Test
@@ -109,6 +113,6 @@ public class TradingItemServiceTests {
         UUID itemId = this.itemService.createItem("A ROCK", "Because it's the only thing you can afford.", "item", 2);
 
         Integer newPlayerMoney = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "A ROCK", 1);
-        assertEquals(198, newPlayerMoney);
+        assertEquals(-2, newPlayerMoney);
     }
 }

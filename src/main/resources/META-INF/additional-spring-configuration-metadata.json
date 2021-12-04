@@ -9,5 +9,10 @@
       "name": "spring",
       "type": "java.lang.String",
       "description": "Description for spring."
+    },
+    {
+      "name": "spring.kafka.topic.consumer.player",
+      "type": "java.lang.String",
+      "description": "Description for spring.kafka.topic.consumer.player."
     }
   ] }
