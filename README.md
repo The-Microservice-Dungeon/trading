@@ -12,4 +12,3 @@ This README file should be adapted to include the following information:
 
 _Note_: The design of the task planning and review is up to the team. One possible option is to use a Kanban board directly via GitHub. 
 
-Devops Test
