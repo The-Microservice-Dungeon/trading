@@ -41,6 +41,10 @@ jobs:
           cache: maven
       - name: Unit-Test
         run: mvn test -Psurefire
+  build-image:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -49,4 +53,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build to GitHub Container Registry
         # use jib plugin to build docker image
-        run: mvn compile com.google.cloud.tools:jib-maven-plugin:3.1.4:build -Dimage=ghcr.io/the-microservice-dungeon/game/gameservice
+        run: mvn compile com.google.cloud.tools:jib-maven-plugin:3.1.4:build -Dimage=ghcr.io/the-microservice-dungeon/trading/tradingservice
