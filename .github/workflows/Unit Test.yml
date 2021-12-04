@@ -18,7 +18,7 @@ jobs:
       mysql:
         image: mysql:8
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
           MYSQL_HOST: mysql
         ports:
           - 3306:3306
@@ -30,7 +30,7 @@ jobs:
       - name: create Database
         run: |
           sudo apt-get install -y mysql-client
-          mysql --host 127.0.0.1 --port 3306 -uroot -proot -e "CREATE DATABASE trading"
+          mysql --host 127.0.0.1 --port 3306 -uroot -e "CREATE DATABASE trading"
       - uses: actions/checkout@v2
       - name: Setup JDK 11 + cache
         uses: actions/setup-java@v2
