@@ -27,6 +27,10 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: create Database
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql --host 127.0.0.1 --port 3606 -uroot -proot -e "CREATE DATABASE trading"
       - uses: actions/checkout@v2
       - name: Setup JDK 11 + cache
         uses: actions/setup-java@v2
@@ -36,4 +40,4 @@ jobs:
           # setup maven cache as well
           cache: maven
       - name: Unit-Test
-        run: mvn test
+        run: mvn test -Psurefire
