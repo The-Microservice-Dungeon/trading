@@ -12,61 +12,13 @@ servers:
     defaultHost:
       default: localhost:8083
 tags:
-- name: buying
-  description: Buying Items, Upgrades and Robots
-- name: selling
-  description: Selling Ressources
 - name: balances
   description: Players Account Balances
 - name: commands
   description: Commands Endpoint for Game Service
+- name: service routes
+  description: Admin routes to change various things in the service
 paths:
-  /items/{item-name}:
-    get:
-      tags:
-      - buying
-      summary: Information about one specific Item
-      parameters:
-      - name: item-name
-        in: path
-        description: Name of Item to buy
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Item'
-        404:
-          description: Item not found
-        500:
-          description: Internal Server Error
-        503:
-          description: Service not Initialized
-          content: {}
-  /items:
-    get:
-      tags:
-      - buying
-      summary: Information about all avaliable Items
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Item'
-        500:
-          description: Internal Server Error
-          content: {}
-        503:
-          description: Service not Initialized
-          content: {}
   /items/{item-name}/economy:
     patch:
       tags:
@@ -173,27 +125,6 @@ paths:
         503:
           description: Service not Initialized
           content: {}
-  /ressources:
-    get:
-      tags:
-      - selling
-      summary: Current Ressource Prices
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Ressource'
-        500:
-          description: Internal Server Error
-          content: {}
-        503:
-          description: Service not Initialized
-          content: {}
-      x-codegen-request-body-name: robot
   /balances:
     get:
       tags:
