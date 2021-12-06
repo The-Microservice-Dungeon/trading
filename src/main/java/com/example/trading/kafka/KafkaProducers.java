@@ -2,10 +2,29 @@
 //
 //public class KafkaProducers {
 //
-////    player banks created
+////    bank_created
+////    eventId
+////    transactionId
+////    version
+////    timestamp
+////    type
+////    payload: playerId, money
 //
-////    on round start: current prices
 //
+////    current_prices
+////    eventId
+////    transactionId
+////    version
+////    timestamp
+////    type
+////    payload: [{name, price}]
 //
+////    trades
+////    eventId
+////    transactionId
+////    version
+////    timestamp
+////    type
+////    payload: {success, moneyChangedBy, message, data}
 //
 //}

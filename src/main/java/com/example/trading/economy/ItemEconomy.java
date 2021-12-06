@@ -33,6 +33,12 @@ public class ItemEconomy {
         this.stock = 10;
     }
 
+    public ItemEconomy(int roundCount, int stock) {
+        this.history = new HashMap<>();
+        this.roundCount = roundCount;
+        this.stock = stock;
+    }
+
     public void addHistory(int currentRound, int newAmount) {
         if (this.history.containsKey(currentRound)) {
             int currentRoundAmount = this.history.get(currentRound);
@@ -54,5 +60,10 @@ public class ItemEconomy {
         float factor = soldStock / (float)this.stock;
         if (factor > 1) return factor;
         else return 1;
+    }
+
+    public void patchParameters(int newRoundCount, int newStock) {
+        this.roundCount = newRoundCount;
+        this.stock = newStock;
     }
 }

@@ -49,4 +49,9 @@ public class ResourceEconomy {
         if (factor < 1) return factor;
         else return 1;
     }
+
+    public void patchParameters(int newRoundCount, int newDemand) {
+        this.roundCount = newRoundCount;
+        this.demand = newDemand;
+    }
 }

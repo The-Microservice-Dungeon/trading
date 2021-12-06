@@ -1,6 +1,7 @@
 package com.example.trading.item;
 
 import com.example.trading.player.PlayerService;
+import com.example.trading.round.RoundService;
 import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -29,6 +30,9 @@ public class ItemService {
     @Autowired
     private PlanetService planetService;
 
+    @Autowired
+    private RoundService roundService;
+
     public UUID createItem(String name, String description, String type, int price) {
         ItemType itemType;
 
@@ -56,7 +60,35 @@ public class ItemService {
         this.itemRepository.save(item);
     }
 
-    public int buyItem(UUID transactionId, UUID playerId, UUID robotId, UUID planetId, String itemName, int currentRound) {
+    public int buyRobots(UUID transactionId, UUID playerId, int robotAmount) {
+        if (robotAmount <= 0)
+            throw new IllegalArgumentException("Cannot buy " + robotAmount + " robots");
+
+        Optional<Item> item = this.itemRepository.findByName("ROBOT");
+        int fullPrice = item.get().getCurrentPrice() * robotAmount;
+
+        if (!this.playerService.checkPlayerForMoney(playerId, fullPrice))
+            throw new IllegalArgumentException("Player '" + playerId + "' does not have enough money");
+
+        JSONObject requestPayload = new JSONObject();
+        requestPayload.put("transactionId", transactionId);
+        requestPayload.put("player", transactionId);
+        requestPayload.put("planets", this.planetService.getRandomPlanets(robotAmount));
+        requestPayload.put("quantity", robotAmount);
+        ResponseEntity<?> buyResponse;
+
+//        POST zu ROBOT/robots
+        buyResponse = new ResponseEntity<>("some big array with created robots", HttpStatus.CREATED);
+//            buyResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
+
+        if (buyResponse.getStatusCode() != HttpStatus.CREATED)
+            throw new IllegalArgumentException(buyResponse.getBody().toString());
+
+        int newAmount = this.playerService.reduceMoney(playerId, fullPrice);
+        return -fullPrice;
+    }
+
+    public int buyItem(UUID transactionId, UUID playerId, UUID robotId, UUID planetId, String itemName) {
         Optional<Item> item = this.itemRepository.findByName(itemName);
         if (item.isEmpty())
             throw new IllegalArgumentException("Item '" + itemName + "' does not exist");
@@ -77,6 +109,7 @@ public class ItemService {
             buyResponse = new ResponseEntity<>("Item <item> added to robot <uuid>.", HttpStatus.OK);
 //            buyResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
 //            buyResponse = new ResponseEntity<>("Robot not found", HttpStatus.NOT_FOUND);
+            item.get().addHistory(this.roundService.getRoundCount());
 
         } else if (item.get().getItemType() == ItemType.HEALTH || item.get().getItemType() == ItemType.ENERGY) {
             // post to ROBOT/robots/{robot-uuid}/instant-restore
@@ -85,29 +118,18 @@ public class ItemService {
 //            buyResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
 //            buyResponse = new ResponseEntity<>("Robot not found", HttpStatus.NOT_FOUND);
 
-        } else if (item.get().getItemType() == ItemType.ROBOT) {
-            // post to ROBOT/robots
-            requestPayload.put("player", playerId);
-            requestPayload.put("planet", planetId);
-//            requestPayload.put("quantity", quantity);
-            buyResponse = new ResponseEntity<>("some big object about the robot", HttpStatus.CREATED);
-//            buyResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
-
         } else {
             // post to ROBOT/robots/{robot-uuid}/upgrades
             requestPayload.put("upgrade-type", itemName);
-            requestPayload.put("target-lvl", itemName.substring(itemName.length() - 1));
             buyResponse = new ResponseEntity<>("Energy capacity of robot <uuid> has been upgraded to <new-lvl>", HttpStatus.OK);
 //            buyResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
 //            buyResponse = new ResponseEntity<>("Robot not found", HttpStatus.NOT_FOUND);
 //            buyResponse = new ResponseEntity<>("Upgrade of robot <uuid> rejected. Current lvl of Energy capacity is <current-lvl>.", HttpStatus.CONFLICT);
         }
 
-        if (buyResponse.getStatusCode() != HttpStatus.OK && buyResponse.getStatusCode() != HttpStatus.CREATED) {
+        if (buyResponse.getStatusCode() != HttpStatus.OK)
             throw new IllegalArgumentException(buyResponse.getBody().toString());
-        }
 
-        item.get().addHistory(currentRound);
         int newAmount = this.playerService.reduceMoney(playerId, item.get().getCurrentPrice());
         return -item.get().getCurrentPrice();
     }
@@ -137,6 +159,20 @@ public class ItemService {
         returnItem.put("price", item.get().getCurrentPrice());
         returnItem.put("type", item.get().getItemType().toString().toLowerCase());
         return returnItem;
+    }
+
+    public void patchItemEconomyParameters(String name, JSONObject parameters) throws Exception {
+        Optional<Item> item = this.itemRepository.findByName(name);
+        if (item.isEmpty()) throw new IllegalArgumentException("Item '" + name + "' does not exist");
+
+        try {
+            item.get().changeEconomyParameters(
+                    (Integer) parameters.get("roundCount"),
+                    (Integer) parameters.get("stock")
+            );
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 
 //    public void calculateNewItemPrice(int currentRound) {

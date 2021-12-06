@@ -50,4 +50,8 @@ public class Resource {
         this.currentPrice = (int)Math.ceil(this.originalPrice * priceFactor);
         System.out.println("NewPrice: " + this.currentPrice);
     }
+
+    public void changeEconomyParameters(int roundCount, int demand) {
+        this.economy.patchParameters(roundCount, demand);
+    }
 }

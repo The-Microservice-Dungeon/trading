@@ -27,34 +27,35 @@ public class TradingPlanetServiceTests {
     @Test
     @Transactional
     public void planetCreationTest() {
-        UUID newPlanetId = this.planetService.createNewPlanet(UUID.randomUUID(), "station");
+        UUID newPlanetId = this.planetService.createNewPlanet(UUID.randomUUID());
         Optional<Planet> planet = this.planetRepository.findById(newPlanetId);
         assertEquals(newPlanetId, planet.get().getPlanetId());
     }
 
     @Test
     @Transactional
-    public void nonExistentPlanetCheckTest() {
-        assertThrows(
-                RuntimeException.class, () -> {
-                    Boolean isPlanetStation = this.planetService.checkIfGivenPlanetIsAStation(UUID.randomUUID());
-                }
-        );
-    }
-
-    @Test
-    @Transactional
     public void isPlanetAStationCheckTest() {
         UUID orgStationId = UUID.randomUUID();
-        UUID stationPlanet = this.planetService.createNewPlanet(orgStationId, "station");
+        UUID stationPlanet = this.planetService.createNewPlanet(orgStationId);
         assertTrue(this.planetService.checkIfGivenPlanetIsAStation(orgStationId));
     }
 
     @Test
     @Transactional
     public void isPlanetNotAStationCheckTest() {
-        UUID orgNormalPlanetId = UUID.randomUUID();
-        UUID normalPlanet = this.planetService.createNewPlanet(orgNormalPlanetId, "planet");
-        assertFalse(this.planetService.checkIfGivenPlanetIsAStation(orgNormalPlanetId));
+        assertFalse(this.planetService.checkIfGivenPlanetIsAStation(UUID.randomUUID()));
+    }
+
+    @Test
+    @Transactional
+    public void getRandomPlanetIdsTest() {
+        UUID planet1 = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID planet2 = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID planet3 = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID planet4 = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID planet5 = this.planetService.createNewPlanet(UUID.randomUUID());
+
+        System.out.println(this.planetService.getRandomPlanets(2));
+        System.out.println(this.planetService.getRandomPlanets(2));
     }
 }

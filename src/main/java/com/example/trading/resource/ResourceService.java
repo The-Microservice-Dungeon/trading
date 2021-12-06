@@ -2,6 +2,7 @@ package com.example.trading.resource;
 
 import com.example.trading.item.Item;
 import com.example.trading.player.PlayerService;
+import com.example.trading.round.RoundService;
 import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -28,6 +29,9 @@ public class ResourceService {
     @Autowired
     private PlanetService planetService;
 
+    @Autowired
+    private RoundService roundService;
+
     public UUID createResource(String name, int price) {
         Resource resource = new Resource(name, price);
         this.resourceRepository.save(resource);
@@ -40,7 +44,7 @@ public class ResourceService {
     }
 
     // sell complete inventory
-    public int sellResources(UUID transactionId, UUID playerId, UUID robotId, UUID planetId, int currentRound) {
+    public int sellResources(UUID transactionId, UUID playerId, UUID robotId, UUID planetId) {
         if (!this.planetService.checkIfGivenPlanetIsAStation(planetId)) return -2;
 
         // post to /robots/{robot-uuid}/inventory/clearResources
@@ -70,11 +74,11 @@ public class ResourceService {
             if (resource.isEmpty()) continue;
 
             fullAmount += (Integer) responseBody.get(key) * resource.get().getCurrentPrice();
-            resource.get().addHistory(currentRound, (Integer) responseBody.get(key));
+            resource.get().addHistory(this.roundService.getRoundCount(), (Integer) responseBody.get(key));
         }
 
 
-        int newAmount = this.playerService.addMoney(playerId, fullAmount);
+        this.playerService.addMoney(playerId, fullAmount);
         return fullAmount;
     }
 
@@ -91,5 +95,19 @@ public class ResourceService {
         }
 
         return resourceArray;
+    }
+
+    public void patchItemEconomyParameters(String name, JSONObject parameters) throws Exception {
+        Optional<Resource> resource = this.resourceRepository.findByName(name);
+        if (resource.isEmpty()) throw new IllegalArgumentException("Resource '" + name + "' does not exist");
+
+        try {
+            resource.get().changeEconomyParameters(
+                    (Integer) parameters.get("roundCount"),
+                    (Integer) parameters.get("demand")
+            );
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
     }
 }

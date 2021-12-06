@@ -10,22 +10,12 @@ import java.util.UUID;
 public class Planet {
     @Id
     @Getter
-//    @GeneratedValue(generator = "uuid2")
-//    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     private UUID planetId;
 
-    @Getter
-    private String type;
-
     public Planet() {}
 
-    public Planet(UUID planetId, String type) {
+    public Planet(UUID planetId) {
         this.planetId = planetId;
-        this.type = type;
-    }
-
-    public boolean isStationOrSpawn() {
-        return this.type == "station" || this.type == "spawn";
     }
 }
