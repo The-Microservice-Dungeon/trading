@@ -236,6 +236,41 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Commands'
+              examples:
+                buyRobots:
+                  value:
+                    transactionId: transactionId
+                    playerId: playerId
+                    payload:
+                      commandType: "buy-robot"
+                      amount: 5
+                      planetId: uuid
+                buyUpgrade:
+                  value:
+                    transactionId: transactionId
+                    playerId: playerId
+                    payload:
+                      commandType: "buy-item"
+                      planetId: planetId
+                      robotId: robotId
+                      itemName: "MINING_4"
+                buyItem:
+                  value:
+                    transactionId: transactionId
+                    playerId: playerId
+                    payload:
+                      commandType: "buy-item"
+                      planetId: planetId
+                      robotId: robotId
+                      itemName: "NUKE" 
+                sellResources:
+                  value:
+                    transactionId: transactionId
+                    playerId: playerId
+                    payload:
+                      commandType: "sell"
+                      planetId: planetId
+                      robotId: robotId
         required: true
       responses:
         200:
