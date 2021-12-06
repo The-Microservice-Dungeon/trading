@@ -242,15 +242,16 @@ paths:
                     transactionId: transactionId
                     playerId: playerId
                     payload:
-                      commandType: "buy-robot"
+                      commandType: "buy"
                       amount: 5
                       planetId: uuid
+                      itemName: "ROBOT"
                 buyUpgrade:
                   value:
                     transactionId: transactionId
                     playerId: playerId
                     payload:
-                      commandType: "buy-item"
+                      commandType: "buy"
                       planetId: planetId
                       robotId: robotId
                       itemName: "MINING_4"
@@ -259,7 +260,7 @@ paths:
                     transactionId: transactionId
                     playerId: playerId
                     payload:
-                      commandType: "buy-item"
+                      commandType: "buy"
                       planetId: planetId
                       robotId: robotId
                       itemName: "NUKE" 
