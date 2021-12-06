@@ -7,11 +7,11 @@ info:
 defaultContentType: application/json
 
 channels:
-  bank_created:
+  bank-created:
     publish:
       message:
         $ref: '#/components/messages/playerBanks'
-  current_prices:
+  current-prices:
     publish:
       message:
         $ref: '#/components/messages/currentPrices'     
