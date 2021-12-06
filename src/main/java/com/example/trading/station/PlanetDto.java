@@ -4,5 +4,4 @@ import java.util.UUID;
 
 public class PlanetDto {
     public UUID id;
-    public String type;
 }

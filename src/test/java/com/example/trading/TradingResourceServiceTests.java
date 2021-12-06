@@ -56,9 +56,8 @@ public class TradingResourceServiceTests {
     @Transactional
     public void sellResourceOnNonStationPlanetTest() {
         UUID playerId = this.playerService.createPlayer(200);
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "planet");
 
-        int price = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, 1);
+        int price = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), UUID.randomUUID());
         assertEquals(-2, price);
     }
 
@@ -66,12 +65,12 @@ public class TradingResourceServiceTests {
     @Transactional
     public void sellResourceSuccessfullyTest() {
         UUID playerId = this.playerService.createPlayer(200);
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "station");
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
         UUID coal = this.resourceService.createResource("COAL", 5);
         UUID iron = this.resourceService.createResource("IRON", 10);
 
         // mock data is 5x coal, 2x iron => 45 overall
-        Integer newPlayerMoney = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, 1);
+        Integer newPlayerMoney = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId);
         assertEquals(45, newPlayerMoney);
     }
 }

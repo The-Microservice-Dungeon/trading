@@ -64,7 +64,7 @@ public class TradingItemServiceTests {
     @Transactional
     public void buyNonExistentItemTest() {
         UUID playerId = this.playerService.createPlayer(200);
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "station");
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
 
         assertThrows(
                 RuntimeException.class,
@@ -73,8 +73,7 @@ public class TradingItemServiceTests {
                         playerId,
                         UUID.randomUUID(), // robot
                         planetId,
-                        "non existant Item",
-                        1
+                        "non existant Item"
                 )
         );
     }
@@ -83,12 +82,11 @@ public class TradingItemServiceTests {
     @Transactional
     public void buyItemFromNonStationPlanetTest() {
         UUID playerId = this.playerService.createPlayer(200);
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "planet");
         UUID newItemId = this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
 
         assertThrows(
                 RuntimeException.class,
-                () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "PISTOL", 1)
+                () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), UUID.randomUUID(), "PISTOL")
         );
     }
 
@@ -96,23 +94,78 @@ public class TradingItemServiceTests {
     @Transactional
     public void buyItemWithoutEnoughMoneyTest() {
         UUID playerId = this.playerService.createPlayer(40);
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "station");
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
         UUID newItemId = this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
 
         assertThrows(
                 RuntimeException.class,
-                () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "PISTOL",  1)
+                () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "PISTOL")
         );
     }
 
     @Test
     @Transactional
-    public void buyItemSuccessfullyTest() {
+    public void buyNormalItemTest() {
         UUID playerId = this.playerService.createPlayer(200);
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID(), "station");
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
         UUID itemId = this.itemService.createItem("A ROCK", "Because it's the only thing you can afford.", "item", 2);
 
-        Integer newPlayerMoney = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "A ROCK", 1);
-        assertEquals(-2, newPlayerMoney);
+        Integer moneyChangedBy = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "A ROCK");
+        assertEquals(-2, moneyChangedBy);
+    }
+
+    @Test
+    @Transactional
+    public void buyUpgradeItemTest() {
+        UUID playerId = this.playerService.createPlayer(200);
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID itemId = this.itemService.createItem("MINING_1", "First Mining Upgrade", "upgrade", 10);
+
+        Integer moneyChangedBy = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "MINING_1");
+        assertEquals(-10, moneyChangedBy);
+    }
+
+    @Test
+    @Transactional
+    public void buyNegativeAmountOfRobotsTest() {
+        assertThrows(
+                RuntimeException.class,
+                () -> this.itemService.buyRobots(UUID.randomUUID(), UUID.randomUUID(), -1312)
+        );
+    }
+
+    @Test
+    @Transactional
+    public void buyRobotsWithoutEnoughMoneyTest() {
+        UUID playerId = this.playerService.createPlayer(50);
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID itemId = this.itemService.createItem("ROBOT", "Beep Beep Boop", "robot", 100);
+
+        assertThrows(
+                RuntimeException.class,
+                () -> this.itemService.buyRobots(UUID.randomUUID(), playerId, 2)
+        );
+    }
+
+    @Test
+    @Transactional
+    public void buySingleRobotTest() {
+        UUID playerId = this.playerService.createPlayer(200);
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID itemId = this.itemService.createItem("ROBOT", "Beep Beep Boop", "robot", 100);
+
+        Integer moneyChangedBy = this.itemService.buyRobots(UUID.randomUUID(), playerId, 1);
+        assertEquals(-100, moneyChangedBy);
+    }
+
+    @Test
+    @Transactional
+    public void buyMultipleRobotsTest() {
+        UUID playerId = this.playerService.createPlayer(200);
+        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID itemId = this.itemService.createItem("ROBOT", "Beep Beep Boop", "robot", 100);
+
+        Integer moneyChangedBy = this.itemService.buyRobots(UUID.randomUUID(), playerId, 2);
+        assertEquals(-200, moneyChangedBy);
     }
 }

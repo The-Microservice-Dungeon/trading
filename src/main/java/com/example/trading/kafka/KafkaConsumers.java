@@ -10,25 +10,6 @@
 //import java.util.UUID;
 //
 //public class KafkaConsumers {
-//    @Autowired
-//    private PlanetService planetService;
-//
-//    @Autowired
-//    private ResourceService resourceService;
-//
-//    @Autowired
-//    private ItemService itemService;
-//
-//
-//    @KafkaListener(topics = "resource created")
-//    public void listenToResourceCreation(String msg) {
-//        UUID resource = this.resourceService.createResource(name, price);
-//    }
-//
-//    @KafkaListener(topics = "item created")
-//    public void listenToItemCreation(String msg) {
-//        UUID item = this.itemService.createItem(name, desc, type, price);
-//    }
 //
 //    @KafkaListener(topics = "round started")
 //    public void listenToRoundStart(String msg) {
