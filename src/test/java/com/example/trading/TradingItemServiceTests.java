@@ -5,7 +5,6 @@ import com.example.trading.item.ItemRepository;
 import com.example.trading.item.ItemService;
 import com.example.trading.player.PlayerService;
 import com.example.trading.station.PlanetService;
-import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

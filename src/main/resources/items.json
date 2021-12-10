@@ -1,0 +1,100 @@
+[
+    {
+        "name": "ROCKET",
+        "description": "5 Damage on a single target",
+        "price": 10,
+        "itemType": "item"
+    },
+    {
+        "name": "WORMHOLE",
+        "description": "Teleport to random planet",
+        "price": 25,
+        "itemType": "item"
+    },
+    {
+        "name": "LONG_RANGE_BOMBARDEMENT",
+        "description": "10 Damage to all robots on a specific planet",
+        "price": 50,
+        "itemType": "item"
+    },
+    {
+        "name": "SELF_DESTRUCTION",
+        "description": "Self destruct a robot and damage all robots on the planet by 20",
+        "price": 75,
+        "itemType": "item"
+    },
+    {
+        "name": "REPAIR_SWARM",
+        "description": "Heal all of your robots on the planet by 20",
+        "price": 100,
+        "itemType": "item"
+    },
+    {
+        "name": "NUKE",
+        "description": "100 damage on all robots on a specific planet",
+        "price": 150,
+        "itemType": "item"
+    },
+
+    {
+        "name": "ROBOT",
+        "description": "new robot added to your swarm at a random location",
+        "price": 100,
+        "itemType": "robot"
+    },
+
+    {
+        "name": "HEALTH",
+        "description": "restores the health of your robot",
+        "price": 100,
+        "itemType": "health"
+    },
+    {
+        "name": "ENERGY",
+        "description": "restores the energy of your robot",
+        "price": 100,
+        "itemType": "energy"
+    },
+
+    {"name": "STORAGE_1", "description": "max storage for a robot", "price": 50, "itemType": "upgrade"},
+    {"name": "STORAGE_2", "description": "max storage for a robot", "price": 100, "itemType": "upgrade"},
+    {"name": "STORAGE_3", "description": "max storage for a robot", "price": 150, "itemType": "upgrade"},
+    {"name": "STORAGE_4", "description": "max storage for a robot", "price": 200, "itemType": "upgrade"},
+    {"name": "STORAGE_5", "description": "max storage for a robot", "price": 250, "itemType": "upgrade"},
+
+    {"name": "HEALTH_1", "description": "max hp for a robot", "price": 50, "itemType": "upgrade"},
+    {"name": "HEALTH_2", "description": "max hp for a robot", "price": 100, "itemType": "upgrade"},
+    {"name": "HEALTH_3", "description": "max hp for a robot", "price": 150, "itemType": "upgrade"},
+    {"name": "HEALTH_4", "description": "max hp for a robot", "price": 200, "itemType": "upgrade"},
+    {"name": "HEALTH_5", "description": "max hp for a robot", "price": 250, "itemType": "upgrade"},
+
+    {"name": "DAMAGE_1", "description": "max damage a robot can do", "price": 50, "itemType": "upgrade"},
+    {"name": "DAMAGE_2", "description": "max damage a robot can do", "price": 100, "itemType": "upgrade"},
+    {"name": "DAMAGE_3", "description": "max damage a robot can do", "price": 150, "itemType": "upgrade"},
+    {"name": "DAMAGE_4", "description": "max damage a robot can do", "price": 200, "itemType": "upgrade"},
+    {"name": "DAMAGE_5", "description": "max damage a robot can do", "price": 250, "itemType": "upgrade"},
+
+    {"name": "MINING_SPEED_1", "description": "max mining speed for a robot", "price": 50, "itemType": "upgrade"},
+    {"name": "MINING_SPEED_2", "description": "max mining speed for a robot", "price": 100, "itemType": "upgrade"},
+    {"name": "MINING_SPEED_3", "description": "max mining speed for a robot", "price": 150, "itemType": "upgrade"},
+    {"name": "MINING_SPEED_4", "description": "max mining speed for a robot", "price": 200, "itemType": "upgrade"},
+    {"name": "MINING_SPEED_5", "description": "max mining speed for a robot", "price": 250, "itemType": "upgrade"},
+
+    {"name": "MINING_1", "description": "max mining strength for a robot", "price": 50, "itemType": "upgrade"},
+    {"name": "MINING_2", "description": "max mining strength for a robot", "price": 100, "itemType": "upgrade"},
+    {"name": "MINING_3", "description": "max mining strength for a robot", "price": 150, "itemType": "upgrade"},
+    {"name": "MINING_4", "description": "max mining strength for a robot", "price": 200, "itemType": "upgrade"},
+    {"name": "MINING_5", "description": "max mining strength for a robot", "price": 250, "itemType": "upgrade"},
+
+    {"name": "MAX_ENERGY_1", "description": "max energy a robot can have", "price": 50, "itemType": "upgrade"},
+    {"name": "MAX_ENERGY_2", "description": "max energy a robot can have", "price": 100, "itemType": "upgrade"},
+    {"name": "MAX_ENERGY_3", "description": "max energy a robot can have", "price": 150, "itemType": "upgrade"},
+    {"name": "MAX_ENERGY_4", "description": "max energy a robot can have", "price": 200, "itemType": "upgrade"},
+    {"name": "MAX_ENERGY_5", "description": "max energy a robot can have", "price": 250, "itemType": "upgrade"},
+
+    {"name": "ENERGY_REGEN_1", "description": "max energy regen a robot can have", "price": 50, "itemType": "upgrade"},
+    {"name": "ENERGY_REGEN_2", "description": "max energy regen a robot can have", "price": 100, "itemType": "upgrade"},
+    {"name": "ENERGY_REGEN_3", "description": "max energy regen a robot can have", "price": 150, "itemType": "upgrade"},
+    {"name": "ENERGY_REGEN_4", "description": "max energy regen a robot can have", "price": 200, "itemType": "upgrade"},
+    {"name": "ENERGY_REGEN_5", "description": "max energy regen a robot can have", "price": 250, "itemType": "upgrade"}
+]

@@ -1,0 +1,22 @@
+[
+    {
+        "name": "COAL",
+        "price": 5
+    },
+    {
+        "name": "IRON",
+        "price": 25
+    },
+    {
+        "name": "GEM",
+        "price": 50
+    },
+    {
+        "name": "GOLD",
+        "price": 75
+    },
+    {
+        "name": "PLATIN",
+        "price": 100
+    }
+]

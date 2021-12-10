@@ -60,8 +60,9 @@ public class Item {
 
     public void calculateNewPrice(int currentRound) {
         float priceFactor = this.economy.calculateNewPriceFactor(currentRound);
-        System.out.println("PriceFactor: " + priceFactor);
         this.currentPrice = (int)Math.ceil(this.originalPrice * priceFactor);
+
+        System.out.println("PriceFactor: " + priceFactor);
         System.out.println("NewPrice: " + this.currentPrice);
     }
 
