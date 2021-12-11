@@ -65,3 +65,20 @@ jobs:
       - name: Build to GitHub Container Registry
         # use jib plugin to build docker image
         run: mvn compile com.google.cloud.tools:jib-maven-plugin:3.1.4:build -Dimage=ghcr.io/the-microservice-dungeon/trading/tradingservice
+  deploy:
+    needs: build-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: stop-pull-run
+        uses: appleboy/ssh-action@master
+        env:
+          SERVICE_NAME: trading
+        with:
+          host: cides03.gm.fh-koeln.de
+          username: ${{ secrets.PROD_USER }}
+          password: ${{ secrets.PROD_PWD }}
+          port: 22
+          envs: SERVICE_NAME
+          script: |
+            echo ${{ secrets.PROD_PWD }} | sudo -S docker-compose -f $SERVICE_NAME/service-compose.yml pull
+            echo ${{ secrets.PROD_PWD }} | sudo -S docker-compose -f $SERVICE_NAME/service-compose.yml up -d
