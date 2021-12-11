@@ -1,6 +1,5 @@
-name: CI/Image
+name: Test + Image + Deploy
 
-# Controls when the workflow will run
 on:
   push:
     paths-ignore:
@@ -9,11 +8,8 @@ on:
       - '**/.gitignore'
     branches:
       - 'main'
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   test:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -26,9 +22,7 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - name: Setup JDK 11 + cache
         uses: actions/setup-java@v2
