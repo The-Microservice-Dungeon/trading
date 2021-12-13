@@ -1,4 +1,4 @@
-package com.example.trading;
+package com.example.trading.resource;
 
 import com.example.trading.core.DomainEvent;
 import com.example.trading.kafka.KafkaMessageProducer;
@@ -8,22 +8,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-public class TradingEventProducer {
+public class ResourceEventProducer {
     @Autowired
     private KafkaMessageProducer kafkaMessageProducer;
 
-    public void publishTradingResult(String payload, String transactionId) {
+    public void publishNewResourcePrices(String items) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         DomainEvent event = new DomainEvent(
-                payload,
+                items,
                 UUID.randomUUID().toString(),
-                transactionId,
+                UUID.randomUUID().toString(),
                 "1",
                 sdf.format(new Date()).toString(),
-                "trades"
+                "current-resource-prices"
         );
 
-        this.kafkaMessageProducer.send("trades", event);
+        this.kafkaMessageProducer.send("current-resource-prices", event);
     }
 }

@@ -154,14 +154,12 @@ public class TradingController {
             response.put("message", "success");
 //            Kafka produce
 //            this.tradingEventProducer.publishTradingResult(response.toString(), transactionId);
-
         }
 
         this.itemService.calculateNewItemPrices();
         this.resourceService.calculateNewResourcePrices();
-//        event mit neuen preisen
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/items/{item-name}/economy")

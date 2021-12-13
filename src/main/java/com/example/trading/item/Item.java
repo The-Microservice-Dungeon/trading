@@ -18,7 +18,9 @@ public class Item {
     @Column(columnDefinition = "BINARY(16)")
     private UUID itemId;
 
+
     @Getter
+    @Column(unique = true)
     private String name;
 
     @Getter
@@ -62,8 +64,8 @@ public class Item {
         float priceFactor = this.economy.calculateNewPriceFactor(currentRound);
         this.currentPrice = (int)Math.ceil(this.originalPrice * priceFactor);
 
-        System.out.println("PriceFactor: " + priceFactor);
-        System.out.println("NewPrice: " + this.currentPrice);
+//        System.out.println("PriceFactor: " + priceFactor);
+//        System.out.println("NewPrice: " + this.currentPrice);
     }
 
     public void changeEconomyParameters(int roundCount, int stock) {

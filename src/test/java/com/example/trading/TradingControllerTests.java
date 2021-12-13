@@ -51,9 +51,6 @@ public class TradingControllerTests {
     @Test
     @Transactional
     public void getAllResourcesRestTest() throws Exception {
-        this.resourceService.createResource("COAL", 2);
-        this.resourceService.createResource("IRON", 5);
-
         MvcResult result = mockMvc
                 .perform(get("/resources").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -65,9 +62,6 @@ public class TradingControllerTests {
     @Test
     @Transactional
     public void getAllItemsRestTest() throws Exception {
-        this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
-        this.itemService.createItem("MINI GUN", "Can shoot a lot", "item", 50);
-
         MvcResult result = mockMvc
                 .perform(get("/items").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -90,10 +84,8 @@ public class TradingControllerTests {
     @Test
     @Transactional
     public void getSpecificItemRestTest() throws Exception {
-        this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
-
         MvcResult result = mockMvc
-                .perform(get("/items/PISTOL").contentType(MediaType.APPLICATION_JSON))
+                .perform(get("/items/ROCKET").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -116,7 +108,6 @@ public class TradingControllerTests {
     @Test
     @Transactional
     public void postBuyNormalItemRestTest() throws Exception {
-        UUID itemId = this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
         UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
         UUID playerId = this.playerService.createPlayer(200);
         UUID transactionId = UUID.randomUUID();
@@ -130,7 +121,7 @@ public class TradingControllerTests {
         payloadObject.put("commandType", "buy");
         payloadObject.put("robotId", robotId.toString());
         payloadObject.put("planetId", planetId.toString());
-        payloadObject.put("itemName", "PISTOL");
+        payloadObject.put("itemName", "ROCKET");
         request.put("payload", payloadObject);
         commandArray.appendElement(request);
 
@@ -141,17 +132,15 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertEquals(150, this.playerService.getCurrentMoneyAmount(playerId));
+        assertEquals(190, this.playerService.getCurrentMoneyAmount(playerId));
     }
 
     @Test
     @Transactional
     public void postBuyRobotsRestTest() throws Exception {
-        UUID itemId = this.itemService.createItem("ROBOT", "Beep Beep Boop", "robot", 100);
         UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
         UUID playerId = this.playerService.createPlayer(500);
         UUID transactionId = UUID.randomUUID();
-        UUID robotId = UUID.randomUUID();
 
         JSONArray commandArray = new JSONArray();
         JSONObject request = new JSONObject();
@@ -171,14 +160,14 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
+        System.out.println(result.getResponse().getContentAsString());
+
         assertEquals(300, this.playerService.getCurrentMoneyAmount(playerId));
     }
 
     @Test
     @Transactional
     public void postSellInventoryRestTest() throws Exception {
-        UUID coalId = this.resourceService.createResource("coal", 5);
-        UUID ironId = this.resourceService.createResource("iron", 10);
         UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
         UUID playerId = this.playerService.createPlayer(200);
         UUID transactionId = UUID.randomUUID();
@@ -202,7 +191,7 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertEquals(245, this.playerService.getCurrentMoneyAmount(playerId));
+        assertEquals(275, this.playerService.getCurrentMoneyAmount(playerId));
     }
 
 
@@ -210,14 +199,12 @@ public class TradingControllerTests {
     @Test
     @Transactional
     public void patchChangeItemEconomyParametersRestTest() throws Exception {
-        UUID itemId = this.itemService.createItem("PISTOL", "Can shoot", "item", 50);
-
         JSONObject request = new JSONObject();
         request.put("roundCount", 10);
         request.put("stock", 20);
 
         MvcResult result = mockMvc
-                .perform(patch("/items/PISTOL/economy")
+                .perform(patch("/items/ROCKET/economy")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request.toJSONString()))
                 .andExpect(status().isOk())

@@ -36,6 +36,8 @@ public class ResourceService {
     @Autowired
     private RoundService roundService;
 
+    private ResourceEventProducer resourceEventProducer;
+
     public UUID createResource(String name, int price) {
         Resource resource = new Resource(name, price);
         this.resourceRepository.save(resource);
@@ -120,28 +122,30 @@ public class ResourceService {
         for (Resource resource : resources) {
             resource.calculateNewPrice(this.roundService.getRoundCount());
         }
+
+//        this.resourceEventProducer.publishNewResourcePrices(this.resourceRepository.findAll().toString());
     }
 
-//    @PostConstruct
-//    public void createResourcesOnStartup() {
-//        JSONParser parser = new JSONParser();
-//        try {
-//            JSONArray resourceArray = (JSONArray) parser.parse(new FileReader("src/main/resources/resources.json"));
-//
-//            for (Object resource : resourceArray) {
-//                JSONObject jsonResource = (JSONObject) resource;
-//                this.createResource(
-//                    jsonResource.get("name").toString(),
-//                    (int) jsonResource.get("price")
-//                );
-//            }
-//        } catch (Exception e) {
-//            System.out.println("Could not find File");
-//        }
-//    }
-//
-//    @PreDestroy
-//    public void removeResourcesOnStop() {
-//        this.resourceRepository.deleteAll();
-//    }
+    @PostConstruct
+    public void createResourcesOnStartup() {
+        JSONParser parser = new JSONParser();
+        try {
+            JSONArray resourceArray = (JSONArray) parser.parse(new FileReader("src/main/resources/resources.json"));
+
+            for (Object resource : resourceArray) {
+                JSONObject jsonResource = (JSONObject) resource;
+                this.createResource(
+                    jsonResource.get("name").toString(),
+                    (int) jsonResource.get("price")
+                );
+            }
+        } catch (Exception e) {
+            System.out.println("Could not find File");
+        }
+    }
+
+    @PreDestroy
+    public void removeResourcesOnStop() {
+        this.resourceRepository.deleteAll();
+    }
 }

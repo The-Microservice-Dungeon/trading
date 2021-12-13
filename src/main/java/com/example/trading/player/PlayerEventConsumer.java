@@ -36,4 +36,6 @@ public class PlayerEventConsumer {
             this.kafkaErrorRepository.save(err);
         }
     }
+
+//    maybe ein listener auf player left
 }

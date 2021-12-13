@@ -32,6 +32,8 @@ public class ItemService {
     @Autowired
     private RoundService roundService;
 
+    private ItemEventProducer itemEventProducer;
+
     public UUID createItem(String name, String description, String type, int price) {
         ItemType itemType;
 
@@ -179,30 +181,32 @@ public class ItemService {
         for (Item item : items) {
             item.calculateNewPrice(this.roundService.getRoundCount());
         }
+
+//        this.itemEventProducer.publishNewItemPrices(this.itemRepository.findAll().toString());
     }
 
-//    @PostConstruct
-//    public void createItemsOnStartUp() {
-//        JSONParser parser = new JSONParser();
-//        try {
-//            JSONArray itemArray = (JSONArray) parser.parse(new FileReader("src/main/resources/items.json"));
-//
-//            for (Object item : itemArray) {
-//                JSONObject jsonItem = (JSONObject) item;
-//                this.createItem(
-//                    jsonItem.get("name").toString(),
-//                    jsonItem.get("description").toString(),
-//                    jsonItem.get("itemType").toString(),
-//                    (int) jsonItem.get("price")
-//                );
-//            }
-//        } catch (Exception e) {
-//            System.out.println("Could not find File");
-//        }
-//    }
-//
-//    @PreDestroy
-//    public void removeItemsOnStop() {
-//        this.itemRepository.deleteAll();
-//    }
+    @PostConstruct
+    public void createItemsOnStartUp() {
+        JSONParser parser = new JSONParser();
+        try {
+            JSONArray itemArray = (JSONArray) parser.parse(new FileReader("src/main/resources/items.json"));
+
+            for (Object item : itemArray) {
+                JSONObject jsonItem = (JSONObject) item;
+                this.createItem(
+                    jsonItem.get("name").toString(),
+                    jsonItem.get("description").toString(),
+                    jsonItem.get("itemType").toString(),
+                    (int) jsonItem.get("price")
+                );
+            }
+        } catch (Exception e) {
+            System.out.println("Could not find File");
+        }
+    }
+
+    @PreDestroy
+    public void removeItemsOnStop() {
+        this.itemRepository.deleteAll();
+    }
 }
