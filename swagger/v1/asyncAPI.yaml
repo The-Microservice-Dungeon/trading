@@ -134,7 +134,7 @@ components:
                   description: Price of the item
     trades:
       description: >
-        If a player bank if initialized
+        The event which indicates what happened to the trade. It also contains additional data about the result of the trade in data. For example if a robot was bought, data contains the new robot object.
       traits:
         - $ref: "#/components/messageTraits/DefaultTradingKafkaMessage"
       payload:
