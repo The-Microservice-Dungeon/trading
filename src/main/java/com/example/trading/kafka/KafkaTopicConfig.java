@@ -13,7 +13,8 @@
 //@Configuration
 //public class KafkaTopicConfig {
 //
-//    private final String bootstrapAddress = System.getenv("BOOTSTRAP_ADDRESS");
+//    @Value(value = "${spring.kafka.bootstrap-servers}")
+//    private String bootstrapAddress;
 //
 //    @Bean
 //    public KafkaAdmin kafkaAdmin() {
@@ -23,7 +24,7 @@
 //    }
 //
 //    @Bean
-//    public NewTopic topic1() {
-//        return new NewTopic("testTopic", 1, (short) 1);
+//    public NewTopic bankCreated() {
+//        return new NewTopic("bank-created", 1, (short) 1);
 //    }
 //}

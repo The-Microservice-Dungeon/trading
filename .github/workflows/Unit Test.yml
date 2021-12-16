@@ -46,4 +46,10 @@ jobs:
           # setup maven cache as well
           cache: maven
       - name: Unit-Test
+        env:
+          DB_HOST: localhost:3306
+          DB_PASSWORD: ''
+          DB_NAME: trading
+          DB_USER: root
         run: mvn test -Psurefire
+        

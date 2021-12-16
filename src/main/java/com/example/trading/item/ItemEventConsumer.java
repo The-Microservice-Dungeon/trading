@@ -24,7 +24,6 @@ public class ItemEventConsumer {
         try {
             ItemDto item = this.objectMapper.readValue(consumerRecord.value(), ItemDto.class);
             DomainEvent event = new DomainEvent(item.toString(), consumerRecord.headers());
-
             this.itemService.createItem(item);
         } catch (Exception e) {
             String errorMsg = "Error while consuming resource event: " + consumerRecord + "\n" + e.getMessage();

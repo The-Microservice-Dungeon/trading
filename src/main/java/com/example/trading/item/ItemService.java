@@ -5,16 +5,15 @@ import com.example.trading.round.RoundService;
 import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Locale;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.io.FileReader;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,6 +31,8 @@ public class ItemService {
 
     @Autowired
     private RoundService roundService;
+
+    private ItemEventProducer itemEventProducer;
 
     public UUID createItem(String name, String description, String type, int price) {
         ItemType itemType;
@@ -175,12 +176,37 @@ public class ItemService {
         }
     }
 
-//    public void calculateNewItemPrice(int currentRound) {
-//        Iterable<Item> items = this.itemRepository.findAll();
-//
-//        for (Item item : items) {
-//            item.calculateNewPrice(currentRound);
-//        }
-//
-//    }
+    public void calculateNewItemPrices() {
+        Iterable<Item> items = this.itemRepository.findAllByItemType(ItemType.ITEM);
+        for (Item item : items) {
+            item.calculateNewPrice(this.roundService.getRoundCount());
+        }
+
+//        this.itemEventProducer.publishNewItemPrices(this.itemRepository.findAll().toString());
+    }
+
+    @PostConstruct
+    public void createItemsOnStartUp() {
+        JSONParser parser = new JSONParser();
+        try {
+            JSONArray itemArray = (JSONArray) parser.parse(new FileReader("src/main/resources/items.json"));
+
+            for (Object item : itemArray) {
+                JSONObject jsonItem = (JSONObject) item;
+                this.createItem(
+                    jsonItem.get("name").toString(),
+                    jsonItem.get("description").toString(),
+                    jsonItem.get("itemType").toString(),
+                    (int) jsonItem.get("price")
+                );
+            }
+        } catch (Exception e) {
+            System.out.println("Could not find File");
+        }
+    }
+
+    @PreDestroy
+    public void removeItemsOnStop() {
+        this.itemRepository.deleteAll();
+    }
 }

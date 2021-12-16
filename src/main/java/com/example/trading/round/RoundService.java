@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 public class RoundService {
 
     public void updateRound(RoundDto roundDto) {
-
-
         Round.updateStatus(roundDto.roundStatus);
         Round.updateRoundCount(roundDto.roundNumber);
     }

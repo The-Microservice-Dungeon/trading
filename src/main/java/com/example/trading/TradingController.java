@@ -1,11 +1,14 @@
 package com.example.trading;
 
+import com.example.trading.core.DomainEvent;
 import com.example.trading.item.ItemService;
+import com.example.trading.kafka.KafkaMessageProducer;
 import com.example.trading.player.PlayerService;
 import com.example.trading.resource.ResourceService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
+import org.apache.kafka.common.header.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +27,8 @@ public class TradingController {
 
     @Autowired
     private ItemService itemService;
+
+    private TradingEventProducer tradingEventProducer;
 
     @GetMapping("/resources")
     public ResponseEntity<?> getInformationAboutAllResources() {
@@ -62,6 +67,7 @@ public class TradingController {
         } catch (Exception e) {
             System.out.println("Cant Parse String: " + e.getMessage());
         }
+
         JSONObject response = new JSONObject();
 
         for (int i = 0; i < commandsArray.size(); i++) {
@@ -70,7 +76,7 @@ public class TradingController {
 
             int moneyChangedBy = 0;
 
-            response.put("transactionId", command.get("transactionId"));
+            String transactionId = command.get("transactionId").toString();
 
             if (Objects.equals(payload.get("commandType"), "buy")) {
                 String item = null;
@@ -82,6 +88,8 @@ public class TradingController {
                     response.put("moneyChangedBy", 0);
                     response.put("message", e.getMessage());
 //                    kafka produce
+//                    this.tradingEventProducer.publishTradingResult(response.toString(), transactionId);
+                    continue;
                 }
 
                 if (Objects.equals(item, "ROBOT")) {
@@ -96,6 +104,9 @@ public class TradingController {
                         response.put("moneyChangedBy", 0);
                         response.put("message", e.getMessage());
 //                        kafka Produce
+//                        this.tradingEventProducer.publishTradingResult(response.toString(), transactionId);
+                        continue;
+
                     }
 
                 } else if (item != null) {
@@ -111,7 +122,9 @@ public class TradingController {
                         response.put("success", false);
                         response.put("moneyChangedBy", 0);
                         response.put("message", e.getMessage());
-//                    kafka Produce
+//                        kafka Produce
+//                        this.tradingEventProducer.publishTradingResult(response.toString(), transactionId);
+                        continue;
                     }
 
                 } else {
@@ -131,6 +144,8 @@ public class TradingController {
                     response.put("moneyChangedBy", 0);
                     response.put("message", e.getMessage());
 //                    kafka Produce
+//                    this.tradingEventProducer.publishTradingResult(response.toString(), transactionId);
+                    continue;
                 }
             }
 
@@ -138,10 +153,11 @@ public class TradingController {
             response.put("moneyChangedBy", moneyChangedBy);
             response.put("message", "success");
 //            Kafka produce
+//            this.tradingEventProducer.publishTradingResult(response.toString(), transactionId);
         }
 
-//        preis berechnung
-//        event mit neuen preisen
+        this.itemService.calculateNewItemPrices();
+        this.resourceService.calculateNewResourcePrices();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

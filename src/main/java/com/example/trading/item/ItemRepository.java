@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface ItemRepository extends CrudRepository<Item, UUID> {
     Optional<Item> findByName(String name);
+    Iterable<Item> findAllByItemType(ItemType type);
 }
