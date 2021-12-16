@@ -169,40 +169,13 @@ paths:
                   $ref: '#/components/schemas/Commands'
               examples:
                 buyRobots:
-                  value:
-                    transactionId: transactionId
-                    playerId: playerId
-                    payload:
-                      commandType: "buy"
-                      amount: 5
-                      planetId: uuid
-                      itemName: "ROBOT"
+                  value: [{"transactionId":"transactionId","playerId":"playerId","payload":{"commandType":"buy","amount":"5","planetId":"uuid","itemName":"ROBOT"}}]
                 buyUpgrade:
-                  value:
-                    transactionId: transactionId
-                    playerId: playerId
-                    payload:
-                      commandType: "buy"
-                      planetId: planetId
-                      robotId: robotId
-                      itemName: "MINING_4"
+                  value: [{"transactionId": "transactionId","playerId": "playerId","payload": {"commandType": "buy","planetId": "planetId","robotId":"robotId","itemName": "MINING_4"}}]
                 buyItem:
-                  value:
-                    transactionId: transactionId
-                    playerId: playerId
-                    payload:
-                      commandType: "buy"
-                      planetId: planetId
-                      robotId: robotId
-                      itemName: "NUKE" 
+                  value: [{"transactionId": "transactionId","playerId": "playerId","payload": {"commandType": "buy","planetId": "planetId","robotId": "robotId","itemName": "NUKE"}}]
                 sellResources:
-                  value:
-                    transactionId: transactionId
-                    playerId: playerId
-                    payload:
-                      commandType: "sell"
-                      planetId: planetId
-                      robotId: robotId
+                  value: [{"transactionId": "transactionId","playerId": "playerId","payload": {"commandType": "sell","planetId": "planetId","robotId": "robotId"}}]
         required: true
       responses:
         200:
