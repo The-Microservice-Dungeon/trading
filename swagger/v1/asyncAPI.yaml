@@ -80,9 +80,33 @@ components:
             type: number
             format: integer
             description: Amount of money initially in the bank
-    currentPrices:
+    current-resource-prices:
       description: >
-        Announce new prices at the start of each round
+        Announce new resource prices at the start of each round
+      traits:
+        - $ref: '#/components/messageTraits/DefaultTradingKafkaMessage'
+        - headers:
+            properties:
+              type:
+                type: string
+                description: Testytesttest
+                example: trading-current-price       
+      payload:
+        type: array
+        description: Array of all resources and their prices
+        items:
+          allOf:
+            - type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the resource
+                price:
+                  type: integer
+                  description: Price of the resource
+    current-item-prices:
+      description: >
+        Announce new item prices at the start of each round
       traits:
         - $ref: '#/components/messageTraits/DefaultTradingKafkaMessage'
         - headers:
@@ -103,7 +127,7 @@ components:
                   description: Name of the item
                 price:
                   type: integer
-                  description: Price of the item
+                  description: Price of the item                  
     trades:
       description: >
         If a player bank if initialized
