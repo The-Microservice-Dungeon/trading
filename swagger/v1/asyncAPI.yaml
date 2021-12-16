@@ -1,7 +1,7 @@
-asyncapi: '2.2.0'
+asyncapi: "2.2.0"
 info:
   title: Trading
-  version: '0.0.1'
+  version: "0.1.0"
   description: |
 
 defaultContentType: application/json
@@ -10,15 +10,19 @@ channels:
   bank-created:
     publish:
       message:
-        $ref: '#/components/messages/playerBanks'
-  current-prices:
+        $ref: "#/components/messages/playerBanks"
+  current-item-prices:
     publish:
       message:
-        $ref: '#/components/messages/currentPrices'     
+        $ref: "#/components/messages/current-item-prices"
+  current-resource-prices:
+    publish:
+      message:
+        $ref: "#/components/messages/current-resource-prices"
   trades:
     publish:
       message:
-        $ref: '#/components/messages/trades'    
+        $ref: "#/components/messages/trades"
 components:
   messageTraits:
     DefaultTradingKafkaMessage:
@@ -27,7 +31,7 @@ components:
           key:
             type: string
             format: uuid
-          bindingVersion: '0.1.0'
+          bindingVersion: "0.1.0"
       correlationId:
         location: "$message.header#/transactionId"
       headers:
@@ -68,7 +72,7 @@ components:
       description: >
         If a player bank if initialized
       traits:
-        - $ref: '#/components/messageTraits/DefaultTradingKafkaMessage'
+        - $ref: "#/components/messageTraits/DefaultTradingKafkaMessage"
       payload:
         type: object
         properties:
@@ -84,13 +88,13 @@ components:
       description: >
         Announce new resource prices at the start of each round
       traits:
-        - $ref: '#/components/messageTraits/DefaultTradingKafkaMessage'
+        - $ref: "#/components/messageTraits/DefaultTradingKafkaMessage"
         - headers:
             properties:
               type:
                 type: string
-                description: Testytesttest
-                example: trading-current-price       
+                description: Announce new resource prices at the start of each round
+                example: trading-current-resource-price
       payload:
         type: array
         description: Array of all resources and their prices
@@ -108,13 +112,13 @@ components:
       description: >
         Announce new item prices at the start of each round
       traits:
-        - $ref: '#/components/messageTraits/DefaultTradingKafkaMessage'
+        - $ref: "#/components/messageTraits/DefaultTradingKafkaMessage"
         - headers:
             properties:
               type:
                 type: string
-                description: Testytesttest
-                example: trading-current-price       
+                description: Announce new item prices at the start of each round
+                example: trading-current-item-price
       payload:
         type: array
         description: Array of all items and their prices
@@ -127,12 +131,12 @@ components:
                   description: Name of the item
                 price:
                   type: integer
-                  description: Price of the item                  
+                  description: Price of the item
     trades:
       description: >
         If a player bank if initialized
       traits:
-        - $ref: '#/components/messageTraits/DefaultTradingKafkaMessage'
+        - $ref: "#/components/messageTraits/DefaultTradingKafkaMessage"
       payload:
         type: object
         properties:
@@ -147,7 +151,6 @@ components:
             type: string
             example: Not enough money
             description: Message to the player. Holds error information if the transaction did not succeed
-          data:          
+          data:
             type: object
             description: Holds data relevant for the trade. E.g. new robot stats.
- 
