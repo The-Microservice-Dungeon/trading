@@ -1,5 +1,9 @@
 package com.example.trading.resource;
 
+import com.example.trading.RestService;
+import com.example.trading.core.exceptions.PlanetIsNotAStationException;
+import com.example.trading.core.exceptions.RequestReturnedErrorException;
+import com.example.trading.core.exceptions.ResourceDoesNotExistException;
 import com.example.trading.item.Item;
 import com.example.trading.player.PlayerService;
 import com.example.trading.round.RoundService;
@@ -8,7 +12,9 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import org.apache.kafka.common.protocol.types.Field;
+import org.apache.kafka.common.quota.ClientQuotaAlteration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,38 +42,35 @@ public class ResourceService {
     @Autowired
     private RoundService roundService;
 
+    @Autowired
+    private RestService restService;
+
     private ResourceEventProducer resourceEventProducer;
 
     public UUID createResource(String name, int price) {
-        Resource resource = new Resource(name, price);
-        this.resourceRepository.save(resource);
-        return resource.getResourceId();
+        Optional<Resource> resource = this.resourceRepository.findByName(name);
+        if (resource.isPresent()) return resource.get().getResourceId();
+
+        Resource newResource = new Resource(name, price);
+        this.resourceRepository.save(newResource);
+        return newResource.getResourceId();
     }
 
-    public void createResource(ResourceDto resourceDto) {
-        Resource resource = new Resource(resourceDto.name, resourceDto.price);
-        this.resourceRepository.save(resource);
-    }
-
-    // sell complete inventory
     public int sellResources(UUID transactionId, UUID playerId, UUID robotId, UUID planetId) {
-        if (!this.planetService.checkIfGivenPlanetIsAStation(planetId)) return -2;
+        if (!this.planetService.checkIfGivenPlanetIsAStation(planetId))
+            throw new PlanetIsNotAStationException(planetId.toString());
 
-        // post to /robots/{robot-uuid}/inventory/clearResources
-        ResponseEntity<?> sellResponse;
-        // rest call!!! to robot for inventory
+        ResponseEntity<?> sellResponse = null;
+//        sellResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/clearResources", null, JSONObject.class);
 
         // mock data
         JSONObject robotInventory = new JSONObject();
         robotInventory.put("coal", 5);
         robotInventory.put("iron", 2);
         sellResponse = new ResponseEntity<>(robotInventory, HttpStatus.OK);
-//        sellResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
-//        sellResponse = new ResponseEntity<>("Robot not found", HttpStatus.NOT_FOUND);
 
-        if (sellResponse.getStatusCode() != HttpStatus.OK) {
-            throw new IllegalArgumentException(sellResponse.getBody().toString());
-        }
+        if (sellResponse.getStatusCode() != HttpStatus.OK)
+            throw new RequestReturnedErrorException(sellResponse.getBody().toString());
 
         JSONObject responseBody = (JSONObject) sellResponse.getBody();
 
@@ -82,7 +85,6 @@ public class ResourceService {
             fullAmount += (Integer) responseBody.get(key) * resource.get().getCurrentPrice();
             resource.get().addHistory(this.roundService.getRoundCount(), (Integer) responseBody.get(key));
         }
-
 
         this.playerService.addMoney(playerId, fullAmount);
         return fullAmount;
@@ -105,7 +107,7 @@ public class ResourceService {
 
     public void patchItemEconomyParameters(String name, JSONObject parameters) throws Exception {
         Optional<Resource> resource = this.resourceRepository.findByName(name);
-        if (resource.isEmpty()) throw new IllegalArgumentException("Resource '" + name + "' does not exist");
+        if (resource.isEmpty()) throw new ResourceDoesNotExistException(name);
 
         try {
             resource.get().changeEconomyParameters(

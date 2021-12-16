@@ -1,5 +1,8 @@
 package com.example.trading;
 
+import com.example.trading.core.exceptions.ItemDoesNotExistException;
+import com.example.trading.core.exceptions.PlanetIsNotAStationException;
+import com.example.trading.core.exceptions.PlayerMoneyTooLowException;
 import com.example.trading.item.Item;
 import com.example.trading.item.ItemRepository;
 import com.example.trading.item.ItemService;
@@ -62,14 +65,8 @@ public class TradingItemServiceTests {
         UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
 
         assertThrows(
-                RuntimeException.class,
-                () -> this.itemService.buyItem(
-                        UUID.randomUUID(), // transaction
-                        playerId,
-                        UUID.randomUUID(), // robot
-                        planetId,
-                        "non existant Item"
-                )
+                ItemDoesNotExistException.class,
+                () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "non existant Item")
         );
     }
 
@@ -79,7 +76,7 @@ public class TradingItemServiceTests {
         UUID playerId = this.playerService.createPlayer(200);
 
         assertThrows(
-            RuntimeException.class,
+            PlanetIsNotAStationException.class,
             () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), UUID.randomUUID(), "ROCKET")
         );
     }
@@ -91,7 +88,7 @@ public class TradingItemServiceTests {
         UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
 
         assertThrows(
-            RuntimeException.class,
+            PlayerMoneyTooLowException.class,
             () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "ROCKET")
         );
     }
@@ -131,7 +128,7 @@ public class TradingItemServiceTests {
         UUID playerId = this.playerService.createPlayer(50);
 
         assertThrows(
-                RuntimeException.class,
+                PlayerMoneyTooLowException.class,
                 () -> this.itemService.buyRobots(UUID.randomUUID(), playerId, 2)
         );
     }

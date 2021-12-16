@@ -1,6 +1,7 @@
 package com.example.trading.player;
 
 import com.example.trading.core.DomainEvent;
+import com.example.trading.core.exceptions.PlayerDoesNotExistException;
 import com.example.trading.kafka.KafkaMessageProducer;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -37,28 +38,28 @@ public class PlayerService {
 
     public boolean checkPlayerForMoney(UUID playerId, int neededAmount) {
         Optional<Player> player = this.playerRepository.findById(playerId);
-        if (player.isEmpty()) throw new IllegalArgumentException("The given player does not exist.");
+        if (player.isEmpty()) throw new PlayerDoesNotExistException(playerId.toString());
 
         return player.get().getMoneyAmount() >= neededAmount;
     }
 
     public int reduceMoney(UUID playerId, int amount) {
         Optional<Player> player = this.playerRepository.findById(playerId);
-        if (player.isEmpty()) throw new IllegalArgumentException("The given player does not exist.");
+        if (player.isEmpty()) throw new PlayerDoesNotExistException(playerId.toString());
 
         return player.get().reduceMoney(amount);
     }
 
     public int addMoney(UUID playerId, int amount) {
         Optional<Player> player = this.playerRepository.findById(playerId);
-        if (player.isEmpty()) throw new IllegalArgumentException("The given player does not exist.");
+        if (player.isEmpty()) throw new PlayerDoesNotExistException(playerId.toString());
 
         return player.get().addMoney(amount);
     }
 
     public int getCurrentMoneyAmount(UUID playerId) {
         Optional<Player> player = this.playerRepository.findById(playerId);
-        if (player.isEmpty()) throw new IllegalArgumentException("The given player does not exist.");
+        if (player.isEmpty()) throw new PlayerDoesNotExistException(playerId.toString());
 
         return player.get().getMoneyAmount();
     }

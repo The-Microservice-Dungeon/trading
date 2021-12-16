@@ -56,7 +56,7 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        System.out.println(result.getResponse().getContentAsString());
+        assertNotEquals("[]", result.getResponse().getContentAsString());
     }
 
     @Test
@@ -67,7 +67,7 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        System.out.println(result.getResponse().getContentAsString());
+        assertNotEquals("[]", result.getResponse().getContentAsString());
     }
 
     @Test
@@ -78,7 +78,10 @@ public class TradingControllerTests {
                 .andExpect(status().is4xxClientError())
                 .andReturn();
 
-        System.out.println(result.getResponse().getContentAsString());
+        assertEquals(
+                "The item/upgrade 'NONEXISTENT' does not exist.",
+                result.getResponse().getContentAsString()
+        );
     }
 
     @Test
@@ -89,7 +92,10 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        System.out.println(result.getResponse().getContentAsString());
+        assertEquals(
+                "{\"price\":10,\"item-name\":\"ROCKET\",\"type\":\"item\"}",
+                result.getResponse().getContentAsString()
+        );
     }
 
     @Test
@@ -102,7 +108,10 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        System.out.println(result.getResponse().getContentAsString());
+        assertEquals(
+                "[{\"balance\":200,\"player-id\":\"" + playerId + "\"}]",
+                result.getResponse().getContentAsString()
+        );
     }
 
     @Test
@@ -160,8 +169,6 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        System.out.println(result.getResponse().getContentAsString());
-
         assertEquals(300, this.playerService.getCurrentMoneyAmount(playerId));
     }
 
@@ -191,7 +198,7 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertEquals(275, this.playerService.getCurrentMoneyAmount(playerId));
+        assertEquals(255, this.playerService.getCurrentMoneyAmount(playerId));
     }
 
 

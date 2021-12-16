@@ -1,11 +1,11 @@
 package com.example.trading;
 
+import com.example.trading.core.exceptions.PlanetIsNotAStationException;
 import com.example.trading.player.PlayerService;
 import com.example.trading.resource.Resource;
 import com.example.trading.resource.ResourceRepository;
 import com.example.trading.resource.ResourceService;
 import com.example.trading.station.PlanetService;
-import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,8 +51,10 @@ public class TradingResourceServiceTests {
     public void sellResourceOnNonStationPlanetTest() {
         UUID playerId = this.playerService.createPlayer(200);
 
-        int price = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), UUID.randomUUID());
-        assertEquals(-2, price);
+        assertThrows(
+                PlanetIsNotAStationException.class,
+                () -> this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), UUID.randomUUID())
+        );
     }
 
     @Test
@@ -63,6 +65,6 @@ public class TradingResourceServiceTests {
 
         // mock data is 5x coal, 2x iron
         Integer newPlayerMoney = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId);
-        assertEquals(75, newPlayerMoney);
+        assertEquals(55, newPlayerMoney);
     }
 }
