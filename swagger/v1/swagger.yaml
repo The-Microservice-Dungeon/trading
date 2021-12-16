@@ -178,7 +178,6 @@ paths:
                         {
                           "commandType": "buy",
                           "amount": "5",
-                          "planetId": "uuid",
                           "itemName": "ROBOT",
                         },
                     },
