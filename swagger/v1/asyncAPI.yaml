@@ -25,6 +25,43 @@ channels:
         $ref: "#/components/messages/trades"
 components:
   messageTraits:
+    DefaultTradingPricesKafkaMessage:
+      bindings:
+        kafka:
+          key:
+            type: string
+            format: uuid
+          bindingVersion: "0.1.0"
+      correlationId:
+        location: "$message.header#/transactionId"
+      headers:
+        type: object
+        required:
+          - eventId
+          - transactionId
+          - version
+          - timestamp
+          - type
+        properties:
+          eventId:
+            type: string
+            format: uuid
+            description: Generated UUID of the event
+            example: 5bc9f935-32f1-4d7b-a90c-ff0e6e34125a
+          version:
+            type: integer
+            description: Consecutive number for the comparability of the actuality of the event
+            example: 42
+          timestamp:
+            type: string
+            format: date-time
+            description: >
+              timestamp as specified in [time-format-decision](https://the-microservice-dungeon.github.io/decisionlog/decisions/time-format.html)
+            example: 2020-01-10T12:00:00Z
+          type:
+            type: string
+            description: The type of event
+            example: event-example-uploaded
     DefaultTradingKafkaMessage:
       bindings:
         kafka:
@@ -51,7 +88,7 @@ components:
           transactionId:
             type: string
             format: uuid
-            description: TransactionID if available or UUID of the entity concerned
+            description: TransactionID if available or UUID of the entity concerned (in bank-created event it contains the player id)
             example: 0cfc04f1-6df5-42c6-a19a-146128b8a3b4
           version:
             type: integer
@@ -88,7 +125,7 @@ components:
       description: >
         Announce new resource prices at the start of each round
       traits:
-        - $ref: "#/components/messageTraits/DefaultTradingKafkaMessage"
+        - $ref: "#/components/messageTraits/DefaultTradingPricesKafkaMessage"
         - headers:
             properties:
               type:
@@ -112,7 +149,7 @@ components:
       description: >
         Announce new item prices at the start of each round
       traits:
-        - $ref: "#/components/messageTraits/DefaultTradingKafkaMessage"
+        - $ref: "#/components/messageTraits/DefaultTradingPricesKafkaMessage"
         - headers:
             properties:
               type:
