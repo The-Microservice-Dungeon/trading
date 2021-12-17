@@ -12,7 +12,7 @@ public class TradingEventProducer {
     @Autowired
     private KafkaMessageProducer kafkaMessageProducer;
 
-    public void publishTradingResult(String payload, String transactionId) {
+    public void publishTradingResult(String payload, String transactionId, String eventType) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         DomainEvent event = new DomainEvent(
@@ -21,7 +21,7 @@ public class TradingEventProducer {
                 transactionId,
                 "1",
                 sdf.format(new Date()).toString(),
-                "trades"
+                eventType
         );
 
         this.kafkaMessageProducer.send("trades", event);

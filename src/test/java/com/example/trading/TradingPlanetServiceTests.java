@@ -3,11 +3,14 @@ package com.example.trading;
 import com.example.trading.station.Planet;
 import com.example.trading.station.PlanetRepository;
 import com.example.trading.station.PlanetService;
+import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,9 +38,8 @@ public class TradingPlanetServiceTests {
     @Test
     @Transactional
     public void isPlanetAStationCheckTest() {
-        UUID orgStationId = UUID.randomUUID();
-        UUID stationPlanet = this.planetService.createNewPlanet(orgStationId);
-        assertTrue(this.planetService.checkIfGivenPlanetIsAStation(orgStationId));
+        UUID stationId = this.planetService.createNewPlanet(UUID.randomUUID());
+        assertTrue(this.planetService.checkIfGivenPlanetIsAStation(stationId));
     }
 
     @Test
@@ -49,13 +51,21 @@ public class TradingPlanetServiceTests {
     @Test
     @Transactional
     public void getRandomPlanetIdsTest() {
-        UUID planet1 = this.planetService.createNewPlanet(UUID.randomUUID());
-        UUID planet2 = this.planetService.createNewPlanet(UUID.randomUUID());
-        UUID planet3 = this.planetService.createNewPlanet(UUID.randomUUID());
-        UUID planet4 = this.planetService.createNewPlanet(UUID.randomUUID());
-        UUID planet5 = this.planetService.createNewPlanet(UUID.randomUUID());
+        ArrayList<String> planets = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            planets.add(this.planetService.createNewPlanet(UUID.randomUUID()).toString());
+        }
 
-        System.out.println(this.planetService.getRandomPlanets(2));
-        System.out.println(this.planetService.getRandomPlanets(2));
+        JSONArray planetArray = this.planetService.getRandomPlanets(6);
+
+        boolean arrayIncludes = true;
+        for (int i = 0; i < 6; i++) {
+            if (!planets.contains((String) planetArray.get(i))) {
+                arrayIncludes = false;
+                break;
+            }
+        }
+
+        assertTrue(arrayIncludes);
     }
 }

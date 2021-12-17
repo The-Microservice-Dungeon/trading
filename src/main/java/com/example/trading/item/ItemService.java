@@ -1,11 +1,17 @@
 package com.example.trading.item;
 
+import com.example.trading.RestService;
+import com.example.trading.core.exceptions.ItemDoesNotExistException;
+import com.example.trading.core.exceptions.PlanetIsNotAStationException;
+import com.example.trading.core.exceptions.PlayerMoneyTooLowException;
+import com.example.trading.core.exceptions.RequestReturnedErrorException;
 import com.example.trading.player.PlayerService;
 import com.example.trading.round.RoundService;
 import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,6 +39,9 @@ public class ItemService {
     @Autowired
     private RoundService roundService;
 
+    @Autowired
+    private RestService restService;
+
     private ItemEventProducer itemEventProducer;
 
     public UUID createItem(String name, String description, String type, int price) {
@@ -43,22 +53,12 @@ public class ItemService {
             throw new IllegalArgumentException("ItemType is not valid");
         }
 
+        Optional<Item> item= this.itemRepository.findByName(name);
+        if (item.isPresent()) return item.get().getItemId();
+
         Item newItem = new Item(name, description, itemType, price);
-        itemRepository.save(newItem);
+        this.itemRepository.save(newItem);
         return newItem.getItemId();
-    }
-
-    public void createItem(ItemDto itemDto) {
-        ItemType itemType;
-
-        try {
-             itemType = ItemType.valueOf(itemDto.itemType.toUpperCase());
-        } catch (Exception E) {
-            throw new IllegalArgumentException("Given itemType is not valid");
-        }
-
-        Item item = new Item(itemDto.name, itemDto.description, itemType, itemDto.price);
-        this.itemRepository.save(item);
     }
 
     public int buyRobots(UUID transactionId, UUID playerId, int robotAmount) {
@@ -69,7 +69,7 @@ public class ItemService {
         int fullPrice = item.get().getCurrentPrice() * robotAmount;
 
         if (!this.playerService.checkPlayerForMoney(playerId, fullPrice))
-            throw new IllegalArgumentException("Player '" + playerId + "' does not have enough money");
+            throw new PlayerMoneyTooLowException(playerId.toString(), fullPrice);
 
         JSONObject requestPayload = new JSONObject();
         requestPayload.put("transactionId", transactionId);
@@ -78,12 +78,11 @@ public class ItemService {
         requestPayload.put("quantity", robotAmount);
         ResponseEntity<?> buyResponse;
 
-//        POST zu ROBOT/robots
+//        buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots", requestPayload, JSONArray.class);
         buyResponse = new ResponseEntity<>("some big array with created robots", HttpStatus.CREATED);
-//            buyResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
 
         if (buyResponse.getStatusCode() != HttpStatus.CREATED)
-            throw new IllegalArgumentException(buyResponse.getBody().toString());
+            throw new RequestReturnedErrorException(buyResponse.getBody().toString());
 
         int newAmount = this.playerService.reduceMoney(playerId, fullPrice);
         return -fullPrice;
@@ -91,45 +90,37 @@ public class ItemService {
 
     public int buyItem(UUID transactionId, UUID playerId, UUID robotId, UUID planetId, String itemName) {
         Optional<Item> item = this.itemRepository.findByName(itemName);
-        if (item.isEmpty())
-            throw new IllegalArgumentException("Item '" + itemName + "' does not exist");
+        if (item.isEmpty()) throw new ItemDoesNotExistException(itemName);
 
         if (!this.planetService.checkIfGivenPlanetIsAStation(planetId))
-            throw new IllegalArgumentException("Planet '" + planetId + "' is not a station/spawn");
+            throw new PlanetIsNotAStationException(planetId.toString());
         if (!this.playerService.checkPlayerForMoney(playerId, item.get().getCurrentPrice()))
-            throw new IllegalArgumentException("Player '" + playerId + "' does not have enough money");
+            throw new PlayerMoneyTooLowException(playerId.toString(), item.get().getCurrentPrice());
 
         JSONObject requestPayload = new JSONObject();
         requestPayload.put("transaction-id", transactionId);
 
-        ResponseEntity<?> buyResponse;
+        ResponseEntity<?> buyResponse = null;
 
         if (item.get().getItemType() == ItemType.ITEM) {
-            // post to ROBOT/robots/{robot-uuid}/inventory/items
             requestPayload.put("item-type", itemName);
+//            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/items", requestPayload, String.class);
             buyResponse = new ResponseEntity<>("Item <item> added to robot <uuid>.", HttpStatus.OK);
-//            buyResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
-//            buyResponse = new ResponseEntity<>("Robot not found", HttpStatus.NOT_FOUND);
             item.get().addHistory(this.roundService.getRoundCount());
 
         } else if (item.get().getItemType() == ItemType.HEALTH || item.get().getItemType() == ItemType.ENERGY) {
-            // post to ROBOT/robots/{robot-uuid}/instant-restore
             requestPayload.put("restoration-type", itemName);
+//            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/instant-restore", requestPayload, String.class);
             buyResponse = new ResponseEntity<>("robot <uuid> has been fully healed", HttpStatus.OK);
-//            buyResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
-//            buyResponse = new ResponseEntity<>("Robot not found", HttpStatus.NOT_FOUND);
 
         } else {
-            // post to ROBOT/robots/{robot-uuid}/upgrades
             requestPayload.put("upgrade-type", itemName);
+//            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/upgrades", requestPayload, String.class);
             buyResponse = new ResponseEntity<>("Energy capacity of robot <uuid> has been upgraded to <new-lvl>", HttpStatus.OK);
-//            buyResponse = new ResponseEntity<>("Request could not be accepted", HttpStatus.BAD_REQUEST);
-//            buyResponse = new ResponseEntity<>("Robot not found", HttpStatus.NOT_FOUND);
-//            buyResponse = new ResponseEntity<>("Upgrade of robot <uuid> rejected. Current lvl of Energy capacity is <current-lvl>.", HttpStatus.CONFLICT);
         }
 
         if (buyResponse.getStatusCode() != HttpStatus.OK)
-            throw new IllegalArgumentException(buyResponse.getBody().toString());
+            throw new RequestReturnedErrorException(buyResponse.getBody().toString());
 
         int newAmount = this.playerService.reduceMoney(playerId, item.get().getCurrentPrice());
         return -item.get().getCurrentPrice();
@@ -153,7 +144,7 @@ public class ItemService {
 
     public JSONObject getItem(String name) {
         Optional<Item> item = this.itemRepository.findByName(name);
-        if (item.isEmpty()) throw new IllegalArgumentException("Item '" + name + "' does not exist");
+        if (item.isEmpty()) throw new ItemDoesNotExistException(name);
 
         JSONObject returnItem = new JSONObject();
         returnItem.put("item-name", item.get().getName());
@@ -164,7 +155,7 @@ public class ItemService {
 
     public void patchItemEconomyParameters(String name, JSONObject parameters) throws Exception {
         Optional<Item> item = this.itemRepository.findByName(name);
-        if (item.isEmpty()) throw new IllegalArgumentException("Item '" + name + "' does not exist");
+        if (item.isEmpty()) throw new ItemDoesNotExistException(name);
 
         try {
             item.get().changeEconomyParameters(
@@ -201,7 +192,7 @@ public class ItemService {
                 );
             }
         } catch (Exception e) {
-            System.out.println("Could not find File");
+            System.out.println("Probably couldn't find file or some duplicate in ItemService: " + e.getMessage());
         }
     }
 

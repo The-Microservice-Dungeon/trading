@@ -5,18 +5,18 @@
     },
     {
         "name": "IRON",
-        "price": 25
+        "price": 15
     },
     {
         "name": "GEM",
-        "price": 50
+        "price": 30
     },
     {
         "name": "GOLD",
-        "price": 75
+        "price": 50
     },
     {
         "name": "PLATIN",
-        "price": 100
+        "price": 60
     }
 ]
