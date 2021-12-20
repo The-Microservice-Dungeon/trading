@@ -93,7 +93,7 @@ public class TradingControllerTests {
                 .andReturn();
 
         assertEquals(
-                "{\"price\":10,\"item-name\":\"ROCKET\",\"type\":\"item\"}",
+                "{\"price\":40,\"item-name\":\"ROCKET\",\"type\":\"item\"}",
                 result.getResponse().getContentAsString()
         );
     }
@@ -141,7 +141,7 @@ public class TradingControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertEquals(190, this.playerService.getCurrentMoneyAmount(playerId));
+        assertEquals(160, this.playerService.getCurrentMoneyAmount(playerId));
     }
 
     @Test

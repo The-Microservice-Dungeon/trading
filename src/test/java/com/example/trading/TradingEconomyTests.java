@@ -7,6 +7,7 @@ import com.example.trading.item.ItemType;
 import com.example.trading.player.PlayerService;
 import com.example.trading.resource.Resource;
 import com.example.trading.resource.ResourceService;
+import com.example.trading.round.Round;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,13 +30,16 @@ public class TradingEconomyTests {
     @Test
     @Transactional
     public void calculateNewItemPriceTest() {
-        Item item = new Item("Test", "desc", ItemType.ITEM, 20);
+        Item item = new Item("Test", "desc", ItemType.ITEM, 10);
 
-        for (int i = 0; i < 12; i++) {
-            item.addHistory(1);
+        for (int i = 0; i < 150; i++) {
+            for (int j = 0; j < 2; j++) {
+                item.addHistory(i);
+            }
         }
 
-        item.calculateNewPrice(5);
+        item.calculateNewPrice(49);
+        item.calculateNewPrice(50);
     }
 
     @Test

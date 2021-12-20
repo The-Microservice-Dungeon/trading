@@ -18,10 +18,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
@@ -132,7 +134,10 @@ public class ResourceService {
     public void createResourcesOnStartup() {
         JSONParser parser = new JSONParser();
         try {
-            JSONArray resourceArray = (JSONArray) parser.parse(new FileReader("src/main/resources/resources.json"));
+            File file = ResourceUtils.getFile("classpath:resources.json");
+            InputStream in = new FileInputStream(file);
+
+            JSONArray resourceArray = (JSONArray) parser.parse(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             for (Object resource : resourceArray) {
                 JSONObject jsonResource = (JSONObject) resource;

@@ -16,11 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -180,7 +181,10 @@ public class ItemService {
     public void createItemsOnStartUp() {
         JSONParser parser = new JSONParser();
         try {
-            JSONArray itemArray = (JSONArray) parser.parse(new FileReader("src/main/resources/items.json"));
+            File file = ResourceUtils.getFile("classpath:items.json");
+            InputStream in = new FileInputStream(file);
+
+            JSONArray itemArray = (JSONArray) parser.parse(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             for (Object item : itemArray) {
                 JSONObject jsonItem = (JSONObject) item;

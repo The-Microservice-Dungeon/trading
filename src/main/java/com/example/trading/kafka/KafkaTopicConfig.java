@@ -27,4 +27,19 @@
 //    public NewTopic bankCreated() {
 //        return new NewTopic("bank-created", 1, (short) 1);
 //    }
+//
+//    @Bean
+//    public NewTopic currentItemPrices() {
+//        return new NewTopic("current-item-prices", 1, (short) 1);
+//    }
+//
+//    @Bean
+//    public NewTopic currentResourcePrices() {
+//        return new NewTopic("current-resource-prices", 1, (short) 1);
+//    }
+//
+//    @Bean
+//    public NewTopic trades() {
+//        return new NewTopic("trades", 1, (short) 1);
+//    }
 //}

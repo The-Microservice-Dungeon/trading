@@ -54,7 +54,7 @@ public class TradingController {
                     response.put("moneyChangedBy", 0);
                     response.put("message", e.getMessage());
 //                    kafka produce
-//                    this.tradingEventProducer.publishTradingResult(response.toString(), transactionId);
+//                    this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "buy-error");
                     continue;
                 }
 

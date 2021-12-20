@@ -21,7 +21,7 @@ public class ResourceEventProducer {
                 UUID.randomUUID().toString(),
                 "1",
                 sdf.format(new Date()).toString(),
-                "current-resource-prices"
+                "trading-current-resource-prices"
         );
 
         this.kafkaMessageProducer.send("current-resource-prices", event);

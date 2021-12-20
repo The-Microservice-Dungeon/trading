@@ -1,6 +1,5 @@
 package com.example.trading;
 
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;

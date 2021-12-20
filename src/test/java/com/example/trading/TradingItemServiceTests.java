@@ -100,7 +100,7 @@ public class TradingItemServiceTests {
         UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
 
         Integer moneyChangedBy = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "ROCKET");
-        assertEquals(-10, moneyChangedBy);
+        assertEquals(-40, moneyChangedBy);
     }
 
     @Test
