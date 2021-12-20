@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: stop-pull-run
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@1d1b21ca96111b1eb4c03c21c14ebb971d2200f6
         env:
           SERVICE_NAME: trading
         with:
