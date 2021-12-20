@@ -24,10 +24,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Setup JDK 11 + cache
+      - name: Setup JDK 17 + cache
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           # setup maven cache as well
           cache: maven
@@ -46,7 +46,7 @@ jobs:
       - name: Setup JDK 11 + cache
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           # setup maven cache as well
           cache: maven
@@ -58,7 +58,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build to GitHub Container Registry
         # use jib plugin to build docker image
-        run: mvn compile com.google.cloud.tools:jib-maven-plugin:3.1.4:build -Dimage=ghcr.io/the-microservice-dungeon/trading/tradingservice
+        run: >
+          mvn compile
+          com.google.cloud.tools:jib-maven-plugin:3.1.4:build
+          -Djib.to.image=ghcr.io/the-microservice-dungeon/trading/tradingservice
+          -Djib.from.image=eclipse-temurin:17-alpine
   deploy:
     needs: build-image
     runs-on: ubuntu-latest
