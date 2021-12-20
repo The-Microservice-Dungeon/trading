@@ -38,10 +38,10 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
-      - name: Setup JDK 11 + cache
+      - name: Setup JDK 17 + cache
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           # setup maven cache as well
           cache: maven
