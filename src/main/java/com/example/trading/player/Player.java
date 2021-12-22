@@ -12,8 +12,6 @@ import java.util.UUID;
 public class Player {
     @Id
     @Getter
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     private UUID playerId;
 
@@ -25,11 +23,6 @@ public class Player {
     private int moneyAmount;
 
     public Player() {}
-
-    public Player(int startMoney) {
-        this.robotCount = 1;
-        this.moneyAmount = startMoney;
-    }
 
     public Player(UUID playerId, int startMoney) {
         this.playerId = playerId;
@@ -49,6 +42,4 @@ public class Player {
         this.moneyAmount += amount;
         return this.moneyAmount;
     }
-
-    // @TODO: safe money to mysql database
 }

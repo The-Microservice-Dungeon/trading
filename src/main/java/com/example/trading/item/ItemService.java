@@ -79,8 +79,8 @@ public class ItemService {
         requestPayload.put("quantity", robotAmount);
         ResponseEntity<?> buyResponse;
 
-//        buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots", requestPayload, JSONArray.class);
-        buyResponse = new ResponseEntity<>("some big array with created robots", HttpStatus.CREATED);
+        buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots", requestPayload, JSONArray.class);
+//        buyResponse = new ResponseEntity<>("some big array with created robots", HttpStatus.CREATED);
 
         if (buyResponse.getStatusCode() != HttpStatus.CREATED)
             throw new RequestReturnedErrorException(buyResponse.getBody().toString());
@@ -105,19 +105,19 @@ public class ItemService {
 
         if (item.get().getItemType() == ItemType.ITEM) {
             requestPayload.put("item-type", itemName);
-//            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/items", requestPayload, String.class);
-            buyResponse = new ResponseEntity<>("Item <item> added to robot <uuid>.", HttpStatus.OK);
+            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/items", requestPayload, String.class);
+//            buyResponse = new ResponseEntity<>("Item <item> added to robot <uuid>.", HttpStatus.OK);
             item.get().addHistory(this.roundService.getRoundCount());
 
         } else if (item.get().getItemType() == ItemType.HEALTH || item.get().getItemType() == ItemType.ENERGY) {
             requestPayload.put("restoration-type", itemName);
-//            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/instant-restore", requestPayload, String.class);
-            buyResponse = new ResponseEntity<>("robot <uuid> has been fully healed", HttpStatus.OK);
+            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/instant-restore", requestPayload, String.class);
+//            buyResponse = new ResponseEntity<>("robot <uuid> has been fully healed", HttpStatus.OK);
 
         } else {
             requestPayload.put("upgrade-type", itemName);
-//            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/upgrades", requestPayload, String.class);
-            buyResponse = new ResponseEntity<>("Energy capacity of robot <uuid> has been upgraded to <new-lvl>", HttpStatus.OK);
+            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/upgrades", requestPayload, String.class);
+//            buyResponse = new ResponseEntity<>("Energy capacity of robot <uuid> has been upgraded to <new-lvl>", HttpStatus.OK);
         }
 
         if (buyResponse.getStatusCode() != HttpStatus.OK)

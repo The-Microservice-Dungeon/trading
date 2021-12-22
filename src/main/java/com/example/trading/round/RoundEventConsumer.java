@@ -19,7 +19,7 @@ public class RoundEventConsumer {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "round-started", groupId = "trading", autoStartup = "true")
+    @KafkaListener(topics = "roundStatus", groupId = "trading", autoStartup = "true")
     public void listenToRoundStarted(ConsumerRecord<String, String> consumerRecord) {
         try {
             RoundDto round = this.objectMapper.readValue(consumerRecord.value(), RoundDto.class);

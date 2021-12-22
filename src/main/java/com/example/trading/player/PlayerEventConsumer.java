@@ -5,12 +5,10 @@ import com.example.trading.kafka.KafkaError;
 import com.example.trading.kafka.KafkaErrorRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 
-import java.util.UUID;
+import java.util.Objects;
 
 public class PlayerEventConsumer {
     @Autowired
@@ -22,13 +20,17 @@ public class PlayerEventConsumer {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "player joined", groupId = "trading", autoStartup = "true")
+    @KafkaListener(topics = "playerStatus", groupId = "trading", autoStartup = "true")
     public void listenToPlayerCreation(ConsumerRecord<String, String> consumerRecord) {
         try {
-            PlayerDto player = this.objectMapper.readValue(consumerRecord.value(), PlayerDto.class);
+            PlayerStatusDto player = this.objectMapper.readValue(consumerRecord.value(), PlayerStatusDto.class);
             DomainEvent event = new DomainEvent(player.toString(), consumerRecord.headers());
 
-            this.playerService.createPlayer(player);
+            if (Objects.equals(player.lobbyAction, "joined")) {
+                this.playerService.createPlayer(player);
+            } else if (Objects.equals(player.lobbyAction, "left")) {
+                this.playerService.playerLeft(player);
+            }
 
         } catch (Exception e) {
             String errorMsg = "Error while consuming player event: " + consumerRecord + "\n" + e.getMessage();
@@ -36,6 +38,4 @@ public class PlayerEventConsumer {
             this.kafkaErrorRepository.save(err);
         }
     }
-
-//    maybe ein listener auf player left
 }

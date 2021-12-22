@@ -56,15 +56,4 @@ public class TradingResourceServiceTests {
                 () -> this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), UUID.randomUUID())
         );
     }
-
-    @Test
-    @Transactional
-    public void sellResourceSuccessfullyTest() {
-        UUID playerId = this.playerService.createPlayer(200);
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
-
-        // mock data is 5x coal, 2x iron
-        Integer newPlayerMoney = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId);
-        assertEquals(55, newPlayerMoney);
-    }
 }

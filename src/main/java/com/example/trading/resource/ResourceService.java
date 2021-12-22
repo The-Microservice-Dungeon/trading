@@ -63,13 +63,13 @@ public class ResourceService {
             throw new PlanetIsNotAStationException(planetId.toString());
 
         ResponseEntity<?> sellResponse = null;
-//        sellResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/clearResources", null, JSONObject.class);
+        sellResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/clearResources", null, JSONObject.class);
 
         // mock data
-        JSONObject robotInventory = new JSONObject();
-        robotInventory.put("coal", 5);
-        robotInventory.put("iron", 2);
-        sellResponse = new ResponseEntity<>(robotInventory, HttpStatus.OK);
+//        JSONObject robotInventory = new JSONObject();
+//        robotInventory.put("coal", 5);
+//        robotInventory.put("iron", 2);
+//        sellResponse = new ResponseEntity<>(robotInventory, HttpStatus.OK);
 
         if (sellResponse.getStatusCode() != HttpStatus.OK)
             throw new RequestReturnedErrorException(sellResponse.getBody().toString());
@@ -136,7 +136,6 @@ public class ResourceService {
         try {
             File file = ResourceUtils.getFile("classpath:resources.json");
             InputStream in = new FileInputStream(file);
-
             JSONArray resourceArray = (JSONArray) parser.parse(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             for (Object resource : resourceArray) {
