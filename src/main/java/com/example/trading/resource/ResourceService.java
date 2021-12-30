@@ -127,7 +127,7 @@ public class ResourceService {
             resource.calculateNewPrice(this.roundService.getRoundCount());
         }
 
-//        this.resourceEventProducer.publishNewResourcePrices(this.resourceRepository.findAll().toString());
+        this.resourceEventProducer.publishNewResourcePrices(this.resourceRepository.findAll().toString());
     }
 
     @PostConstruct

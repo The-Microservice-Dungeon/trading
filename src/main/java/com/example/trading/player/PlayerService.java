@@ -19,14 +19,14 @@ public class PlayerService {
     public UUID createPlayer(int amount) {
         Player player = new Player(UUID.randomUUID(), amount);
         this.playerRepository.save(player);
-//        this.playerEventProducer.publishPlayerBankCreation(player.getPlayerId(), player.getMoneyAmount());
+        this.playerEventProducer.publishPlayerBankCreation(player.getPlayerId(), player.getMoneyAmount());
         return player.getPlayerId();
     }
 
     public void createPlayer(PlayerStatusDto playerStatusDto) {
         Player player = new Player(UUID.fromString(playerStatusDto.userId), 200);
         this.playerRepository.save(player);
-//        this.playerEventProducer.publishPlayerBankCreation(player.getPlayerId(), player.getMoneyAmount());
+        this.playerEventProducer.publishPlayerBankCreation(player.getPlayerId(), player.getMoneyAmount());
     }
 
     public void playerLeft(PlayerStatusDto playerStatusDto) {

@@ -174,7 +174,7 @@ public class ItemService {
             item.calculateNewPrice(this.roundService.getRoundCount());
         }
 
-//        this.itemEventProducer.publishNewItemPrices(this.itemRepository.findAll().toString());
+        this.itemEventProducer.publishNewItemPrices(this.itemRepository.findAll().toString());
     }
 
     @PostConstruct
