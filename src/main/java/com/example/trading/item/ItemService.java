@@ -46,6 +46,14 @@ public class ItemService {
     @Autowired
     private ItemEventProducer itemEventProducer;
 
+    /**
+     * creates item or returns item id if it already exists
+     * @param name of item
+     * @param description of item
+     * @param type of item
+     * @param price of item
+     * @return uuid of created item
+     */
     public UUID createItem(String name, String description, String type, int price) {
         ItemType itemType;
 
@@ -63,6 +71,14 @@ public class ItemService {
         return newItem.getItemId();
     }
 
+    /**
+     * handler for robot buy command
+     * does a rest call to the robot-service
+     * @param transactionId from the command
+     * @param playerId from the command
+     * @param robotAmount that should be bought
+     * @return amount of money that has been deducted from the player
+     */
     public int buyRobots(UUID transactionId, UUID playerId, int robotAmount) {
         if (robotAmount <= 0)
             throw new IllegalArgumentException("Cannot buy " + robotAmount + " robots");
@@ -90,6 +106,16 @@ public class ItemService {
         return -fullPrice;
     }
 
+    /**
+     * handler for item buy command
+     * does a rest-calls to the robot-service
+     * @param transactionId from the command
+     * @param playerId from the command
+     * @param robotId from the command
+     * @param planetId from the command
+     * @param itemName that should be bought
+     * @return amount of money that has been deducted from the player
+     */
     public int buyItem(UUID transactionId, UUID playerId, UUID robotId, UUID planetId, String itemName) {
         Optional<Item> item = this.itemRepository.findByName(itemName);
         if (item.isEmpty()) throw new ItemDoesNotExistException(itemName);
@@ -128,6 +154,11 @@ public class ItemService {
         return -item.get().getCurrentPrice();
     }
 
+    /**
+     * returns all items with current prices
+     * used for the events and rest-calls
+     * @return array with items
+     */
     public JSONArray getItems() {
         Iterable<Item> items = this.itemRepository.findAll();
 
@@ -144,6 +175,11 @@ public class ItemService {
         return itemArray;
     }
 
+    /**
+     * returns a specific item
+     * used for rest-calls
+     * @return object with item or exception
+     */
     public JSONObject getItem(String name) {
         Optional<Item> item = this.itemRepository.findByName(name);
         if (item.isEmpty()) throw new ItemDoesNotExistException(name);
@@ -155,6 +191,13 @@ public class ItemService {
         return returnItem;
     }
 
+    /**
+     * changes item economy parameters
+     * admin functionality
+     * @param name of the item, which params should be changed
+     * @param parameters new params
+     * @throws Exception
+     */
     public void patchItemEconomyParameters(String name, JSONObject parameters) throws Exception {
         Optional<Item> item = this.itemRepository.findByName(name);
         if (item.isEmpty()) throw new ItemDoesNotExistException(name);
@@ -169,6 +212,9 @@ public class ItemService {
         }
     }
 
+    /**
+     * calculates the new item prices and emits them as an event
+     */
     public void calculateNewItemPrices() {
         Iterable<Item> items = this.itemRepository.findAllByItemType(ItemType.ITEM);
         for (Item item : items) {
@@ -178,6 +224,9 @@ public class ItemService {
         this.itemEventProducer.publishNewItemPrices(this.itemRepository.findAll().toString());
     }
 
+    /**
+     * creates all items on start up
+     */
     @PostConstruct
     public void createItemsOnStartUp() {
         JSONParser parser = new JSONParser();

@@ -30,7 +30,7 @@ public class ResourceRestController {
         }
 
         try {
-            this.resourceService.patchItemEconomyParameters(resourceName, parameters);
+            this.resourceService.patchResourceEconomyParameters(resourceName, parameters);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

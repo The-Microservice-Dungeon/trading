@@ -1,5 +1,10 @@
 package com.example.trading.round;
 
+/**
+ * Round manages the round count and status for our service
+ * needed for the calculation of item and resource prices
+ * needed for the saving of item and resource histories
+ */
 public class Round {
     private static int currentRound = 0;
     private static String status = null;

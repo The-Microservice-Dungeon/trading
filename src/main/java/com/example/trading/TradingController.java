@@ -21,8 +21,14 @@ public class TradingController {
     @Autowired
     private ItemService itemService;
 
+    @Autowired
     private TradingEventProducer tradingEventProducer;
 
+    /**
+     * main post controller for commands that have to be handled in trading
+     * @param commands requestbody of json-string-array with commands
+     * @return 200 Ok
+     */
     @PostMapping("/commands")
     public ResponseEntity<?> processInComingTradingCommands(@RequestBody String commands) {
         JSONParser parser = new JSONParser();
@@ -35,8 +41,8 @@ public class TradingController {
 
         JSONObject response = new JSONObject();
 
-        for (int i = 0; i < commandsArray.size(); i++) {
-            JSONObject command = (JSONObject) commandsArray.get(i);
+        for (Object commandObject : commandsArray) {
+            JSONObject command = (JSONObject) commandObject;
             JSONObject payload = (JSONObject) command.get("payload");
 
             int moneyChangedBy = 0;

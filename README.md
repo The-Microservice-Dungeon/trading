@@ -1,14 +1,15 @@
 # trading
+### Setup for local testing
+1. install a local apache client like laragon or xampp
+2. create a local mysql database for the project
+3. configure data in application.properties or set system environment variables
 
-This README file should be adapted to include the following information:
+### Tests
+Most things in this service have tests.
+The tests ending with "IntegrationTest" will fail locally.
+These should only be able to run correctly with the other services deployed.
 
-(1) How can the service be started, regardless of the platform? A short, precise instruction is sufficient. Existence/familiarity with tools like maven can be assumed.
-
-(2) What other prerequisites must be in place for the service to run? For example, linking to further documentation of required infrastructure such as Kafka from the DevOps team.
-
-(3) Are there decisions from the decision log that should be further elaborated (like domain model)? Depending on the level of detail, describe in more detail here or in the wiki.
-
-(4) Are there further links that promote navigation or understanding? For example, link to API documentation or important decisions in the decision log.
-
-_Note_: The design of the task planning and review is up to the team. One possible option is to use a Kanban board directly via GitHub. 
-
+### Rest Api:
+https://the-microservice-dungeon.github.io/docs/openapi/trading
+### Event Api:
+https://the-microservice-dungeon.github.io/docs/asyncapi/trading

@@ -19,7 +19,6 @@ public class Item {
     @Column(columnDefinition = "BINARY(16)")
     private UUID itemId;
 
-
     @Getter
     @Column(unique = true)
     private String name;

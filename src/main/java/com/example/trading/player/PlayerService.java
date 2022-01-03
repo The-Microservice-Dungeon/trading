@@ -17,23 +17,42 @@ public class PlayerService {
     @Autowired
     private PlayerEventProducer playerEventProducer;
 
+    /**
+     * creates player (used for testing)
+     * @param amount wanted amount for the player bank
+     * @return uuid of created player
+     */
     public UUID createPlayer(int amount) {
         Player player = new Player(UUID.randomUUID(), amount);
         this.playerRepository.save(player);
-        this.playerEventProducer.publishPlayerBankCreation(player.getPlayerId(), player.getMoneyAmount());
         return player.getPlayerId();
     }
 
+    /**
+     * creates player and publishes player bank event
+     * @param playerStatusDto dto from player-status event
+     */
     public void createPlayer(PlayerStatusDto playerStatusDto) {
         Player player = new Player(UUID.fromString(playerStatusDto.userId), 200);
         this.playerRepository.save(player);
         this.playerEventProducer.publishPlayerBankCreation(player.getPlayerId(), player.getMoneyAmount());
     }
 
+    /**
+     * deletes player from service
+     * a re-join should also create a new bank
+     * @param playerStatusDto dto from player-status event
+     */
     public void playerLeft(PlayerStatusDto playerStatusDto) {
         this.playerRepository.deleteById(UUID.fromString(playerStatusDto.userId));
     }
 
+    /**
+     * checks if the player as enough money
+     * @param playerId player to check
+     * @param neededAmount amount to check
+     * @return boolean if playerId has neededMoney
+     */
     public boolean checkPlayerForMoney(UUID playerId, int neededAmount) {
         Optional<Player> player = this.playerRepository.findById(playerId);
         if (player.isEmpty()) throw new PlayerDoesNotExistException(playerId.toString());
@@ -41,6 +60,12 @@ public class PlayerService {
         return player.get().getMoneyAmount() >= neededAmount;
     }
 
+    /**
+     * reduces player money
+     * @param playerId
+     * @param amount to reduce
+     * @return new money amount
+     */
     public int reduceMoney(UUID playerId, int amount) {
         Optional<Player> player = this.playerRepository.findById(playerId);
         if (player.isEmpty()) throw new PlayerDoesNotExistException(playerId.toString());
@@ -48,6 +73,12 @@ public class PlayerService {
         return player.get().reduceMoney(amount);
     }
 
+    /**
+     * adds player money
+     * @param playerId
+     * @param amount to add
+     * @return new money amount
+     */
     public int addMoney(UUID playerId, int amount) {
         Optional<Player> player = this.playerRepository.findById(playerId);
         if (player.isEmpty()) throw new PlayerDoesNotExistException(playerId.toString());
@@ -55,6 +86,11 @@ public class PlayerService {
         return player.get().addMoney(amount);
     }
 
+    /**
+     * gets current money amount
+     * @param playerId
+     * @return money amount
+     */
     public int getCurrentMoneyAmount(UUID playerId) {
         Optional<Player> player = this.playerRepository.findById(playerId);
         if (player.isEmpty()) throw new PlayerDoesNotExistException(playerId.toString());
@@ -62,6 +98,10 @@ public class PlayerService {
         return player.get().getMoneyAmount();
     }
 
+    /**
+     * returns all player balances for the rest call
+     * @return array with all player balances
+     */
     public JSONArray getAllPlayerBalances() {
         Iterable<Player> players = this.playerRepository.findAll();
 
