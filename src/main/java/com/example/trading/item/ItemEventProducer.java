@@ -3,11 +3,13 @@ package com.example.trading.item;
 import com.example.trading.core.DomainEvent;
 import com.example.trading.kafka.KafkaMessageProducer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+@Component
 public class ItemEventProducer {
     @Autowired
     private KafkaMessageProducer kafkaMessageProducer;

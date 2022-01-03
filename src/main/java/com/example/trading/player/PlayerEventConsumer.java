@@ -7,9 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+@Component
 public class PlayerEventConsumer {
     @Autowired
     private PlayerService playerService;

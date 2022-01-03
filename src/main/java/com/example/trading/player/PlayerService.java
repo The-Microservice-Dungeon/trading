@@ -14,6 +14,7 @@ public class PlayerService {
     @Autowired
     private PlayerRepository playerRepository;
 
+    @Autowired
     private PlayerEventProducer playerEventProducer;
 
     public UUID createPlayer(int amount) {

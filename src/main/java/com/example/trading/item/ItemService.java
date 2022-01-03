@@ -43,6 +43,7 @@ public class ItemService {
     @Autowired
     private RestService restService;
 
+    @Autowired
     private ItemEventProducer itemEventProducer;
 
     public UUID createItem(String name, String description, String type, int price) {
