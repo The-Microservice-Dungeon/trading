@@ -179,6 +179,7 @@ components:
         properties:
           success:
             type: boolean
+            example: false
             description: Is true if the transaction succeeded
           moneyChangedBy:
             type: number
