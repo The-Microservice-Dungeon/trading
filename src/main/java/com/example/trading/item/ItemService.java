@@ -6,12 +6,11 @@ import com.example.trading.core.exceptions.PlanetIsNotAStationException;
 import com.example.trading.core.exceptions.PlayerMoneyTooLowException;
 import com.example.trading.core.exceptions.RequestReturnedErrorException;
 import com.example.trading.player.PlayerService;
-import com.example.trading.round.RoundService;
+import com.example.trading.game.GameService;
 import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +37,7 @@ public class ItemService {
     private PlanetService planetService;
 
     @Autowired
-    private RoundService roundService;
+    private GameService gameService;
 
     @Autowired
     private RestService restService;
@@ -134,7 +133,7 @@ public class ItemService {
             requestPayload.put("item-type", itemName);
             buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/items", requestPayload, String.class);
 //            buyResponse = new ResponseEntity<>("Item <item> added to robot <uuid>.", HttpStatus.OK);
-            item.get().addHistory(this.roundService.getRoundCount());
+            item.get().addHistory(this.gameService.getRoundCount());
 
         } else if (item.get().getItemType() == ItemType.HEALTH || item.get().getItemType() == ItemType.ENERGY) {
             requestPayload.put("restoration-type", itemName);
@@ -192,33 +191,12 @@ public class ItemService {
     }
 
     /**
-     * changes item economy parameters
-     * admin functionality
-     * @param name of the item, which params should be changed
-     * @param parameters new params
-     * @throws Exception
-     */
-    public void patchItemEconomyParameters(String name, JSONObject parameters) throws Exception {
-        Optional<Item> item = this.itemRepository.findByName(name);
-        if (item.isEmpty()) throw new ItemDoesNotExistException(name);
-
-        try {
-            item.get().changeEconomyParameters(
-                    (Integer) parameters.get("roundCount"),
-                    (Integer) parameters.get("stock")
-            );
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    /**
      * calculates the new item prices and emits them as an event
      */
     public void calculateNewItemPrices() {
         Iterable<Item> items = this.itemRepository.findAllByItemType(ItemType.ITEM);
         for (Item item : items) {
-            item.calculateNewPrice(this.roundService.getRoundCount());
+            item.calculateNewPrice(this.gameService.getRoundCount());
         }
 
         this.itemEventProducer.publishNewItemPrices(this.itemRepository.findAll().toString());

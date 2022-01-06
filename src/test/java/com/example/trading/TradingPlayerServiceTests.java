@@ -3,9 +3,8 @@ package com.example.trading;
 import com.example.trading.player.Player;
 import com.example.trading.player.PlayerRepository;
 import com.example.trading.player.PlayerService;
-import com.example.trading.round.Round;
-import com.example.trading.round.RoundDto;
-import com.example.trading.round.RoundService;
+import com.example.trading.game.RoundDto;
+import com.example.trading.game.GameService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -23,13 +22,13 @@ class TradingPlayerServiceTests {
 
     private final PlayerService playerService;
     private final PlayerRepository playerRepository;
-    private final RoundService roundService;
+    private final GameService gameService;
 
     @Autowired
-    public TradingPlayerServiceTests(PlayerService service, PlayerRepository repository, RoundService roundService) {
+    public TradingPlayerServiceTests(PlayerService service, PlayerRepository repository, GameService gameService) {
         this.playerService = service;
         this.playerRepository = repository;
-        this.roundService = roundService;
+        this.gameService = gameService;
     }
 
     @Test
@@ -88,12 +87,12 @@ class TradingPlayerServiceTests {
     @Test
     @Transactional
     public void getSpecificRoundPlayerBalances() {
-        this.roundService.updateRound(new RoundDto(1, "started"));
+        this.gameService.updateRound(new RoundDto(1, "started"));
         UUID newPlayerId = this.playerService.createPlayer(200);
-        this.roundService.updateRound(new RoundDto(1, "ended"));
-        this.roundService.updateRound(new RoundDto(2, "started"));
+        this.gameService.updateRound(new RoundDto(1, "ended"));
+        this.gameService.updateRound(new RoundDto(2, "started"));
         this.playerService.reduceMoney(newPlayerId, 50);
-        this.roundService.updateRound(new RoundDto(2, "ended"));
+        this.gameService.updateRound(new RoundDto(2, "ended"));
 
         JSONArray round1 = this.playerService.getPlayerBalancesForRound(1);
         JSONObject playerRound1 = (JSONObject) round1.get(0);

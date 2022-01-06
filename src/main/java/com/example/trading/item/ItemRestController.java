@@ -28,23 +28,4 @@ public class ItemRestController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
-    @PatchMapping("/items/{item-name}/economy")
-    public ResponseEntity<?> patchItemEconomyParameters(@PathVariable("item-name") String itemName, @RequestBody String newParameters) {
-        JSONParser parser = new JSONParser();
-        JSONObject parameters = new JSONObject();
-        try {
-            parameters = (JSONObject) parser.parse(newParameters);
-        } catch (Exception e) {
-            System.out.println("Cant Parse String: " + e.getMessage());
-        }
-
-        try {
-            this.itemService.patchItemEconomyParameters(itemName, parameters);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }

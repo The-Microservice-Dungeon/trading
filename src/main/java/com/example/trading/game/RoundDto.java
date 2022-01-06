@@ -1,4 +1,4 @@
-package com.example.trading.round;
+package com.example.trading.game;
 
 public class RoundDto {
     public int roundNumber;

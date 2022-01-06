@@ -1,7 +1,8 @@
 package com.example.trading.resource;
 
-import com.example.trading.core.DomainEvent;
-import com.example.trading.kafka.KafkaMessageProducer;
+import com.example.trading.event.DomainEvent;
+import com.example.trading.core.kafka.KafkaMessageProducer;
+import com.example.trading.event.DomainEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,16 +15,15 @@ public class ResourceEventProducer {
     @Autowired
     private KafkaMessageProducer kafkaMessageProducer;
 
-    public void publishNewResourcePrices(String items) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    @Autowired
+    private DomainEventService domainEventService;
 
-        DomainEvent event = new DomainEvent(
-                items,
-                UUID.randomUUID().toString(),
+    public void publishNewResourcePrices(String resources) {
+        DomainEvent event = this.domainEventService.createDomainEvent(
+                resources,
                 UUID.randomUUID().toString(),
                 "1",
-                sdf.format(new Date()).toString(),
-                "trading-current-resource-prices"
+                "current-resource-prices"
         );
 
         this.kafkaMessageProducer.send("current-resource-prices", event);

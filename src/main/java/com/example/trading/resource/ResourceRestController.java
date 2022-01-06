@@ -18,23 +18,4 @@ public class ResourceRestController {
         JSONArray resources = this.resourceService.getResources();
         return new ResponseEntity<JSONArray>(resources, HttpStatus.OK);
     }
-
-    @PatchMapping("/resources/{resource-name}/economy")
-    public ResponseEntity<?> patchResourceEconomyParameters(@PathVariable("resource-name") String resourceName, @RequestBody String newParameters) {
-        JSONParser parser = new JSONParser();
-        JSONObject parameters = new JSONObject();
-        try {
-            parameters = (JSONObject) parser.parse(newParameters);
-        } catch (Exception e) {
-            System.out.println("Cant Parse String: " + e.getMessage());
-        }
-
-        try {
-            this.resourceService.patchResourceEconomyParameters(resourceName, parameters);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 }

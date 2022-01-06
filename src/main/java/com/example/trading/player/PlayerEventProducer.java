@@ -1,8 +1,8 @@
 package com.example.trading.player;
 
-import com.example.trading.core.DomainEvent;
-import com.example.trading.kafka.KafkaErrorRepository;
-import com.example.trading.kafka.KafkaMessageProducer;
+import com.example.trading.event.DomainEvent;
+import com.example.trading.core.kafka.KafkaMessageProducer;
+import com.example.trading.event.DomainEventService;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,19 +16,18 @@ public class PlayerEventProducer {
     @Autowired
     private KafkaMessageProducer kafkaMessageProducer;
 
-    public void publishPlayerBankCreation(UUID newPlayerId, int moneyAmount) {
+    @Autowired
+    private DomainEventService domainEventService;
+
+    public void publishPlayerBankCreation(UUID newPlayerId, int moneyAmount, String transactionId) {
         JSONObject payload = new JSONObject();
         payload.put("playerId", newPlayerId.toString());
         payload.put("money", moneyAmount);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
-        DomainEvent event = new DomainEvent(
+        DomainEvent event = this.domainEventService.createDomainEvent(
                 payload.toString(),
-                UUID.randomUUID().toString(),
-                newPlayerId.toString(),
+                transactionId,
                 "1",
-                sdf.format(new Date()).toString(),
                 "bank-created"
         );
 

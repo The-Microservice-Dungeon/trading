@@ -32,19 +32,10 @@ public class PlayerService {
      * creates player and publishes player bank event
      * @param playerStatusDto dto from player-status event
      */
-    public void createPlayer(PlayerStatusDto playerStatusDto) {
+    public void createPlayer(PlayerStatusDto playerStatusDto, String transactionId) {
         Player player = new Player(UUID.fromString(playerStatusDto.userId), 200);
         this.playerRepository.save(player);
-        this.playerEventProducer.publishPlayerBankCreation(player.getPlayerId(), player.getMoneyAmount());
-    }
-
-    /**
-     * deletes player from service
-     * a re-join should also create a new bank
-     * @param playerStatusDto dto from player-status event
-     */
-    public void playerLeft(PlayerStatusDto playerStatusDto) {
-        this.playerRepository.deleteById(UUID.fromString(playerStatusDto.userId));
+        this.playerEventProducer.publishPlayerBankCreation(player.getPlayerId(), player.getMoneyAmount(), transactionId);
     }
 
     /**

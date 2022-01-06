@@ -1,4 +1,4 @@
-package com.example.trading.kafka;
+package com.example.trading.core.kafka;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

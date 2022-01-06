@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Locale;
 import java.util.UUID;
 
 @Entity
@@ -51,9 +50,5 @@ public class Resource {
 
 //        System.out.println("PriceFactor: " + priceFactor);
 //        System.out.println("NewPrice: " + this.currentPrice);
-    }
-
-    public void changeEconomyParameters(int roundCount, int demand) {
-        this.economy.patchParameters(roundCount, demand);
     }
 }

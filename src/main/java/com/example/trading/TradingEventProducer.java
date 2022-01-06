@@ -1,28 +1,24 @@
 package com.example.trading;
 
-import com.example.trading.core.DomainEvent;
-import com.example.trading.kafka.KafkaMessageProducer;
+import com.example.trading.event.DomainEvent;
+import com.example.trading.core.kafka.KafkaMessageProducer;
+import com.example.trading.event.DomainEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
 
 @Component
 public class TradingEventProducer {
     @Autowired
     private KafkaMessageProducer kafkaMessageProducer;
 
-    public void publishTradingResult(String payload, String transactionId, String eventType) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    @Autowired
+    private DomainEventService domainEventService;
 
-        DomainEvent event = new DomainEvent(
+    public void publishTradingResult(String payload, String transactionId, String eventType) {
+        DomainEvent event = this.domainEventService.createDomainEvent(
                 payload,
-                UUID.randomUUID().toString(),
                 transactionId,
                 "1",
-                sdf.format(new Date()).toString(),
                 eventType
         );
 
