@@ -20,32 +20,6 @@ tags:
     description: Admin routes to change various things in the service
 paths:
   /items/{item-name}/economy:
-    patch:
-      tags:
-        - service routes
-      summary: Patch the current item economy
-      parameters:
-        - name: item-name
-          in: path
-          description: Name of Item
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                items:
-                  $ref: "#/components/schemas/ItemEconomy"
-        500:
-          description: Internal Server Error
-          content: {}
-        503:
-          description: Service not Initialized
-          content: {}
     get:
       tags:
         - service routes
@@ -73,32 +47,6 @@ paths:
           description: Service not Initialized
           content: {}
   /resources/{resource-name}/economy:
-    patch:
-      tags:
-        - service routes
-      summary: Patch the current resource economy
-      parameters:
-        - name: resource-name
-          in: path
-          description: Name of resource
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                items:
-                  $ref: "#/components/schemas/ResourceEconomy"
-        500:
-          description: Internal Server Error
-          content: {}
-        503:
-          description: Service not Initialized
-          content: {}
     get:
       tags:
         - service routes
@@ -129,7 +77,7 @@ paths:
     get:
       tags:
         - balances
-      summary: Get all Players Account Balances
+      summary: get all players account balances
       responses:
         200:
           description: OK
@@ -138,7 +86,37 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Balance"
+                  $ref: "#/components/schemas/AllBalances"
+        403:
+          description: Forbidden
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}
+  /balances/{round-number}:
+    get:
+      tags:
+        - balances
+      summary: Get specific round account balances
+      parameters:
+        - name: round-number
+          in: path
+          description: Number of the round
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RoundBalance"
         403:
           description: Forbidden
           content: {}
@@ -249,6 +227,29 @@ paths:
         503:
           description: Service not Initialized
           content: {}
+  /actuator/logs:
+    get:
+      tags:
+        - logs
+      summary: get logs
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Logs"
+        403:
+          description: Forbidden
+          content: {}
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}
 components:
   schemas:
     ResourceEconomy:
@@ -320,12 +321,30 @@ components:
           type: integer
           format: int32
           example: 200
-    Balance:
+    AllBalances:
       required:
-        - player-id
+        - playerId
         - balance
       properties:
-        player-id:
+        playerId:
+          type: string
+          description: ID of the Player
+          format: uuid
+        balance:
+          description: The Players Account Balance
+          type: integer
+          format: int32
+          example: 30002
+    RoundBalance:
+      required:
+        - playerId
+        - balance
+      properties:
+        round:
+          type: integer
+          description: Number of the round
+          format: int32
+        playerId:
           type: string
           description: ID of the Player
           format: uuid
@@ -353,3 +372,7 @@ components:
             robotId: UUID
             planetId: UUID
             itemName: "MINING_4"
+    Logs:
+      type: string
+      description: the log string
+      format: logs
