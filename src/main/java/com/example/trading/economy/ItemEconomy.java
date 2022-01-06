@@ -21,7 +21,7 @@ public class ItemEconomy {
     private int stock;
 
     @ElementCollection
-    @CollectionTable(name="history")
+    @CollectionTable(name="itemHistory")
     @MapKeyColumn(name="roundNumber")
     @Column(name="amount")
     @Getter

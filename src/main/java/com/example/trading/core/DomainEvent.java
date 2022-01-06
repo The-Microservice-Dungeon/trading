@@ -1,17 +1,22 @@
 package com.example.trading.core;
 
 
+import lombok.NoArgsConstructor;
 import org.apache.kafka.common.header.Headers;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.UUID;
 
 public class DomainEvent {
+    public String eventId;
+
     public String payload;
     public String type;
     public String transactionId;
     public String version;
     public String timestamp;
-    public String eventId;
 
     public DomainEvent(String payload, Headers headers) {
         this.eventId = headers.lastHeader("eventId").value().toString();

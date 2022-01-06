@@ -2,37 +2,37 @@
     {
         "name": "ROCKET",
         "description": "5 Damage on a single target",
-        "price": 10,
+        "price": 40,
         "itemType": "item"
     },
     {
         "name": "WORMHOLE",
         "description": "Teleport to random planet",
-        "price": 25,
+        "price": 80,
         "itemType": "item"
     },
     {
         "name": "LONG_RANGE_BOMBARDEMENT",
         "description": "10 Damage to all robots on a specific planet",
-        "price": 50,
+        "price": 60,
         "itemType": "item"
     },
     {
         "name": "SELF_DESTRUCTION",
         "description": "Self destruct a robot and damage all robots on the planet by 20",
-        "price": 75,
+        "price": 80,
         "itemType": "item"
     },
     {
         "name": "REPAIR_SWARM",
         "description": "Heal all of your robots on the planet by 20",
-        "price": 100,
+        "price": 90,
         "itemType": "item"
     },
     {
         "name": "NUKE",
         "description": "100 damage on all robots on a specific planet",
-        "price": 200,
+        "price": 210,
         "itemType": "item"
     },
 
@@ -46,13 +46,13 @@
     {
         "name": "HEALTH",
         "description": "restores the health of your robot",
-        "price": 100,
+        "price": 50,
         "itemType": "health"
     },
     {
         "name": "ENERGY",
         "description": "restores the energy of your robot",
-        "price": 100,
+        "price": 75,
         "itemType": "energy"
     },
 

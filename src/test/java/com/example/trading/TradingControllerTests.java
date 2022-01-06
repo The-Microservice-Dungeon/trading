@@ -3,6 +3,8 @@ package com.example.trading;
 import com.example.trading.item.ItemService;
 import com.example.trading.player.PlayerService;
 import com.example.trading.resource.ResourceService;
+import com.example.trading.round.RoundDto;
+import com.example.trading.round.RoundService;
 import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -32,6 +34,7 @@ public class TradingControllerTests {
     private final ItemService itemService;
     private final PlayerService playerService;
     private final PlanetService planetService;
+    private final RoundService roundService;
 
     private final MockMvc mockMvc;
 
@@ -40,12 +43,14 @@ public class TradingControllerTests {
                                   ResourceService resourceService,
                                   ItemService itemService,
                                   PlayerService playerService,
-                                  PlanetService planetService) {
+                                  PlanetService planetService,
+                                  RoundService roundService) {
         this.mockMvc = mockMvc;
         this.resourceService = resourceService;
         this.itemService = itemService;
         this.playerService = playerService;
         this.planetService = planetService;
+        this.roundService = roundService;
     }
 
     @Test
@@ -93,7 +98,7 @@ public class TradingControllerTests {
                 .andReturn();
 
         assertEquals(
-                "{\"price\":10,\"item-name\":\"ROCKET\",\"type\":\"item\"}",
+                "{\"price\":40,\"item-name\":\"ROCKET\",\"type\":\"item\"}",
                 result.getResponse().getContentAsString()
         );
     }
@@ -116,91 +121,21 @@ public class TradingControllerTests {
 
     @Test
     @Transactional
-    public void postBuyNormalItemRestTest() throws Exception {
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
+    public void getBalancesForSpecificRoundRestTest() throws Exception {
+        this.roundService.updateRound(new RoundDto(1, "started"));
         UUID playerId = this.playerService.createPlayer(200);
-        UUID transactionId = UUID.randomUUID();
-        UUID robotId = UUID.randomUUID();
-
-        JSONArray commandArray = new JSONArray();
-        JSONObject request = new JSONObject();
-        request.put("transactionId", transactionId.toString());
-        request.put("playerId", playerId.toString());
-        JSONObject payloadObject = new JSONObject();
-        payloadObject.put("commandType", "buy");
-        payloadObject.put("robotId", robotId.toString());
-        payloadObject.put("planetId", planetId.toString());
-        payloadObject.put("itemName", "ROCKET");
-        request.put("payload", payloadObject);
-        commandArray.appendElement(request);
+        this.roundService.updateRound(new RoundDto(1, "ended"));
 
         MvcResult result = mockMvc
-                .perform(post("/commands")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(commandArray.toJSONString()))
+                .perform(get("/balances/1").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertEquals(190, this.playerService.getCurrentMoneyAmount(playerId));
+        assertEquals(
+                "[{\"round\":1,\"balance\":200,\"player-id\":\"" + playerId + "\"}]",
+                result.getResponse().getContentAsString()
+        );
     }
-
-    @Test
-    @Transactional
-    public void postBuyRobotsRestTest() throws Exception {
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
-        UUID playerId = this.playerService.createPlayer(500);
-        UUID transactionId = UUID.randomUUID();
-
-        JSONArray commandArray = new JSONArray();
-        JSONObject request = new JSONObject();
-        request.put("transactionId", transactionId.toString());
-        request.put("playerId", playerId.toString());
-        JSONObject payloadObject = new JSONObject();
-        payloadObject.put("commandType", "buy");
-        payloadObject.put("itemName", "ROBOT");
-        payloadObject.put("amount", 2);
-        request.put("payload", payloadObject);
-        commandArray.appendElement(request);
-
-        MvcResult result = mockMvc
-                .perform(post("/commands")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(commandArray.toJSONString()))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        assertEquals(300, this.playerService.getCurrentMoneyAmount(playerId));
-    }
-
-    @Test
-    @Transactional
-    public void postSellInventoryRestTest() throws Exception {
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
-        UUID playerId = this.playerService.createPlayer(200);
-        UUID transactionId = UUID.randomUUID();
-        UUID robotId = UUID.randomUUID();
-
-        JSONArray commandArray = new JSONArray();
-        JSONObject request = new JSONObject();
-        request.put("transactionId", transactionId.toString());
-        request.put("playerId", playerId.toString());
-        JSONObject payloadObject = new JSONObject();
-        payloadObject.put("commandType", "sell");
-        payloadObject.put("robotId", robotId.toString());
-        payloadObject.put("planetId", planetId.toString());
-        request.put("payload", payloadObject);
-        commandArray.appendElement(request);
-
-        MvcResult result = mockMvc
-                .perform(post("/commands")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(commandArray.toJSONString()))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        assertEquals(255, this.playerService.getCurrentMoneyAmount(playerId));
-    }
-
 
 
     @Test
@@ -219,5 +154,4 @@ public class TradingControllerTests {
 
         System.out.println(result.getResponse().getContentAsString());
     }
-
 }

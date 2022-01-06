@@ -1,6 +1,7 @@
 package com.example.trading;
 
 import com.example.trading.item.ItemService;
+import com.example.trading.player.PlayerService;
 import com.example.trading.resource.ResourceService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -21,8 +22,17 @@ public class TradingController {
     @Autowired
     private ItemService itemService;
 
+    @Autowired
+    private PlayerService playerService;
+
+    @Autowired
     private TradingEventProducer tradingEventProducer;
 
+    /**
+     * main post controller for commands that have to be handled in trading
+     * @param commands requestbody of json-string-array with commands
+     * @return 200 Ok
+     */
     @PostMapping("/commands")
     public ResponseEntity<?> processInComingTradingCommands(@RequestBody String commands) {
         JSONParser parser = new JSONParser();
@@ -35,8 +45,8 @@ public class TradingController {
 
         JSONObject response = new JSONObject();
 
-        for (int i = 0; i < commandsArray.size(); i++) {
-            JSONObject command = (JSONObject) commandsArray.get(i);
+        for (Object commandObject : commandsArray) {
+            JSONObject command = (JSONObject) commandObject;
             JSONObject payload = (JSONObject) command.get("payload");
 
             int moneyChangedBy = 0;
@@ -54,7 +64,7 @@ public class TradingController {
                     response.put("moneyChangedBy", 0);
                     response.put("message", e.getMessage());
 //                    kafka produce
-//                    this.tradingEventProducer.publishTradingResult(response.toString(), transactionId);
+                    this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "buy-error");
                     continue;
                 }
 
@@ -71,7 +81,7 @@ public class TradingController {
                         response.put("moneyChangedBy", 0);
                         response.put("message", e.getMessage());
 //                        kafka Produce
-//                        this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "buy-error");
+                        this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "buy-error");
                         continue;
                     }
 
@@ -90,7 +100,7 @@ public class TradingController {
                         response.put("moneyChangedBy", 0);
                         response.put("message", e.getMessage());
 //                        kafka Produce
-//                        this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "buy-error");
+                        this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "buy-error");
                         continue;
                     }
 
@@ -112,7 +122,7 @@ public class TradingController {
                     response.put("moneyChangedBy", 0);
                     response.put("message", e.getMessage());
 //                    kafka Produce
-//                    this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "sell-error");
+                    this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "sell-error");
                     continue;
                 }
             }
@@ -121,7 +131,7 @@ public class TradingController {
             response.put("moneyChangedBy", moneyChangedBy);
             response.put("message", "success");
 //            Kafka produce
-//            this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, eventType);
+            this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, eventType);
         }
 
         this.itemService.calculateNewItemPrices();

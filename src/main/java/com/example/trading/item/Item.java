@@ -1,6 +1,7 @@
 package com.example.trading.item;
 
 import com.example.trading.economy.ItemEconomy;
+import com.example.trading.round.Round;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -17,7 +18,6 @@ public class Item {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     private UUID itemId;
-
 
     @Getter
     @Column(unique = true)
@@ -62,9 +62,11 @@ public class Item {
 
     public void calculateNewPrice(int currentRound) {
         float priceFactor = this.economy.calculateNewPriceFactor(currentRound);
-        this.currentPrice = (int)Math.ceil(this.originalPrice * priceFactor);
-
+        int roundAdjust = (int)Math.floor(200 * (1 / (1 + Math.exp(-0.014 * currentRound) * 199)));
+        this.currentPrice = (int)Math.ceil(this.originalPrice * priceFactor * roundAdjust);
+//
 //        System.out.println("PriceFactor: " + priceFactor);
+//        System.out.println("RoundAdjust: " + roundAdjust);
 //        System.out.println("NewPrice: " + this.currentPrice);
     }
 

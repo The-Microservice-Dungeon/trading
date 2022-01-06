@@ -3,6 +3,11 @@ package com.example.trading;
 import com.example.trading.player.Player;
 import com.example.trading.player.PlayerRepository;
 import com.example.trading.player.PlayerService;
+import com.example.trading.round.Round;
+import com.example.trading.round.RoundDto;
+import com.example.trading.round.RoundService;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,11 +23,13 @@ class TradingPlayerServiceTests {
 
     private final PlayerService playerService;
     private final PlayerRepository playerRepository;
+    private final RoundService roundService;
 
     @Autowired
-    public TradingPlayerServiceTests(PlayerService service, PlayerRepository repository) {
+    public TradingPlayerServiceTests(PlayerService service, PlayerRepository repository, RoundService roundService) {
         this.playerService = service;
         this.playerRepository = repository;
+        this.roundService = roundService;
     }
 
     @Test
@@ -74,8 +81,27 @@ class TradingPlayerServiceTests {
 
         assertEquals(
                 "[{\"balance\":500,\"player-id\":\"" + newPlayerId + "\"}]",
-                this.playerService.getAllPlayerBalances().toString()
+                this.playerService.getAllCurrentPlayerBalances().toString()
         );
+    }
+
+    @Test
+    @Transactional
+    public void getSpecificRoundPlayerBalances() {
+        this.roundService.updateRound(new RoundDto(1, "started"));
+        UUID newPlayerId = this.playerService.createPlayer(200);
+        this.roundService.updateRound(new RoundDto(1, "ended"));
+        this.roundService.updateRound(new RoundDto(2, "started"));
+        this.playerService.reduceMoney(newPlayerId, 50);
+        this.roundService.updateRound(new RoundDto(2, "ended"));
+
+        JSONArray round1 = this.playerService.getPlayerBalancesForRound(1);
+        JSONObject playerRound1 = (JSONObject) round1.get(0);
+        JSONArray round2 = this.playerService.getPlayerBalancesForRound(2);
+        JSONObject playerRound2 = (JSONObject) round2.get(0);
+
+        assertEquals(200, playerRound1.get("balance"));
+        assertEquals(150, playerRound2.get("balance"));
     }
 
 }

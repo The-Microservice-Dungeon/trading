@@ -21,7 +21,7 @@ public class ResourceEconomy {
     private int demand;
 
     @ElementCollection
-    @CollectionTable(name="history")
+    @CollectionTable(name="resourceHistory")
     @MapKeyColumn(name="roundNumber")
     @Column(name="amount")
     private Map<Integer, Integer> history;

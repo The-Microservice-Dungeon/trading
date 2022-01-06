@@ -3,11 +3,13 @@ package com.example.trading.resource;
 import com.example.trading.core.DomainEvent;
 import com.example.trading.kafka.KafkaMessageProducer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+@Component
 public class ResourceEventProducer {
     @Autowired
     private KafkaMessageProducer kafkaMessageProducer;
@@ -21,7 +23,7 @@ public class ResourceEventProducer {
                 UUID.randomUUID().toString(),
                 "1",
                 sdf.format(new Date()).toString(),
-                "current-resource-prices"
+                "trading-current-resource-prices"
         );
 
         this.kafkaMessageProducer.send("current-resource-prices", event);

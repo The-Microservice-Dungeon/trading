@@ -6,35 +6,40 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
 public class Player {
     @Id
     @Getter
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(columnDefinition = "BINARY(16)")
     private UUID playerId;
 
     @Getter
-    @Setter
-    private int robotCount;
-
-    @Getter
     private int moneyAmount;
+
+    @ElementCollection
+    @MapKeyColumn(name="roundNumber")
+    @Column(name="amount")
+    @Getter
+    private Map<Integer, Integer> balanceHistory;
 
     public Player() {}
 
-    public Player(int startMoney) {
-        this.robotCount = 1;
-        this.moneyAmount = startMoney;
-    }
-
     public Player(UUID playerId, int startMoney) {
         this.playerId = playerId;
-        this.robotCount = 1;
         this.moneyAmount = startMoney;
+        this.balanceHistory = new HashMap<>();
+    }
+
+    public void addCurrentBalanceToHistory(int currentRound) {
+        this.balanceHistory.put(currentRound, this.moneyAmount);
+    }
+
+    public int getMoneyAmountFromRound(int round) {
+        return this.balanceHistory.get(round);
     }
 
     public int reduceMoney(int amount) {
@@ -49,6 +54,4 @@ public class Player {
         this.moneyAmount += amount;
         return this.moneyAmount;
     }
-
-    // @TODO: safe money to mysql database
 }

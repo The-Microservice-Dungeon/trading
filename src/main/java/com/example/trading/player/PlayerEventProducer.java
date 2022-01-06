@@ -5,11 +5,13 @@ import com.example.trading.kafka.KafkaErrorRepository;
 import com.example.trading.kafka.KafkaMessageProducer;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+@Component
 public class PlayerEventProducer {
     @Autowired
     private KafkaMessageProducer kafkaMessageProducer;
