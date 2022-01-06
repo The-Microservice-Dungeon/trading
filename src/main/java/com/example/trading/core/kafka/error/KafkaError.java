@@ -1,4 +1,4 @@
-package com.example.trading.kafka;
+package com.example.trading.core.kafka.error;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

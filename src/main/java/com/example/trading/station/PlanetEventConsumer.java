@@ -1,8 +1,9 @@
 package com.example.trading.station;
 
-import com.example.trading.core.DomainEvent;
-import com.example.trading.kafka.KafkaError;
-import com.example.trading.kafka.KafkaErrorRepository;
+import com.example.trading.event.DomainEvent;
+import com.example.trading.core.kafka.error.KafkaError;
+import com.example.trading.core.kafka.error.KafkaErrorRepository;
+import com.example.trading.event.DomainEventService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class PlanetEventConsumer {
     private PlanetService planetService;
 
     @Autowired
+    private DomainEventService domainEventService;
+
+    @Autowired
     private KafkaErrorRepository kafkaErrorRepository;
 
     @Autowired
@@ -24,7 +28,7 @@ public class PlanetEventConsumer {
     public void listenToSpaceStationCreation(ConsumerRecord<String, String> consumerRecord) {
         try {
             PlanetDto planet = this.objectMapper.readValue(consumerRecord.value(), PlanetDto.class);
-            DomainEvent event = new DomainEvent(planet.toString(), consumerRecord.headers());
+            this.domainEventService.saveDomainEvent(planet.toString(), consumerRecord.headers());
             this.planetService.createNewPlanet(planet);
         } catch (Exception e) {
             String errorMsg = "Error while consuming station event: " + consumerRecord + "\n" + e.getMessage();

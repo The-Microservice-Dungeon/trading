@@ -1,15 +1,17 @@
-package com.example.trading.core;
+package com.example.trading.event;
 
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.kafka.common.header.Headers;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.UUID;
 
+@Entity
+@Getter
+@NoArgsConstructor
 public class DomainEvent {
+    @Id
     public String eventId;
 
     public String payload;

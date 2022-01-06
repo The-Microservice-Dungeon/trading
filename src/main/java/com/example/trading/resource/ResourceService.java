@@ -3,18 +3,13 @@ package com.example.trading.resource;
 import com.example.trading.RestService;
 import com.example.trading.core.exceptions.PlanetIsNotAStationException;
 import com.example.trading.core.exceptions.RequestReturnedErrorException;
-import com.example.trading.core.exceptions.ResourceDoesNotExistException;
-import com.example.trading.item.Item;
 import com.example.trading.player.PlayerService;
-import com.example.trading.round.RoundService;
+import com.example.trading.game.GameService;
 import com.example.trading.station.PlanetService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
-import org.apache.kafka.common.protocol.types.Field;
-import org.apache.kafka.common.quota.ClientQuotaAlteration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,9 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -42,7 +35,7 @@ public class ResourceService {
     private PlanetService planetService;
 
     @Autowired
-    private RoundService roundService;
+    private GameService gameService;
 
     @Autowired
     private RestService restService;
@@ -96,7 +89,7 @@ public class ResourceService {
             if (resource.isEmpty()) continue;
 
             fullAmount += (Integer) responseBody.get(key) * resource.get().getCurrentPrice();
-            resource.get().addHistory(this.roundService.getRoundCount(), (Integer) responseBody.get(key));
+            resource.get().addHistory(this.gameService.getRoundCount(), (Integer) responseBody.get(key));
         }
 
         this.playerService.addMoney(playerId, fullAmount);
@@ -124,33 +117,12 @@ public class ResourceService {
     }
 
     /**
-     * changes resource economy parameters
-     * admin functionality
-     * @param name of the resource, which params should be changed
-     * @param parameters new params
-     * @throws Exception
-     */
-    public void patchResourceEconomyParameters(String name, JSONObject parameters) throws Exception {
-        Optional<Resource> resource = this.resourceRepository.findByName(name);
-        if (resource.isEmpty()) throw new ResourceDoesNotExistException(name);
-
-        try {
-            resource.get().changeEconomyParameters(
-                    (Integer) parameters.get("roundCount"),
-                    (Integer) parameters.get("demand")
-            );
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    /**
      * calculates the new resource prices and emits them as an event
      */
     public void calculateNewResourcePrices() {
         Iterable<Resource> resources = this.resourceRepository.findAll();
         for (Resource resource : resources) {
-            resource.calculateNewPrice(this.roundService.getRoundCount());
+            resource.calculateNewPrice(this.gameService.getRoundCount());
         }
 
         this.resourceEventProducer.publishNewResourcePrices(this.resourceRepository.findAll().toString());

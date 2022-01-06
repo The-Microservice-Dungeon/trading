@@ -1,13 +1,11 @@
 package com.example.trading.item;
 
 import com.example.trading.economy.ItemEconomy;
-import com.example.trading.round.Round;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Locale;
 import java.util.UUID;
 
 @Entity
@@ -68,9 +66,5 @@ public class Item {
 //        System.out.println("PriceFactor: " + priceFactor);
 //        System.out.println("RoundAdjust: " + roundAdjust);
 //        System.out.println("NewPrice: " + this.currentPrice);
-    }
-
-    public void changeEconomyParameters(int roundCount, int stock) {
-        this.economy.patchParameters(roundCount, stock);
     }
 }
