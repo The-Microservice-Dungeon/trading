@@ -102,15 +102,37 @@ public class PlayerService {
      * returns all player balances for the rest call
      * @return array with all player balances
      */
-    public JSONArray getAllPlayerBalances() {
+    public JSONArray getAllCurrentPlayerBalances() {
         Iterable<Player> players = this.playerRepository.findAll();
-
         JSONArray balances = new JSONArray();
 
         for (Player player : players) {
             JSONObject jsonBalance = new JSONObject();
             jsonBalance.put("player-id", player.getPlayerId().toString());
             jsonBalance.put("balance", player.getMoneyAmount());
+            balances.appendElement(jsonBalance);
+        }
+
+        return balances;
+    }
+
+    public void updatePlayerBalanceHistories(int currentRound) {
+        Iterable<Player> players = this.playerRepository.findAll();
+
+        for (Player player : players) {
+            player.addCurrentBalanceToHistory(currentRound);
+        }
+    }
+
+    public JSONArray getPlayerBalancesForRound(int roundNumber) {
+        Iterable<Player> players = this.playerRepository.findAll();
+        JSONArray balances = new JSONArray();
+
+        for (Player player : players) {
+            JSONObject jsonBalance = new JSONObject();
+            jsonBalance.put("round", roundNumber);
+            jsonBalance.put("player-id", player.getPlayerId().toString());
+            jsonBalance.put("balance", player.getMoneyAmountFromRound(roundNumber));
             balances.appendElement(jsonBalance);
         }
 

@@ -1,6 +1,7 @@
 package com.example.trading;
 
 import com.example.trading.item.ItemService;
+import com.example.trading.player.PlayerService;
 import com.example.trading.resource.ResourceService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -20,6 +21,9 @@ public class TradingController {
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    private PlayerService playerService;
 
     @Autowired
     private TradingEventProducer tradingEventProducer;

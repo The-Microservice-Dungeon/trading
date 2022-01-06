@@ -6,6 +6,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -16,18 +18,28 @@ public class Player {
     private UUID playerId;
 
     @Getter
-    @Setter
-    private int robotCount;
-
-    @Getter
     private int moneyAmount;
+
+    @ElementCollection
+    @MapKeyColumn(name="roundNumber")
+    @Column(name="amount")
+    @Getter
+    private Map<Integer, Integer> balanceHistory;
 
     public Player() {}
 
     public Player(UUID playerId, int startMoney) {
         this.playerId = playerId;
-        this.robotCount = 1;
         this.moneyAmount = startMoney;
+        this.balanceHistory = new HashMap<>();
+    }
+
+    public void addCurrentBalanceToHistory(int currentRound) {
+        this.balanceHistory.put(currentRound, this.moneyAmount);
+    }
+
+    public int getMoneyAmountFromRound(int round) {
+        return this.balanceHistory.get(round);
     }
 
     public int reduceMoney(int amount) {
