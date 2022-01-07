@@ -3,7 +3,6 @@ package com.example.trading;
 import com.example.trading.item.ItemService;
 import com.example.trading.player.PlayerService;
 import com.example.trading.resource.ResourceService;
-import com.example.trading.game.RoundDto;
 import com.example.trading.game.GameService;
 import com.example.trading.station.StationService;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TradingControllerTests {
+public class TradingRestControllerTests {
 
     private final ResourceService resourceService;
     private final ItemService itemService;
@@ -35,7 +34,7 @@ public class TradingControllerTests {
     private final MockMvc mockMvc;
 
     @Autowired
-    public TradingControllerTests(MockMvc mockMvc,
+    public TradingRestControllerTests(MockMvc mockMvc,
                                   ResourceService resourceService,
                                   ItemService itemService,
                                   PlayerService playerService,
@@ -117,19 +116,59 @@ public class TradingControllerTests {
 
     @Test
     @Transactional
-    public void getBalancesForSpecificRoundRestTest() throws Exception {
-        this.gameService.updateRound(new RoundDto(1, "started"));
-        UUID playerId = this.playerService.createPlayer(200);
-        this.gameService.updateRound(new RoundDto(1, "ended"));
-
+    public void getItemsPriceHistoryRestTest() throws Exception {
         MvcResult result = mockMvc
-                .perform(get("/balances/1").contentType(MediaType.APPLICATION_JSON))
+                .perform(get("/items/history/price").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        assertEquals(
-                "[{\"round\":1,\"balance\":200,\"player-id\":\"" + playerId + "\"}]",
+        assertNotEquals(
+                "[]",
                 result.getResponse().getContentAsString()
         );
     }
+
+    @Test
+    @Transactional
+    public void getItemsBuyHistoryRestTest() throws Exception {
+        MvcResult result = mockMvc
+                .perform(get("/items/history/buy").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertNotEquals(
+                "[]",
+                result.getResponse().getContentAsString()
+        );
+    }
+
+    @Test
+    @Transactional
+    public void getResourcesPriceHistoryRestTest() throws Exception {
+        MvcResult result = mockMvc
+                .perform(get("/resources/history/price").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertNotEquals(
+                "[]",
+                result.getResponse().getContentAsString()
+        );
+    }
+
+    @Test
+    @Transactional
+    public void getResourcesSellHistoryRestTest() throws Exception {
+        MvcResult result = mockMvc
+                .perform(get("/resources/history/sell").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertNotEquals(
+                "[]",
+                result.getResponse().getContentAsString()
+        );
+    }
+
+
 }

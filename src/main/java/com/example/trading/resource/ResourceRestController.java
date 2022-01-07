@@ -18,4 +18,16 @@ public class ResourceRestController {
         JSONArray resources = this.resourceService.getResources();
         return new ResponseEntity<JSONArray>(resources, HttpStatus.OK);
     }
+
+    @GetMapping("/resources/history/price")
+    public ResponseEntity<?> getResourcePriceHistory() {
+        JSONArray resources = this.resourceService.getResourcePriceHistory();
+        return new ResponseEntity<JSONArray>(resources, HttpStatus.OK);
+    }
+
+    @GetMapping("/resources/history/sell")
+    public ResponseEntity<?> getResourceSellHistory() {
+        JSONArray resources = this.resourceService.getResourceSellHistory();
+        return new ResponseEntity<JSONArray>(resources, HttpStatus.OK);
+    }
 }

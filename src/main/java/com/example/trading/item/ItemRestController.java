@@ -15,17 +15,29 @@ public class ItemRestController {
 
     @GetMapping("/items")
     public ResponseEntity<?> getInformationAboutAllItems() {
-        JSONArray items = itemService.getItems();
+        JSONArray items = this.itemService.getItems();
         return new ResponseEntity<JSONArray>(items, HttpStatus.OK);
     }
 
     @GetMapping("/items/{item-name}")
     public ResponseEntity<?> getInformationAboutOneItem(@PathVariable("item-name") String itemId) {
         try {
-            JSONObject foundItem = itemService.getItem(itemId);
+            JSONObject foundItem = this.itemService.getItem(itemId);
             return new ResponseEntity<JSONObject>(foundItem, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/items/history/price")
+    public ResponseEntity<?> getItemPriceHistory() {
+        JSONArray items = this.itemService.getItemPriceHistory();
+        return new ResponseEntity<JSONArray>(items, HttpStatus.OK);
+    }
+
+    @GetMapping("/items/history/buy")
+    public ResponseEntity<?> getItemBuyHistory() {
+        JSONArray items = this.itemService.getItemBuyHistory();
+        return new ResponseEntity<JSONArray>(items, HttpStatus.OK);
     }
 }

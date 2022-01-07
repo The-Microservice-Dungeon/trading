@@ -24,6 +24,7 @@ public class ResourceEconomy {
     @CollectionTable(name="resourceHistory")
     @MapKeyColumn(name="roundNumber")
     @Column(name="amount")
+    @Getter
     private Map<Integer, Integer> history;
 
     public ResourceEconomy() {

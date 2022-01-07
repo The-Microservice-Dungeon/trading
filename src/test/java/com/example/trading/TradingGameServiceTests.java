@@ -48,15 +48,6 @@ public class TradingGameServiceTests {
         assertEquals("init", this.gameService.getRoundStatus());
     }
 
-    @Test
-    @Transactional
-    public void updateRoundTest() {
-        RoundDto dto = new RoundDto(1, "started");
-        this.gameService.updateRound(dto);
-
-        assertEquals(1, this.gameService.getRoundCount());
-        assertEquals("started", this.gameService.getRoundStatus());
-    }
 
     @Test
     @Transactional

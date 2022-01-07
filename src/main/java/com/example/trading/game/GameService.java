@@ -41,7 +41,12 @@ public class GameService {
     }
 
     public void updateRound(RoundDto roundDto) {
-        if (Objects.equals(roundDto.roundStatus, "ended")) this.playerService.updatePlayerBalanceHistories(getRoundCount());
+        if (Objects.equals(roundDto.roundStatus, "ended")) {
+            this.playerService.updatePlayerBalanceHistories(getRoundCount());
+        } else if (Objects.equals(roundDto.roundStatus, "started")) {
+            this.itemService.calculateNewItemPrices();
+            this.resourceService.calculateNewResourcePrices();
+        }
         Game.updateStatus(roundDto.roundStatus);
         Game.updateRoundCount(roundDto.roundNumber);
     }

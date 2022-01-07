@@ -8,6 +8,7 @@ import com.example.trading.item.ItemRepository;
 import com.example.trading.item.ItemService;
 import com.example.trading.player.PlayerService;
 import com.example.trading.station.StationService;
+import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -111,5 +112,19 @@ public class TradingItemServiceTests {
                 PlayerMoneyTooLowException.class,
                 () -> this.itemService.buyRobots(UUID.randomUUID(), playerId, 2)
         );
+    }
+
+    @Test
+    @Transactional
+    public void getItemPriceHistoryTest() {
+        JSONArray items = this.itemService.getItemPriceHistory();
+        assertNotEquals("[]", items.toString());
+    }
+
+    @Test
+    @Transactional
+    public void getItemBuyHistoryTest() {
+        JSONArray items = this.itemService.getItemBuyHistory();
+        assertNotEquals("[]", items.toString());
     }
 }

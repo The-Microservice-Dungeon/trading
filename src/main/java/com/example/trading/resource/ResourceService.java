@@ -3,6 +3,7 @@ package com.example.trading.resource;
 import com.example.trading.core.RestService;
 import com.example.trading.core.exceptions.PlanetIsNotAStationException;
 import com.example.trading.core.exceptions.RequestReturnedErrorException;
+import com.example.trading.item.Item;
 import com.example.trading.player.PlayerService;
 import com.example.trading.game.GameService;
 import com.example.trading.station.StationService;
@@ -72,14 +73,16 @@ public class ResourceService {
         if (!this.planetService.checkIfGivenPlanetIsAStation(planetId))
             throw new PlanetIsNotAStationException(planetId.toString());
 
-        ResponseEntity<?> sellResponse = null;
-        sellResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/clearResources", null, JSONObject.class);
+        ResponseEntity<?> sellResponse = this.restService.post(
+                System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/clearResources",
+                null,
+                JSONObject.class
+        );
 
         if (sellResponse.getStatusCode() != HttpStatus.OK)
             throw new RequestReturnedErrorException(sellResponse.getBody().toString());
 
         JSONObject responseBody = (JSONObject) sellResponse.getBody();
-
         if (responseBody == null) return this.playerService.getCurrentMoneyAmount(playerId);
 
         int fullAmount = 0;
@@ -99,14 +102,12 @@ public class ResourceService {
     /**
      * returns all resources with current prices
      * used for the events and rest-calls
-     * @return array with resources
+     * @return JSONArray
      */
     public JSONArray getResources() {
-        Iterable<Resource> resources = this.resourceRepository.findAll();
-
         JSONArray resourceArray = new JSONArray();
 
-        for (Resource resource : resources) {
+        for (Resource resource : this.resourceRepository.findAll()) {
             JSONObject jsonResource = new JSONObject();
             jsonResource.put("name", resource.getName());
             jsonResource.put("price", resource.getCurrentPrice());
@@ -117,11 +118,46 @@ public class ResourceService {
     }
 
     /**
+     * returns all resources with their complete price history
+     * used for the according rest-call /resources/history/price
+     * @return JSONArray
+     */
+    public JSONArray getResourcePriceHistory() {
+        JSONArray resourceArray = new JSONArray();
+
+        for (Resource resource : this.resourceRepository.findAll()) {
+            JSONObject jsonResource = new JSONObject();
+            jsonResource.put("name", resource.getName());
+            jsonResource.put("history", resource.getPriceHistory());
+            resourceArray.appendElement(jsonResource);
+        }
+
+        return resourceArray;
+    }
+
+    /**
+     * returns all resources with their complete sell history
+     * used for the according rest-call /resources/history/sell
+     * @return JSONArray
+     */
+    public JSONArray getResourceSellHistory() {
+        JSONArray resourceArray = new JSONArray();
+
+        for (Resource resource : this.resourceRepository.findAll()) {
+            JSONObject jsonResource = new JSONObject();
+            jsonResource.put("name", resource.getName());
+            jsonResource.put("history", resource.getSellHistory());
+            resourceArray.appendElement(jsonResource);
+        }
+
+        return resourceArray;
+    }
+
+    /**
      * calculates the new resource prices and emits them as an event
      */
     public void calculateNewResourcePrices() {
-        Iterable<Resource> resources = this.resourceRepository.findAll();
-        for (Resource resource : resources) {
+        for (Resource resource : this.resourceRepository.findAll()) {
             resource.calculateNewPrice(this.gameService.getRoundCount());
         }
 
