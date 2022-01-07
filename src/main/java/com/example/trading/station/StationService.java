@@ -63,4 +63,8 @@ public class StationService {
 
         return stationArray;
     }
+
+    public void removeStations() {
+        this.stationRepository.deleteAll();
+    }
 }

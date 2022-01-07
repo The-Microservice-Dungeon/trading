@@ -128,11 +128,16 @@ public class ResourceService {
         this.resourceEventProducer.publishNewResourcePrices(this.resourceRepository.findAll().toString());
     }
 
+    public void resetResources() {
+        this.removeResources();
+        this.createResources();
+    }
+
     /**
      * creates all resources on startup
      */
     @PostConstruct
-    public void createResourcesOnStartup() {
+    public void createResources() {
         JSONParser parser = new JSONParser();
         try {
             File file = ResourceUtils.getFile("classpath:resources.json");
@@ -152,7 +157,7 @@ public class ResourceService {
     }
 
     @PreDestroy
-    public void removeResourcesOnStop() {
+    public void removeResources() {
         this.resourceRepository.deleteAll();
     }
 }

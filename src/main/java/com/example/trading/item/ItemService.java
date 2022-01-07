@@ -203,10 +203,18 @@ public class ItemService {
     }
 
     /**
+     *
+     */
+    public void resetItems() {
+        this.removeAllItems();
+        this.createAllItems();
+    }
+
+    /**
      * creates all items on start up
      */
     @PostConstruct
-    public void createItemsOnStartUp() {
+    public void createAllItems() {
         JSONParser parser = new JSONParser();
         try {
             File file = ResourceUtils.getFile("classpath:items.json");
@@ -229,7 +237,7 @@ public class ItemService {
     }
 
     @PreDestroy
-    public void removeItemsOnStop() {
+    public void removeAllItems() {
         this.itemRepository.deleteAll();
     }
 }

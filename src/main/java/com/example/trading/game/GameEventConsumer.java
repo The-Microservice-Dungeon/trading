@@ -9,6 +9,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 
+import java.util.Objects;
+
 public class GameEventConsumer {
     @Autowired
     private GameService gameService;
@@ -25,9 +27,12 @@ public class GameEventConsumer {
     @KafkaListener(topics = "status", groupId = "trading", autoStartup = "true")
     public void listenToGameStatus(ConsumerRecord<String, String> consumerRecord) {
         try {
-            StatusDto statusDto = this.objectMapper.readValue(consumerRecord.value(), StatusDto.class);
+            GameStatusDto statusDto = this.objectMapper.readValue(consumerRecord.value(), GameStatusDto.class);
             this.domainEventService.saveDomainEvent(statusDto.toString(), consumerRecord.headers());
-            this.gameService.startNewGame();
+
+            if (Objects.equals(statusDto.status, "created")) {
+                this.gameService.startNewGame(statusDto.gameId);
+            }
         } catch (Exception e) {
             String errorMsg = "Error while consuming status event: " + consumerRecord + "\n" + e.getMessage();
             KafkaError err = new KafkaError(consumerRecord.value() + e.getMessage());

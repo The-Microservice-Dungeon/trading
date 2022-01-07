@@ -129,4 +129,8 @@ public class PlayerService {
 
         return balances;
     }
+
+    public void removePlayers() {
+        this.playerRepository.deleteAll();
+    }
 }

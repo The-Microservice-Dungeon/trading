@@ -1,5 +1,6 @@
 package com.example.trading.game;
 
-public class StatusDto {
+public class GameStatusDto {
     public String status;
+    public String gameId;
 }
