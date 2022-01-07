@@ -5,7 +5,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 3.0.0
+  version: 4.2.0.69
 servers:
   - url: http://{defaultHost}
     variables:
@@ -19,65 +19,133 @@ tags:
   - name: service routes
     description: Admin routes to change various things in the service
 paths:
-  /items/{item-name}/economy:
+  /resources/history/price:
     get:
       tags:
         - service routes
-      summary: Get the current item economy
-      parameters:
-        - name: item-name
-          in: path
-          description: Name of Item
-          required: true
-          schema:
-            type: string
+      summary: Get the complete price history of all resources
       responses:
         200:
           description: OK
           content:
             application/json:
+              example:
+                    [
+                    	{
+                    		"name": "coal",
+                    		"history": {
+                    			"0": 42,
+                    			"1": 69,
+                    			"n": "...",
+                    		}
+                    	},
+                    	...
+                    ]
               schema:
-                type: object
-                items:
-                  $ref: "#/components/schemas/ItemEconomy"
+                $ref: "#/components/schemas/ResourcePriceHistory"
         500:
           description: Internal Server Error
           content: {}
         503:
           description: Service not Initialized
           content: {}
-  /resources/{resource-name}/economy:
+  /resources/history/sell:
     get:
       tags:
         - service routes
-      summary: Get the current resource economy
-      parameters:
-        - name: resource-name
-          in: path
-          description: Name of resource
-          required: true
-          schema:
-            type: string
+      summary: Get the complete selling history of all resources
       responses:
         200:
           description: OK
           content:
             application/json:
+              example:
+                      [
+                      	{
+                      		"name": "coal",
+                      		"history": {
+                      			"9": 420,
+                      			"10": 1337,
+                      			"n": "...",
+                      		}
+                      	},
+                      	...
+                      ]
               schema:
-                type: object
-                items:
-                  $ref: "#/components/schemas/ResourceEconomy"
+                $ref: "#/components/schemas/ResourceSellHistory"
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}  
+  /items/history/price:
+    get:
+      tags:
+        - service routes
+      summary: Get the complete price history of all items
+      description: Only for special items. Upgrades etc. have no dynamic pricing
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              example:
+                    [
+                    	{
+                    		"name": "rocket",
+                    		"history": {
+                    			"0": 13,
+                    			"1": 37,
+                    			"n": "...",
+                    		}
+                    	},
+                    	...
+                    ]
+              schema:
+                $ref: "#/components/schemas/ItemPriceHistory"
         500:
           description: Internal Server Error
           content: {}
         503:
           description: Service not Initialized
           content: {}
+  /items/history/buy:
+    get:
+      tags:
+        - service routes
+      summary: Get the complete buying history of all items
+      description: Only for special items. Upgrades etc. have no dynamic pricing
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              example:
+                      [
+                      	{
+                      		"name": "rocket",
+                      		"history": {
+                      			"9": 2,
+                      			"10": 1,
+                      			"n": "...",
+                      		}
+                      	},
+                      	...
+                      ]
+              schema:
+                $ref: "#/components/schemas/ItemBuyHistory"
+        500:
+          description: Internal Server Error
+          content: {}
+        503:
+          description: Service not Initialized
+          content: {}  
   /balances:
     get:
       tags:
         - balances
-      summary: get all players account balances
+      summary: Get all players account balances
       responses:
         200:
           description: OK
@@ -252,38 +320,66 @@ paths:
           content: {}
 components:
   schemas:
-    ResourceEconomy:
+    ResourcePriceHistory:
       type: object
       properties:
-        demand:
-          type: number
-          description: Demand of the item
-          example: 5
-        roundCount:
-          description: Current round number
-          type: integer
-          format: int32
-          example: 12
-        resourceName:
-          type: string
-          description: Name of the resource
-          example: COAL
-    ItemEconomy:
+          name:
+            type: string
+            description: Name of the resource
+            example: "coal"
+          history:
+            description: A hashmap with round number as a key and the price as the value.
+            type: object
+            additionalProperties:
+              type: string
+            example:
+              "0": 25
+              "1": 25
+    ResourceSellHistory:
       type: object
       properties:
-        stock:
-          type: number
-          description: Stock of the item
-          example: 5
-        roundCount:
-          description: Current round number
-          type: integer
-          format: int32
-          example: 12
-        itemName:
+          name:
+            type: string
+            description: Name of the resource
+            example: "coal"
+          history:
+            description: A hashmap with round number as a key and the amountSold as the value.
+            type: object
+            additionalProperties:
+              type: string
+            example:
+              "9": 2
+              "10": 1        
+    ItemPriceHistory:
+      type: object
+      properties:
+        name:
           type: string
-          description: Name of the Item
-          example: ROCKET
+          description: Name of the item
+          example: "rocket"
+        history:
+          description: A hashmap with round number as a key and the price as the value.
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            "0": 25
+            "1": 25
+    ItemBuyHistory:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the item
+          example: "rocket"
+        history:
+          description: A hashmap with round number as a key and the amountBought as the value.
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            "9": 2
+            "10": 1            
     Item:
       type: object
       properties:
