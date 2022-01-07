@@ -17,9 +17,9 @@ public class StationService {
      * @return ID of the created station
      */
     public UUID createNewStation(UUID planetId) {
-        Station planet = new Station(planetId);
-        this.stationRepository.save(planet);
-        return planet.getPlanetId();
+        Station station = new Station(planetId);
+        this.stationRepository.save(station);
+        return station.getPlanetId();
     }
 
     /**
