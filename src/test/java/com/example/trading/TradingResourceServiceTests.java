@@ -5,7 +5,7 @@ import com.example.trading.player.PlayerService;
 import com.example.trading.resource.Resource;
 import com.example.trading.resource.ResourceRepository;
 import com.example.trading.resource.ResourceService;
-import com.example.trading.station.PlanetService;
+import com.example.trading.station.StationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,14 +21,12 @@ public class TradingResourceServiceTests {
     private final ResourceService resourceService;
     private final ResourceRepository resourceRepository;
     private final PlayerService playerService;
-    private final PlanetService planetService;
 
     @Autowired
-    public TradingResourceServiceTests(ResourceService service, ResourceRepository repository, PlayerService playerService, PlanetService planetService) {
+    public TradingResourceServiceTests(ResourceService service, ResourceRepository repository, PlayerService playerService) {
         this.resourceService = service;
         this.resourceRepository = repository;
         this.playerService = playerService;
-        this.planetService = planetService;
     }
 
     @Test

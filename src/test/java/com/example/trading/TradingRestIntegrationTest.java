@@ -1,12 +1,11 @@
 package com.example.trading;
 
 import com.example.trading.player.PlayerService;
-import com.example.trading.station.PlanetService;
+import com.example.trading.station.StationService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,23 +25,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class TradingRestIntegrationTest {
 
-    private final PlanetService planetService;
+    private final StationService stationService;
     private final PlayerService playerService;
     private final MockMvc mockMvc;
 
     @Autowired
     public TradingRestIntegrationTest(MockMvc mockMvc,
                                       PlayerService playerService,
-                                      PlanetService planetService) {
+                                      StationService stationService) {
         this.mockMvc = mockMvc;
         this.playerService = playerService;
-        this.planetService = planetService;
+        this.stationService = stationService;
     }
 
     @Test
     @Transactional
     public void postSellInventoryRestTest() throws Exception {
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID planetId = this.stationService.createNewStation(UUID.randomUUID());
         UUID playerId = this.playerService.createPlayer(200);
         UUID transactionId = UUID.randomUUID();
         UUID robotId = UUID.randomUUID();
@@ -76,7 +75,7 @@ public class TradingRestIntegrationTest {
     @Test
     @Transactional
     public void postBuyNormalItemRestTest() throws Exception {
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID planetId = this.stationService.createNewStation(UUID.randomUUID());
         UUID playerId = this.playerService.createPlayer(200);
         UUID transactionId = UUID.randomUUID();
         UUID robotId = UUID.randomUUID();
@@ -111,7 +110,7 @@ public class TradingRestIntegrationTest {
     @Test
     @Transactional
     public void postBuyRobotsRestTest() throws Exception {
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID planetId = this.stationService.createNewStation(UUID.randomUUID());
         UUID playerId = this.playerService.createPlayer(500);
         UUID transactionId = UUID.randomUUID();
 

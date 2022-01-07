@@ -1,8 +1,8 @@
 package com.example.trading;
 
-import com.example.trading.station.Planet;
-import com.example.trading.station.PlanetRepository;
-import com.example.trading.station.PlanetService;
+import com.example.trading.station.Station;
+import com.example.trading.station.StationRepository;
+import com.example.trading.station.StationService;
 import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,34 +17,34 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class TradingPlanetServiceTests {
-    private final PlanetService planetService;
-    private final PlanetRepository planetRepository;
+    private final StationService stationService;
+    private final StationRepository stationRepository;
 
     @Autowired
-    public TradingPlanetServiceTests(PlanetService planetService, PlanetRepository planetRepository) {
-        this.planetService = planetService;
-        this.planetRepository = planetRepository;
+    public TradingPlanetServiceTests(StationService stationService, StationRepository stationRepository) {
+        this.stationService = stationService;
+        this.stationRepository = stationRepository;
     }
 
     @Test
     @Transactional
     public void planetCreationTest() {
-        UUID newPlanetId = this.planetService.createNewPlanet(UUID.randomUUID());
-        Optional<Planet> planet = this.planetRepository.findById(newPlanetId);
+        UUID newPlanetId = this.stationService.createNewStation(UUID.randomUUID());
+        Optional<Station> planet = this.stationRepository.findById(newPlanetId);
         assertEquals(newPlanetId, planet.get().getPlanetId());
     }
 
     @Test
     @Transactional
     public void isPlanetAStationCheckTest() {
-        UUID stationId = this.planetService.createNewPlanet(UUID.randomUUID());
-        assertTrue(this.planetService.checkIfGivenPlanetIsAStation(stationId));
+        UUID stationId = this.stationService.createNewStation(UUID.randomUUID());
+        assertTrue(this.stationService.checkIfGivenPlanetIsAStation(stationId));
     }
 
     @Test
     @Transactional
     public void isPlanetNotAStationCheckTest() {
-        assertFalse(this.planetService.checkIfGivenPlanetIsAStation(UUID.randomUUID()));
+        assertFalse(this.stationService.checkIfGivenPlanetIsAStation(UUID.randomUUID()));
     }
 
     @Test
@@ -53,10 +52,10 @@ public class TradingPlanetServiceTests {
     public void getRandomPlanetIdsTest() {
         ArrayList<String> planets = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            planets.add(this.planetService.createNewPlanet(UUID.randomUUID()).toString());
+            planets.add(this.stationService.createNewStation(UUID.randomUUID()).toString());
         }
 
-        JSONArray planetArray = this.planetService.getRandomPlanets(6);
+        JSONArray planetArray = this.stationService.getRandomStations(6);
 
         boolean arrayIncludes = true;
         for (int i = 0; i < 6; i++) {

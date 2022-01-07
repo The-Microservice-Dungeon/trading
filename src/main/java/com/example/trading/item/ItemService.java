@@ -1,13 +1,13 @@
 package com.example.trading.item;
 
-import com.example.trading.RestService;
+import com.example.trading.core.RestService;
 import com.example.trading.core.exceptions.ItemDoesNotExistException;
 import com.example.trading.core.exceptions.PlanetIsNotAStationException;
 import com.example.trading.core.exceptions.PlayerMoneyTooLowException;
 import com.example.trading.core.exceptions.RequestReturnedErrorException;
 import com.example.trading.player.PlayerService;
 import com.example.trading.game.GameService;
-import com.example.trading.station.PlanetService;
+import com.example.trading.station.StationService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -34,7 +34,7 @@ public class ItemService {
     private PlayerService playerService;
 
     @Autowired
-    private PlanetService planetService;
+    private StationService stationService;
 
     @Autowired
     private GameService gameService;
@@ -91,7 +91,7 @@ public class ItemService {
         JSONObject requestPayload = new JSONObject();
         requestPayload.put("transactionId", transactionId);
         requestPayload.put("player", transactionId);
-        requestPayload.put("planets", this.planetService.getRandomPlanets(robotAmount));
+        requestPayload.put("planets", this.stationService.getRandomStations(robotAmount));
         requestPayload.put("quantity", robotAmount);
         ResponseEntity<?> buyResponse;
 
@@ -119,7 +119,7 @@ public class ItemService {
         Optional<Item> item = this.itemRepository.findByName(itemName);
         if (item.isEmpty()) throw new ItemDoesNotExistException(itemName);
 
-        if (!this.planetService.checkIfGivenPlanetIsAStation(planetId))
+        if (!this.stationService.checkIfGivenPlanetIsAStation(planetId))
             throw new PlanetIsNotAStationException(planetId.toString());
         if (!this.playerService.checkPlayerForMoney(playerId, item.get().getCurrentPrice()))
             throw new PlayerMoneyTooLowException(playerId.toString(), item.get().getCurrentPrice());

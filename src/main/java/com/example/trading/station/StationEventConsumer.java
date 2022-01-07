@@ -1,6 +1,5 @@
 package com.example.trading.station;
 
-import com.example.trading.event.DomainEvent;
 import com.example.trading.core.kafka.error.KafkaError;
 import com.example.trading.core.kafka.error.KafkaErrorRepository;
 import com.example.trading.event.DomainEventService;
@@ -11,9 +10,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PlanetEventConsumer {
+public class StationEventConsumer {
     @Autowired
-    private PlanetService planetService;
+    private StationService stationService;
 
     @Autowired
     private DomainEventService domainEventService;
@@ -27,9 +26,9 @@ public class PlanetEventConsumer {
     @KafkaListener(topics = "spacestation-created", groupId = "trading", autoStartup = "true")
     public void listenToSpaceStationCreation(ConsumerRecord<String, String> consumerRecord) {
         try {
-            PlanetDto planet = this.objectMapper.readValue(consumerRecord.value(), PlanetDto.class);
-            this.domainEventService.saveDomainEvent(planet.toString(), consumerRecord.headers());
-            this.planetService.createNewPlanet(planet);
+            StationDto stationDto = this.objectMapper.readValue(consumerRecord.value(), StationDto.class);
+            this.domainEventService.saveDomainEvent(stationDto.toString(), consumerRecord.headers());
+            this.stationService.createNewStation(stationDto);
         } catch (Exception e) {
             String errorMsg = "Error while consuming station event: " + consumerRecord + "\n" + e.getMessage();
             KafkaError err = new KafkaError(consumerRecord.value() + e.getMessage());

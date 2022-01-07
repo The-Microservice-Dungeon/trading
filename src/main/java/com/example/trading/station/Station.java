@@ -1,21 +1,20 @@
 package com.example.trading.station;
 
 import lombok.Getter;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-public class Planet {
+public class Station {
     @Id
     @Getter
     @Column(columnDefinition = "BINARY(16)")
     private UUID planetId;
 
-    public Planet() {}
+    public Station() {}
 
-    public Planet(UUID planetId) {
+    public Station(UUID planetId) {
         this.planetId = planetId;
     }
 }

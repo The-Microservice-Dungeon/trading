@@ -5,7 +5,7 @@ import com.example.trading.player.PlayerService;
 import com.example.trading.resource.ResourceService;
 import com.example.trading.game.RoundDto;
 import com.example.trading.game.GameService;
-import com.example.trading.station.PlanetService;
+import com.example.trading.station.StationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,7 +29,7 @@ public class TradingControllerTests {
     private final ResourceService resourceService;
     private final ItemService itemService;
     private final PlayerService playerService;
-    private final PlanetService planetService;
+    private final StationService planetService;
     private final GameService gameService;
 
     private final MockMvc mockMvc;
@@ -39,7 +39,7 @@ public class TradingControllerTests {
                                   ResourceService resourceService,
                                   ItemService itemService,
                                   PlayerService playerService,
-                                  PlanetService planetService,
+                                  StationService planetService,
                                   GameService gameService) {
         this.mockMvc = mockMvc;
         this.resourceService = resourceService;

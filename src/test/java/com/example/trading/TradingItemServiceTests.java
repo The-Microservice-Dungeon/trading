@@ -7,11 +7,10 @@ import com.example.trading.item.Item;
 import com.example.trading.item.ItemRepository;
 import com.example.trading.item.ItemService;
 import com.example.trading.player.PlayerService;
-import com.example.trading.station.PlanetService;
+import com.example.trading.station.StationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
@@ -24,14 +23,14 @@ public class TradingItemServiceTests {
     private final ItemService itemService;
     private final ItemRepository itemRepository;
     private final PlayerService playerService;
-    private final PlanetService planetService;
+    private final StationService stationService;
 
     @Autowired
-    public TradingItemServiceTests(ItemService service, ItemRepository repository, PlayerService playerService, PlanetService planetService) {
+    public TradingItemServiceTests(ItemService service, ItemRepository repository, PlayerService playerService, StationService stationService) {
         this.itemService = service;
         this.itemRepository = repository;
         this.playerService = playerService;
-        this.planetService = planetService;
+        this.stationService = stationService;
     }
 
     @Test
@@ -63,7 +62,7 @@ public class TradingItemServiceTests {
     @Transactional
     public void buyNonExistentItemTest() {
         UUID playerId = this.playerService.createPlayer(200);
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID planetId = this.stationService.createNewStation(UUID.randomUUID());
 
         assertThrows(
                 ItemDoesNotExistException.class,
@@ -86,7 +85,7 @@ public class TradingItemServiceTests {
     @Transactional
     public void buyItemWithoutEnoughMoneyTest() {
         UUID playerId = this.playerService.createPlayer(5);
-        UUID planetId = this.planetService.createNewPlanet(UUID.randomUUID());
+        UUID planetId = this.stationService.createNewStation(UUID.randomUUID());
 
         assertThrows(
             PlayerMoneyTooLowException.class,
@@ -113,6 +112,4 @@ public class TradingItemServiceTests {
                 () -> this.itemService.buyRobots(UUID.randomUUID(), playerId, 2)
         );
     }
-
-
 }

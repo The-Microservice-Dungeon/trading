@@ -1,11 +1,11 @@
 package com.example.trading.resource;
 
-import com.example.trading.RestService;
+import com.example.trading.core.RestService;
 import com.example.trading.core.exceptions.PlanetIsNotAStationException;
 import com.example.trading.core.exceptions.RequestReturnedErrorException;
 import com.example.trading.player.PlayerService;
 import com.example.trading.game.GameService;
-import com.example.trading.station.PlanetService;
+import com.example.trading.station.StationService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -32,7 +32,7 @@ public class ResourceService {
     private PlayerService playerService;
 
     @Autowired
-    private PlanetService planetService;
+    private StationService planetService;
 
     @Autowired
     private GameService gameService;

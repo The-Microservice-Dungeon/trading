@@ -1,4 +1,4 @@
-package com.example.trading;
+package com.example.trading.core;
 
 import net.minidev.json.JSONObject;
 import org.springframework.boot.web.client.RestTemplateBuilder;

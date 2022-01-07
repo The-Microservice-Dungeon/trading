@@ -2,7 +2,6 @@ package com.example.trading.core.kafka;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,6 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(producerFactory());
     }
 
-//    @Bean
     public ProducerFactory<String, String> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }

@@ -7,28 +7,28 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class PlanetService {
+public class StationService {
     @Autowired
-    private PlanetRepository planetRepository;
+    private StationRepository stationRepository;
 
     /**
      * creates a planet (used for internal testing)
      * @param planetId UUID of new planet
-     * @return ID of the created planet
+     * @return ID of the created station
      */
-    public UUID createNewPlanet(UUID planetId) {
-        Planet planet = new Planet(planetId);
-        this.planetRepository.save(planet);
+    public UUID createNewStation(UUID planetId) {
+        Station planet = new Station(planetId);
+        this.stationRepository.save(planet);
         return planet.getPlanetId();
     }
 
     /**
      * creates a planet
-     * @param planetDto dto from kafka event
+     * @param stationDto dto from kafka event
      */
-    public void createNewPlanet(PlanetDto planetDto) {
-        Planet planet = new Planet(planetDto.id);
-        this.planetRepository.save(planet);
+    public void createNewStation(StationDto stationDto) {
+        Station station = new Station(stationDto.id);
+        this.stationRepository.save(station);
     }
 
     /**
@@ -37,8 +37,8 @@ public class PlanetService {
      * @return Boolean is planet a station
      */
     public boolean checkIfGivenPlanetIsAStation(UUID planetId) {
-        Optional<Planet> planet = this.planetRepository.findById(planetId);
-        return planet.isPresent();
+        Optional<Station> station = this.stationRepository.findById(planetId);
+        return station.isPresent();
     }
 
     /**
@@ -46,21 +46,21 @@ public class PlanetService {
      * @param amount of wanted planet ids
      * @return array of random planet ids
      */
-    public JSONArray getRandomPlanets(int amount) {
-        Iterable<Planet> temp = this.planetRepository.findAll();
-        List<Planet> planets = new ArrayList<>();
-        temp.forEach(planets::add);
-        JSONArray planetArray = new JSONArray();
+    public JSONArray getRandomStations(int amount) {
+        Iterable<Station> temp = this.stationRepository.findAll();
+        List<Station> stations = new ArrayList<>();
+        temp.forEach(stations::add);
+        JSONArray stationArray = new JSONArray();
 
         Random random = new Random();
         for (int i = 0; i < amount; i++) {
-            planetArray.add(
-                    planets.get(
-                            random.nextInt(planets.size())
+            stationArray.add(
+                    stations.get(
+                            random.nextInt(stations.size())
                     ).getPlanetId().toString()
             );
         }
 
-        return planetArray;
+        return stationArray;
     }
 }
