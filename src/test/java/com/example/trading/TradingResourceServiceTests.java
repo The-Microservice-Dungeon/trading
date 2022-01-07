@@ -6,6 +6,7 @@ import com.example.trading.resource.Resource;
 import com.example.trading.resource.ResourceRepository;
 import com.example.trading.resource.ResourceService;
 import com.example.trading.station.StationService;
+import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -53,5 +54,19 @@ public class TradingResourceServiceTests {
                 PlanetIsNotAStationException.class,
                 () -> this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), UUID.randomUUID())
         );
+    }
+
+    @Test
+    @Transactional
+    public void getResourcePriceHistoryTest() {
+        JSONArray priceHistory = this.resourceService.getResourcePriceHistory();
+        assertNotEquals("[]", priceHistory.toString());
+    }
+
+    @Test
+    @Transactional
+    public void getResourceSellHistoryTest() {
+        JSONArray sellHistory = this.resourceService.getResourceSellHistory();
+        assertNotEquals("[]", sellHistory.toString());
     }
 }

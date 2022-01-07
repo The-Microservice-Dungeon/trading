@@ -134,9 +134,6 @@ public class TradingController {
             this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, eventType);
         }
 
-        this.itemService.calculateNewItemPrices();
-        this.resourceService.calculateNewResourcePrices();
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

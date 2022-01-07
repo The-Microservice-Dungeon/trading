@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -28,6 +30,12 @@ public class Resource {
     @Getter
     private int originalPrice;
 
+    @ElementCollection
+    @MapKeyColumn(name="roundNumber")
+    @Column(name="price")
+    @Getter
+    private Map<Integer, Integer> priceHistory;
+
     @OneToOne(cascade = CascadeType.ALL)
     private ResourceEconomy economy;
 
@@ -38,16 +46,23 @@ public class Resource {
         this.currentPrice = price;
         this.originalPrice = price;
         this.economy = new ResourceEconomy();
+        this.priceHistory = new HashMap<>();
+        this.priceHistory.put(0, this.originalPrice);
     }
 
     public void addHistory(int roundNumber, int amount) {
         this.economy.addHistory(roundNumber, amount);
     }
 
+    public Map<Integer, Integer> getSellHistory() {
+        return this.economy.getHistory();
+    }
+
     public void calculateNewPrice(int currentRound) {
         float priceFactor = this.economy.calculateNewPriceFactor(currentRound);
         this.currentPrice = (int)Math.ceil(this.originalPrice * priceFactor);
 
+        this.priceHistory.put(currentRound, this.currentPrice);
 //        System.out.println("PriceFactor: " + priceFactor);
 //        System.out.println("NewPrice: " + this.currentPrice);
     }

@@ -7,6 +7,7 @@ import com.example.trading.core.exceptions.PlayerMoneyTooLowException;
 import com.example.trading.core.exceptions.RequestReturnedErrorException;
 import com.example.trading.player.PlayerService;
 import com.example.trading.game.GameService;
+import com.example.trading.resource.Resource;
 import com.example.trading.station.StationService;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -159,11 +160,9 @@ public class ItemService {
      * @return array with items
      */
     public JSONArray getItems() {
-        Iterable<Item> items = this.itemRepository.findAll();
-
         JSONArray itemArray = new JSONArray();
 
-        for (Item item : items) {
+        for (Item item : this.itemRepository.findAll()) {
             JSONObject jsonItem = new JSONObject();
             jsonItem.put("item-name", item.getName());
             jsonItem.put("price", item.getCurrentPrice());
@@ -191,6 +190,42 @@ public class ItemService {
     }
 
     /**
+     * returns all special items with their complete price history
+     * used for the according rest-call /items/history/price
+     * @return JSONArray
+     */
+    public JSONArray getItemPriceHistory() {
+        JSONArray itemArray = new JSONArray();
+
+        for (Item item : this.itemRepository.findAllByItemType(ItemType.ITEM)) {
+            JSONObject jsonItem = new JSONObject();
+            jsonItem.put("name", item.getName());
+            jsonItem.put("history", item.getPriceHistory());
+            itemArray.appendElement(jsonItem);
+        }
+
+        return itemArray;
+    }
+
+    /**
+     * returns all special items with their complete buy history
+     * used for the according rest-call /items/history/buy
+     * @return JSONArray
+     */
+    public JSONArray getItemBuyHistory() {
+        JSONArray itemArray = new JSONArray();
+
+        for (Item item : this.itemRepository.findAllByItemType(ItemType.ITEM)) {
+            JSONObject jsonItem = new JSONObject();
+            jsonItem.put("name", item.getName());
+            jsonItem.put("history", item.getBuyHistory());
+            itemArray.appendElement(jsonItem);
+        }
+
+        return itemArray;
+    }
+
+    /**
      * calculates the new item prices and emits them as an event
      */
     public void calculateNewItemPrices() {
@@ -203,10 +238,18 @@ public class ItemService {
     }
 
     /**
+     *
+     */
+    public void resetItems() {
+        this.removeAllItems();
+        this.createAllItems();
+    }
+
+    /**
      * creates all items on start up
      */
     @PostConstruct
-    public void createItemsOnStartUp() {
+    public void createAllItems() {
         JSONParser parser = new JSONParser();
         try {
             File file = ResourceUtils.getFile("classpath:items.json");
@@ -229,7 +272,7 @@ public class ItemService {
     }
 
     @PreDestroy
-    public void removeItemsOnStop() {
+    public void removeAllItems() {
         this.itemRepository.deleteAll();
     }
 }

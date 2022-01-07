@@ -1,5 +1,7 @@
 package com.example.trading;
 
+import com.example.trading.game.GameService;
+import com.example.trading.game.RoundDto;
 import com.example.trading.player.PlayerService;
 import com.example.trading.station.StationService;
 import net.minidev.json.JSONArray;
@@ -18,6 +20,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,15 +30,18 @@ public class TradingRestIntegrationTest {
 
     private final StationService stationService;
     private final PlayerService playerService;
+    private final GameService gameService;
     private final MockMvc mockMvc;
 
     @Autowired
     public TradingRestIntegrationTest(MockMvc mockMvc,
                                       PlayerService playerService,
-                                      StationService stationService) {
+                                      StationService stationService,
+                                      GameService gameService) {
         this.mockMvc = mockMvc;
         this.playerService = playerService;
         this.stationService = stationService;
+        this.gameService = gameService;
     }
 
     @Test
@@ -138,5 +144,23 @@ public class TradingRestIntegrationTest {
 
         assertEquals("true", response.get("success"));
         assertEquals(300, this.playerService.getCurrentMoneyAmount(playerId));
+    }
+
+    @Test
+    @Transactional
+    public void getBalancesForSpecificRoundRestTest() throws Exception {
+        this.gameService.updateRound(new RoundDto(1, "started"));
+        UUID playerId = this.playerService.createPlayer(200);
+        this.gameService.updateRound(new RoundDto(1, "ended"));
+
+        MvcResult result = mockMvc
+                .perform(get("/balances/1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertEquals(
+                "[{\"round\":1,\"balance\":200,\"player-id\":\"" + playerId + "\"}]",
+                result.getResponse().getContentAsString()
+        );
     }
 }

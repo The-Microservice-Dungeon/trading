@@ -84,23 +84,6 @@ class TradingPlayerServiceTests {
         );
     }
 
-    @Test
-    @Transactional
-    public void getSpecificRoundPlayerBalances() {
-        this.gameService.updateRound(new RoundDto(1, "started"));
-        UUID newPlayerId = this.playerService.createPlayer(200);
-        this.gameService.updateRound(new RoundDto(1, "ended"));
-        this.gameService.updateRound(new RoundDto(2, "started"));
-        this.playerService.reduceMoney(newPlayerId, 50);
-        this.gameService.updateRound(new RoundDto(2, "ended"));
 
-        JSONArray round1 = this.playerService.getPlayerBalancesForRound(1);
-        JSONObject playerRound1 = (JSONObject) round1.get(0);
-        JSONArray round2 = this.playerService.getPlayerBalancesForRound(2);
-        JSONObject playerRound2 = (JSONObject) round2.get(0);
-
-        assertEquals(200, playerRound1.get("balance"));
-        assertEquals(150, playerRound2.get("balance"));
-    }
 
 }
