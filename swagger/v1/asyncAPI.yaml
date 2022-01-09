@@ -191,4 +191,96 @@ components:
             description: Message to the player. Holds error information if the transaction did not succeed
           data:
             type: object
-            description: Holds data relevant for the trade. E.g. new robot stats.
+            description: Contains the data given by the robot-service for a specific trade. Always contains the answer from the robot service.
+      examples:
+      - name: Trade failed
+        summary: An event emitted if a robot was bought but the player had no money
+        headers:
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          transactionId: "0cfc04f1-6df5-42c6-a19a-146128b8a3b4"
+          version: 42
+          timestamp: {}
+          type: trades
+        payload:
+          success: false
+          moneyChangedBy: 0
+          message: "not enough money"
+          data:
+      - name: Buy a robot
+        summary: An event emitted if a robot was bought
+        headers:
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          transactionId: "0cfc04f1-6df5-42c6-a19a-146128b8a3b4"
+          version: 42
+          timestamp: {}
+          type: trades
+        payload:
+          success: true
+          moneyChangedBy: -500
+          message: "robot bought"
+          data:   
+            id: "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+            player: "ae2cfcf0-e870-4360-a41e-3b3bb3312234"
+            planet: "2faf337d-d8d1-40fc-983e-5f130540496b"
+            alive: true
+            maxHealth: 100
+            maxEnergy: 60
+            energyRegen: 8
+            attackDamage: 5
+            miningSpeed: 10
+            health: 75
+            energy: 43
+            healthLevel: 5
+            damageLevel: 5
+            miningSpeedLevel: 5
+            miningLevel: 5
+            energyLevel: 5
+            energyRegenLevel: 5
+            storageLevel: 5
+            inventory:
+              maxStorage: 20
+              usedStorage: 5
+              coal: 3
+              iron: 2
+              gem: 0
+              gold: 0
+              platin: 0
+            items: 
+              rocket: 0
+              wormhole: 2
+              longRangeBombardement: 0
+              selfDestruction: 1
+              repairSwarm: 0
+              nuke: 3
+      - name: Buy an item
+        summary: An event emitted if an item was bought
+        headers:
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          transactionId: "0cfc04f1-6df5-42c6-a19a-146128b8a3b4"
+          version: 42
+          timestamp: {}
+          type: trades
+        payload:
+          success: true
+          moneyChangedBy: -100
+          message: "item bought"
+          data:
+            itemType: ROCKET
+      - name: Sell resources
+        summary: An event emitted if resources are sold
+        headers:
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          transactionId: "0cfc04f1-6df5-42c6-a19a-146128b8a3b4"
+          version: 42
+          timestamp: {}
+          type: trades
+        payload:
+          success: true
+          moneyChangedBy: 1337
+          message: "resources sold"
+          data:
+            coal: 3
+            iron: 2
+            gem: 0
+            gold: 0
+            platin: 0
