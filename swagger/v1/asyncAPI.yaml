@@ -195,12 +195,6 @@ components:
       examples:
       - name: Trade failed
         summary: An event emitted if a robot was bought but the player had no money
-        headers:
-          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
-          transactionId: "0cfc04f1-6df5-42c6-a19a-146128b8a3b4"
-          version: 42
-          timestamp: {}
-          type: trades
         payload:
           success: false
           moneyChangedBy: 0
@@ -208,12 +202,6 @@ components:
           data:
       - name: Buy a robot
         summary: An event emitted if a robot was bought
-        headers:
-          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
-          transactionId: "0cfc04f1-6df5-42c6-a19a-146128b8a3b4"
-          version: 42
-          timestamp: {}
-          type: trades
         payload:
           success: true
           moneyChangedBy: -500
@@ -254,12 +242,6 @@ components:
               nuke: 3
       - name: Buy an item
         summary: An event emitted if an item was bought
-        headers:
-          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
-          transactionId: "0cfc04f1-6df5-42c6-a19a-146128b8a3b4"
-          version: 42
-          timestamp: {}
-          type: trades
         payload:
           success: true
           moneyChangedBy: -100
@@ -268,12 +250,6 @@ components:
             itemType: ROCKET
       - name: Sell resources
         summary: An event emitted if resources are sold
-        headers:
-          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
-          transactionId: "0cfc04f1-6df5-42c6-a19a-146128b8a3b4"
-          version: 42
-          timestamp: {}
-          type: trades
         payload:
           success: true
           moneyChangedBy: 1337
