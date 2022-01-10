@@ -4,8 +4,13 @@ package com.example.trading.event;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.kafka.common.header.Headers;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -21,11 +26,11 @@ public class DomainEvent {
     public String timestamp;
 
     public DomainEvent(String payload, Headers headers) {
-        this.eventId = headers.lastHeader("eventId").value().toString();
-        this.transactionId = headers.lastHeader("transactionId").value().toString();
-        this.version = headers.lastHeader("version").value().toString();
-        this.timestamp = headers.lastHeader("timestamp").value().toString();
-        this.type = headers.lastHeader("type").value().toString();
+        this.eventId = new String(headers.lastHeader("eventId").value(), StandardCharsets.UTF_8);
+        this.transactionId = new String(headers.lastHeader("transactionId").value(), StandardCharsets.UTF_8);
+        this.version = new String(headers.lastHeader("version").value(), StandardCharsets.UTF_8);
+        this.timestamp = new String(headers.lastHeader("timestamp").value(), StandardCharsets.UTF_8);
+        this.type = new String(headers.lastHeader("type").value(), StandardCharsets.UTF_8);
         this.payload = payload;
     }
 

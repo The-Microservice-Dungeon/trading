@@ -36,7 +36,7 @@ public class KafkaMessageProducer {
         ProducerRecord<String, String> record = new ProducerRecord<>(topic, event.eventId, event.payload);
         record.headers().add("eventId", event.eventId.getBytes());
         record.headers().add("transactionId", event.transactionId.getBytes());
-        record.headers().add("version", event.version.toString().getBytes());
+        record.headers().add("version", event.version.getBytes());
         record.headers().add("timestamp", event.timestamp.getBytes());
         record.headers().add("type", event.type.getBytes());
 
@@ -47,7 +47,7 @@ public class KafkaMessageProducer {
             public void onFailure(Throwable ex) {
                 String errorMessage = "Couldn't send message: " + record + "\n" + ex.getMessage();
                 errors.add(Pair.of(topic, event));
-//                beanUtil.getBean(KafkaErrorRepository.class).save(KafkaError(errorMessage));
+//                beanUtil.getBean(KafkaErrorRepository.class).save(new KafkaError(errorMessage));
             }
 
             @Override
