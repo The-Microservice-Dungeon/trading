@@ -1,5 +1,7 @@
 package com.example.trading;
 
+import com.example.trading.event.DomainEvent;
+import com.example.trading.event.DomainEventRepository;
 import com.example.trading.player.Player;
 import com.example.trading.player.PlayerRepository;
 import com.example.trading.station.Station;
@@ -18,6 +20,9 @@ public class TradingTestingController {
     @Autowired
     private PlayerRepository playerRepository;
 
+    @Autowired
+    private DomainEventRepository domainEventRepository;
+
     @GetMapping("/stations")
     public ResponseEntity<?> getInformationAboutAllResources() {
         Iterable<Station> stations = this.stationRepository.findAll();
@@ -28,5 +33,11 @@ public class TradingTestingController {
     public ResponseEntity<?> getPlayers() {
         Iterable<Player> players = this.playerRepository.findAll();
         return new ResponseEntity<Iterable<Player>>(players, HttpStatus.OK);
+    }
+
+    @GetMapping("/domainevents")
+    public ResponseEntity<?> getDomainEvents() {
+        Iterable<DomainEvent> events = this.domainEventRepository.findAll();
+        return new ResponseEntity<Iterable<DomainEvent>>(events, HttpStatus.OK);
     }
 }
