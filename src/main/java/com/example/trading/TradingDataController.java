@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class TradingTestingController {
+public class TradingDataController {
     @Autowired
     private StationRepository stationRepository;
 
@@ -24,7 +24,7 @@ public class TradingTestingController {
     private DomainEventRepository domainEventRepository;
 
     @GetMapping("/stations")
-    public ResponseEntity<?> getInformationAboutAllResources() {
+    public ResponseEntity<?> getStations() {
         Iterable<Station> stations = this.stationRepository.findAll();
         return new ResponseEntity<Iterable<Station>>(stations, HttpStatus.OK);
     }
