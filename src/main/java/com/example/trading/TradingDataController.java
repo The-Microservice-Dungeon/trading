@@ -1,5 +1,7 @@
 package com.example.trading;
 
+import com.example.trading.core.kafka.error.KafkaError;
+import com.example.trading.core.kafka.error.KafkaErrorRepository;
 import com.example.trading.event.DomainEvent;
 import com.example.trading.event.DomainEventRepository;
 import com.example.trading.player.Player;
@@ -23,6 +25,9 @@ public class TradingDataController {
     @Autowired
     private DomainEventRepository domainEventRepository;
 
+    @Autowired
+    private KafkaErrorRepository kafkaErrorRepository;
+
     @GetMapping("/stations")
     public ResponseEntity<?> getStations() {
         Iterable<Station> stations = this.stationRepository.findAll();
@@ -39,5 +44,11 @@ public class TradingDataController {
     public ResponseEntity<?> getDomainEvents() {
         Iterable<DomainEvent> events = this.domainEventRepository.findAll();
         return new ResponseEntity<Iterable<DomainEvent>>(events, HttpStatus.OK);
+    }
+
+    @GetMapping("/kafkaerrors")
+    public ResponseEntity<?> getKafkaErrors() {
+        Iterable<KafkaError> errors = this.kafkaErrorRepository.findAll();
+        return new ResponseEntity<Iterable<KafkaError>>(errors, HttpStatus.OK);
     }
 }
