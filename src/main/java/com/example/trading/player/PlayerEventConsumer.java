@@ -26,7 +26,7 @@ public class PlayerEventConsumer {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "player", groupId = "trading", autoStartup = "true")
+    @KafkaListener(topics = "playerStatus", groupId = "trading", autoStartup = "true")
     public void listenToPlayerCreation(ConsumerRecord<String, String> consumerRecord) {
         try {
             PlayerStatusDto player = this.objectMapper.readValue(consumerRecord.value(), PlayerStatusDto.class);
