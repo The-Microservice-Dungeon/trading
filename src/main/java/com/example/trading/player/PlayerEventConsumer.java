@@ -1,5 +1,6 @@
 package com.example.trading.player;
 
+import com.example.trading.core.kafka.error.KafkaErrorService;
 import com.example.trading.event.DomainEvent;
 import com.example.trading.core.kafka.error.KafkaError;
 import com.example.trading.core.kafka.error.KafkaErrorRepository;
@@ -21,7 +22,7 @@ public class PlayerEventConsumer {
     private DomainEventService domainEventService;
 
     @Autowired
-    private KafkaErrorRepository kafkaErrorRepository;
+    private KafkaErrorService kafkaErrorService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -37,9 +38,7 @@ public class PlayerEventConsumer {
             }
 
         } catch (Exception e) {
-            String errorMsg = "Error while consuming player event: " + consumerRecord + "\n" + e.getMessage();
-            KafkaError err = new KafkaError(consumerRecord.value() + e.getMessage());
-            this.kafkaErrorRepository.save(err);
+            this.kafkaErrorService.newKafkaError("playerStatus", consumerRecord.toString(), e.getMessage());
         }
     }
 }

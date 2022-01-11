@@ -2,6 +2,7 @@ package com.example.trading.station;
 
 import com.example.trading.core.kafka.error.KafkaError;
 import com.example.trading.core.kafka.error.KafkaErrorRepository;
+import com.example.trading.core.kafka.error.KafkaErrorService;
 import com.example.trading.event.DomainEventService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -18,7 +19,7 @@ public class StationEventConsumer {
     private DomainEventService domainEventService;
 
     @Autowired
-    private KafkaErrorRepository kafkaErrorRepository;
+    private KafkaErrorService kafkaErrorService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -30,9 +31,7 @@ public class StationEventConsumer {
             this.domainEventService.saveDomainEvent(stationDto.toString(), consumerRecord.headers());
             this.stationService.createNewStation(stationDto);
         } catch (Exception e) {
-            String errorMsg = "Error while consuming station event: " + consumerRecord + "\n" + e.getMessage();
-            KafkaError err = new KafkaError(consumerRecord.value() + e.getMessage());
-            this.kafkaErrorRepository.save(err);
+            this.kafkaErrorService.newKafkaError("spacestation-created", consumerRecord.toString(), e.getMessage());
         }
     }
 }
