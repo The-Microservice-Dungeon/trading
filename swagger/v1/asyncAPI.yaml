@@ -103,7 +103,7 @@ components:
           type:
             type: string
             description: The type of event
-            example: event-example-uploaded
+            example: event-example-uploaded        
   messages:
     playerBanks:
       description: >
@@ -199,7 +199,12 @@ components:
           success: false
           moneyChangedBy: 0
           message: "not enough money"
-          data:
+          data: null
+        headers:
+          type: "buy-error"
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          version: 42
+          timestamp: "2020-01-10T12:00:00Z"            
       - name: Buy a robot
         summary: An event emitted if a robot was bought
         payload:
@@ -240,14 +245,23 @@ components:
               selfDestruction: 1
               repairSwarm: 0
               nuke: 3
+        headers:
+          type: "buy-robot"
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          version: 42
+          timestamp: "2020-01-10T12:00:00Z"                    
       - name: Buy an item
         summary: An event emitted if an item was bought
         payload:
           success: true
           moneyChangedBy: -100
           message: "item bought"
-          data:
-            itemType: ROCKET
+          data: null
+        headers:
+          type: "buy-item"
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          version: 42
+          timestamp: "2020-01-10T12:00:00Z"
       - name: Sell resources
         summary: An event emitted if resources are sold
         payload:
@@ -260,3 +274,8 @@ components:
             gem: 0
             gold: 0
             platin: 0
+        headers:
+          type: "sell-resource"
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          version: 42
+          timestamp: "2020-01-10T12:00:00Z"            
