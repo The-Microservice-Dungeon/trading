@@ -103,54 +103,7 @@ components:
           type:
             type: string
             description: The type of event
-            example: event-example-uploaded
-    DefaultTradingTradesKafkaMessage:
-      bindings:
-        kafka:
-          key:
-            type: string
-            format: uuid
-          bindingVersion: "0.1.0"
-      correlationId:
-        location: "$message.header#/transactionId"
-      headers:
-        type: object
-        required:
-          - eventId
-          - transactionId
-          - version
-          - timestamp
-          - type
-        properties:
-          eventId:
-            type: string
-            format: uuid
-            description: Generated UUID of the event
-            example: 5bc9f935-32f1-4d7b-a90c-ff0e6e34125a
-          transactionId:
-            type: string
-            format: uuid
-            description: TransactionID if available or UUID of the entity concerned (in bank-created event it contains the player id)
-            example: 0cfc04f1-6df5-42c6-a19a-146128b8a3b4
-          version:
-            type: integer
-            description: Consecutive number for the comparability of the actuality of the event
-            example: 42
-          timestamp:
-            type: string
-            format: date-time
-            description: >
-              timestamp as specified in [time-format-decision](https://the-microservice-dungeon.github.io/decisionlog/decisions/time-format.html)
-            example: 2020-01-10T12:00:00Z
-          type:
-            type: string
-            description: The type of event
-            examples:
-              - buy-error
-              - buy-robot
-              - buy-item
-              - sell-resource
-              - sell-error          
+            example: event-example-uploaded        
   messages:
     playerBanks:
       description: >
@@ -220,7 +173,7 @@ components:
       description: >
         The event which indicates what happened to the trade. It also contains additional data about the result of the trade in data. For example if a robot was bought, data contains the new robot object.
       traits:
-        - $ref: "#/components/messageTraits/DefaultTradingTradesKafkaMessage"
+        - $ref: "#/components/messageTraits/DefaultTradingKafkaMessage"
       payload:
         type: object
         properties:
@@ -246,7 +199,12 @@ components:
           success: false
           moneyChangedBy: 0
           message: "not enough money"
-          data:
+          data: null
+        headers:
+          type: "buy-error"
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          version: 42
+          timestamp: "2020-01-10T12:00:00Z"            
       - name: Buy a robot
         summary: An event emitted if a robot was bought
         payload:
@@ -287,6 +245,11 @@ components:
               selfDestruction: 1
               repairSwarm: 0
               nuke: 3
+        headers:
+          type: "buy-robot"
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          version: 42
+          timestamp: "2020-01-10T12:00:00Z"                    
       - name: Buy an item
         summary: An event emitted if an item was bought
         payload:
@@ -294,6 +257,11 @@ components:
           moneyChangedBy: -100
           message: "item bought"
           data: null
+        headers:
+          type: "buy-item"
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          version: 42
+          timestamp: "2020-01-10T12:00:00Z"
       - name: Sell resources
         summary: An event emitted if resources are sold
         payload:
@@ -306,3 +274,8 @@ components:
             gem: 0
             gold: 0
             platin: 0
+        headers:
+          type: "sell-resource"
+          eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
+          version: 42
+          timestamp: "2020-01-10T12:00:00Z"            
