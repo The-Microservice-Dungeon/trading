@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,7 +48,7 @@ public class TradingIntegrationTest {
         UUID playerId = this.playerService.createPlayer(200);
         UUID planetId = this.stationService.createNewStation(UUID.randomUUID());
 
-        int gotMoney = this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId);
+        int gotMoney = (int) this.resourceService.sellResources(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId).get("moneyChangedBy");
         assertTrue(gotMoney >= 0);
     }
 
@@ -58,8 +59,8 @@ public class TradingIntegrationTest {
         UUID planetOne = this.stationService.createNewStation(UUID.randomUUID());
         UUID planetTwo = this.stationService.createNewStation(UUID.randomUUID());
 
-        Integer moneyChangedBy = this.itemService.buyRobots(UUID.randomUUID(), playerId, 1);
-        assertEquals(-100, moneyChangedBy);
+        Map<String, ?> moneyChangedBy = this.itemService.buyRobots(UUID.randomUUID(), playerId, 1);
+        assertEquals(-100, moneyChangedBy.get("moneyChangedBy"));
     }
 
     @Test
@@ -69,8 +70,8 @@ public class TradingIntegrationTest {
         UUID planetOne = this.stationService.createNewStation(UUID.randomUUID());
         UUID planetTwo = this.stationService.createNewStation(UUID.randomUUID());
 
-        Integer moneyChangedBy = this.itemService.buyRobots(UUID.randomUUID(), playerId, 2);
-        assertEquals(-200, moneyChangedBy);
+        Map<String, ?> moneyChangedBy = this.itemService.buyRobots(UUID.randomUUID(), playerId, 2);
+        assertEquals(-200, moneyChangedBy.get("moneyChangedBy"));
     }
 
     @Test
@@ -79,8 +80,8 @@ public class TradingIntegrationTest {
         UUID playerId = this.playerService.createPlayer(200);
         UUID planetId = this.stationService.createNewStation(UUID.randomUUID());
 
-        Integer moneyChangedBy = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "ROCKET");
-        assertEquals(-40, moneyChangedBy);
+        Map<String, ?> moneyChangedBy = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "ROCKET");
+        assertEquals(-40, moneyChangedBy.get("moneyChangedBy"));
     }
 
     @Test
@@ -89,8 +90,8 @@ public class TradingIntegrationTest {
         UUID playerId = this.playerService.createPlayer(200);
         UUID planetId = this.stationService.createNewStation(UUID.randomUUID());
 
-        Integer moneyChangedBy = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "MINING_1");
-        assertEquals(-50, moneyChangedBy);
+        Map<String, ?> moneyChangedBy = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "MINING_1");
+        assertEquals(-50, moneyChangedBy.get("moneyChangedBy"));
     }
 
     @Test

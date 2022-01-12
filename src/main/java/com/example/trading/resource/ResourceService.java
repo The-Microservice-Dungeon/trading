@@ -3,7 +3,6 @@ package com.example.trading.resource;
 import com.example.trading.core.RestService;
 import com.example.trading.core.exceptions.PlanetIsNotAStationException;
 import com.example.trading.core.exceptions.RequestReturnedErrorException;
-import com.example.trading.item.Item;
 import com.example.trading.player.PlayerService;
 import com.example.trading.game.GameService;
 import com.example.trading.station.StationService;
@@ -20,6 +19,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,7 +70,7 @@ public class ResourceService {
      * @param planetId from the command
      * @return amount of money gotten from the selling of the resources
      */
-    public int sellResources(UUID transactionId, UUID playerId, UUID robotId, UUID planetId) {
+    public Map<String, ?> sellResources(UUID transactionId, UUID playerId, UUID robotId, UUID planetId) {
         if (!this.planetService.checkIfGivenPlanetIsAStation(planetId))
             throw new PlanetIsNotAStationException(planetId.toString());
 
@@ -83,7 +84,13 @@ public class ResourceService {
             throw new RequestReturnedErrorException(sellResponse.getBody().toString());
 
         JSONObject responseBody = (JSONObject) sellResponse.getBody();
-        if (responseBody == null) return this.playerService.getCurrentMoneyAmount(playerId);
+
+        Map<String, String> returnData = new HashMap<>();
+        if (responseBody == null) {
+            returnData.put("moneyChangedBy", String.valueOf(0));
+            returnData.put("message", "Robot inventory is empty");
+            return returnData;
+        }
 
         int fullAmount = 0;
 
@@ -96,7 +103,11 @@ public class ResourceService {
         }
 
         this.playerService.addMoney(playerId, fullAmount);
-        return fullAmount;
+
+        returnData.put("moneyChangedBy", String.valueOf(fullAmount));
+        returnData.put("message", "resources sold");
+        returnData.put("data", responseBody.toString());
+        return returnData;
     }
 
     /**
