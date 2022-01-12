@@ -4,6 +4,7 @@ import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.util.*;
 
 @Service
@@ -27,7 +28,7 @@ public class StationService {
      * @param stationDto dto from kafka event
      */
     public void createNewStation(StationDto stationDto) {
-        Station station = new Station(stationDto.id);
+        Station station = new Station(UUID.fromString(stationDto.planet_id));
         this.stationRepository.save(station);
     }
 
@@ -64,6 +65,7 @@ public class StationService {
         return stationArray;
     }
 
+    @PreDestroy
     public void removeStations() {
         this.stationRepository.deleteAll();
     }

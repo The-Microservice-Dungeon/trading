@@ -4,6 +4,7 @@ import org.apache.kafka.common.header.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -33,5 +34,10 @@ public class DomainEventService {
 
         this.domainEventRepository.save(event);
         return event;
+    }
+
+    @PreDestroy
+    public void removeAllOldDomainEvents() {
+        this.domainEventRepository.deleteAll();
     }
 }

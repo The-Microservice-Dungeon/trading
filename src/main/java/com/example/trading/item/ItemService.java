@@ -126,25 +126,23 @@ public class ItemService {
             throw new PlayerMoneyTooLowException(playerId.toString(), item.get().getCurrentPrice());
 
         JSONObject requestPayload = new JSONObject();
-        requestPayload.put("transaction-id", transactionId);
+        requestPayload.put("transactionId", transactionId);
 
         ResponseEntity<?> buyResponse = null;
 
         if (item.get().getItemType() == ItemType.ITEM) {
-            requestPayload.put("item-type", itemName);
+            requestPayload.put("itemType", itemName);
             buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/items", requestPayload, String.class);
-//            buyResponse = new ResponseEntity<>("Item <item> added to robot <uuid>.", HttpStatus.OK);
             item.get().addHistory(this.gameService.getRoundCount());
 
         } else if (item.get().getItemType() == ItemType.HEALTH || item.get().getItemType() == ItemType.ENERGY) {
-            requestPayload.put("restoration-type", itemName);
+            requestPayload.put("restorationType", itemName);
             buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/instant-restore", requestPayload, String.class);
-//            buyResponse = new ResponseEntity<>("robot <uuid> has been fully healed", HttpStatus.OK);
 
         } else {
-            requestPayload.put("upgrade-type", itemName);
+            requestPayload.put("upgradeType", itemName.substring(0, itemName.length() - 1));
+            requestPayload.put("targetLevel", itemName.substring(itemName.length() - 1));
             buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/upgrades", requestPayload, String.class);
-//            buyResponse = new ResponseEntity<>("Energy capacity of robot <uuid> has been upgraded to <new-lvl>", HttpStatus.OK);
         }
 
         if (buyResponse.getStatusCode() != HttpStatus.OK)
