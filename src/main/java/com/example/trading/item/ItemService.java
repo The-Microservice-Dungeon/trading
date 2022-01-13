@@ -22,6 +22,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -79,7 +81,7 @@ public class ItemService {
      * @param robotAmount that should be bought
      * @return amount of money that has been deducted from the player
      */
-    public int buyRobots(UUID transactionId, UUID playerId, int robotAmount) {
+    public Map<String, ?> buyRobots(UUID transactionId, UUID playerId, int robotAmount) {
         if (robotAmount <= 0)
             throw new IllegalArgumentException("Cannot buy " + robotAmount + " robots");
 
@@ -97,13 +99,17 @@ public class ItemService {
         ResponseEntity<?> buyResponse;
 
         buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots", requestPayload, JSONArray.class);
-//        buyResponse = new ResponseEntity<>("some big array with created robots", HttpStatus.CREATED);
 
         if (buyResponse.getStatusCode() != HttpStatus.CREATED)
             throw new RequestReturnedErrorException(buyResponse.getBody().toString());
 
         int newAmount = this.playerService.reduceMoney(playerId, fullPrice);
-        return -fullPrice;
+
+        Map<String, String> returnData = new HashMap<>();
+        returnData.put("moneyChangedBy", String.valueOf(-fullPrice));
+        returnData.put("message", buyResponse.getBody().toString());
+        returnData.put("data", buyResponse.getBody().toString());
+        return returnData;
     }
 
     /**
@@ -116,7 +122,7 @@ public class ItemService {
      * @param itemName that should be bought
      * @return amount of money that has been deducted from the player
      */
-    public int buyItem(UUID transactionId, UUID playerId, UUID robotId, UUID planetId, String itemName) {
+    public Map<String, ?> buyItem(UUID transactionId, UUID playerId, UUID robotId, UUID planetId, String itemName) {
         Optional<Item> item = this.itemRepository.findByName(itemName);
         if (item.isEmpty()) throw new ItemDoesNotExistException(itemName);
 
@@ -148,8 +154,14 @@ public class ItemService {
         if (buyResponse.getStatusCode() != HttpStatus.OK)
             throw new RequestReturnedErrorException(buyResponse.getBody().toString());
 
+
         int newAmount = this.playerService.reduceMoney(playerId, item.get().getCurrentPrice());
-        return -item.get().getCurrentPrice();
+
+        Map<String, String> returnData = new HashMap<>();
+        returnData.put("moneyChangedBy", String.valueOf(-item.get().getCurrentPrice()));
+        returnData.put("message", buyResponse.getBody().toString());
+        returnData.put("data", null);
+        return returnData;
     }
 
     /**

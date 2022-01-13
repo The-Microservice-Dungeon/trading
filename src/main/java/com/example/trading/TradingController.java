@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -49,7 +50,7 @@ public class TradingController {
             JSONObject command = (JSONObject) commandObject;
             JSONObject payload = (JSONObject) command.get("payload");
 
-            int moneyChangedBy = 0;
+            Map<String, ?> result = null;
 
             String transactionId = command.get("transactionId").toString();
             String eventType = "";
@@ -60,34 +61,26 @@ public class TradingController {
                 try {
                     item = (String) payload.get("itemName");
                 } catch (Exception e) {
-                    response.put("success", false);
-                    response.put("moneyChangedBy", 0);
-                    response.put("message", e.getMessage());
-//                    kafka produce
-                    this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "buy-error");
+                    this.sendErrorEvent(e.getMessage(), transactionId, "buy-error");
                     continue;
                 }
 
                 if (Objects.equals(item, "ROBOT")) {
                     try {
-                        moneyChangedBy = this.itemService.buyRobots(
+                        result = this.itemService.buyRobots(
                                 UUID.fromString((String) command.get("transactionId")),
                                 UUID.fromString((String) command.get("playerId")),
                                 (Integer) payload.get("amount")
                         );
                         eventType = "buy-robot";
                     } catch (Exception e) {
-                        response.put("success", false);
-                        response.put("moneyChangedBy", 0);
-                        response.put("message", e.getMessage());
-//                        kafka Produce
-                        this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "buy-error");
+                        this.sendErrorEvent(e.getMessage(), transactionId, "buy-error");
                         continue;
                     }
 
                 } else if (item != null) {
                     try {
-                        moneyChangedBy = this.itemService.buyItem(
+                        result = this.itemService.buyItem(
                                 UUID.fromString((String) command.get("transactionId")),
                                 UUID.fromString((String) command.get("playerId")),
                                 UUID.fromString((String) payload.get("robotId")),
@@ -96,11 +89,7 @@ public class TradingController {
                         );
                         eventType = "buy-item";
                     } catch (Exception e) {
-                        response.put("success", false);
-                        response.put("moneyChangedBy", 0);
-                        response.put("message", e.getMessage());
-//                        kafka Produce
-                        this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "buy-error");
+                        this.sendErrorEvent(e.getMessage(), transactionId, "buy-error");
                         continue;
                     }
 
@@ -110,7 +99,7 @@ public class TradingController {
 
             } else if (Objects.equals(payload.get("commandType"), "sell")) {
                 try {
-                    moneyChangedBy = this.resourceService.sellResources(
+                    result = this.resourceService.sellResources(
                             UUID.fromString((String) command.get("transactionId")),
                             UUID.fromString((String) command.get("playerId")),
                             UUID.fromString((String) payload.get("robotId")),
@@ -118,22 +107,28 @@ public class TradingController {
                     );
                     eventType = "sell-resource";
                 } catch (Exception e) {
-                    response.put("success", false);
-                    response.put("moneyChangedBy", 0);
-                    response.put("message", e.getMessage());
-//                    kafka Produce
-                    this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, "sell-error");
+                    this.sendErrorEvent(e.getMessage(), transactionId, "sell-error");
                     continue;
                 }
             }
 
             response.put("success", true);
-            response.put("moneyChangedBy", moneyChangedBy);
-            response.put("message", "success");
+            response.put("moneyChangedBy", Integer.parseInt((String) result.get("moneyChangedBy")));
+            response.put("message", result.get("message"));
+            response.put("data", response.get("data"));
 //            Kafka produce
             this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, eventType);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private void sendErrorEvent(String exceptionMessage, String transactionId, String type) {
+        JSONObject response = new JSONObject();
+        response.put("success", false);
+        response.put("moneyChangedBy", 0);
+        response.put("message", exceptionMessage);
+        response.put("data", null);
+        this.tradingEventProducer.publishTradingResult(response.toString(), transactionId, type);
     }
 }
