@@ -211,40 +211,40 @@ components:
           success: true
           moneyChangedBy: -500
           message: "robot bought"
-          data:   
-            id: "497f6eca-6276-4993-bfeb-53cbbbba6f08"
-            player: "ae2cfcf0-e870-4360-a41e-3b3bb3312234"
-            planet: "2faf337d-d8d1-40fc-983e-5f130540496b"
-            alive: true
-            maxHealth: 100
-            maxEnergy: 60
-            energyRegen: 8
-            attackDamage: 5
-            miningSpeed: 10
-            health: 75
-            energy: 43
-            healthLevel: 5
-            damageLevel: 5
-            miningSpeedLevel: 5
-            miningLevel: 5
-            energyLevel: 5
-            energyRegenLevel: 5
-            storageLevel: 5
-            inventory:
-              maxStorage: 20
-              usedStorage: 5
-              coal: 3
-              iron: 2
-              gem: 0
-              gold: 0
-              platin: 0
-            items: 
-              rocket: 0
-              wormhole: 2
-              longRangeBombardement: 0
-              selfDestruction: 1
-              repairSwarm: 0
-              nuke: 3
+          data:
+            - id: "497f6eca-6276-4993-bfeb-53cbbbba6f08"
+              player: "ae2cfcf0-e870-4360-a41e-3b3bb3312234"
+              planet: "2faf337d-d8d1-40fc-983e-5f130540496b"
+              alive: true
+              maxHealth: 100
+              maxEnergy: 60
+              energyRegen: 8
+              attackDamage: 5
+              miningSpeed: 10
+              health: 75
+              energy: 43
+              healthLevel: 5
+              damageLevel: 5
+              miningSpeedLevel: 5
+              miningLevel: 5
+              energyLevel: 5
+              energyRegenLevel: 5
+              storageLevel: 5
+              inventory:
+                maxStorage: 20
+                usedStorage: 5
+                coal: 3
+                iron: 2
+                gem: 0
+                gold: 0
+                platin: 0
+              items: 
+                rocket: 0
+                wormhole: 2
+                longRangeBombardement: 0
+                selfDestruction: 1
+                repairSwarm: 0
+                nuke: 3
         headers:
           type: "buy-robot"
           eventId: "5bc9f935-32f1-4d7b-a90c-ff0e6e34125a"
