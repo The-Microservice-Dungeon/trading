@@ -33,10 +33,7 @@ public class PlayerEventConsumer {
             PlayerStatusDto player = this.objectMapper.readValue(consumerRecord.value(), PlayerStatusDto.class);
             String transactionID = this.domainEventService.saveDomainEvent(player.toString(), consumerRecord.headers());
 
-            if (Objects.equals(player.lobbyAction, "joined")) {
-                this.playerService.createPlayer(player, transactionID);
-            }
-
+            this.playerService.createPlayer(player, transactionID);
         } catch (Exception e) {
             this.kafkaErrorService.newKafkaError("playerStatus", consumerRecord.toString(), e.getMessage());
         }

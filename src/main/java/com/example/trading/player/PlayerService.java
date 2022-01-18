@@ -33,7 +33,7 @@ public class PlayerService {
      * @param playerStatusDto dto from player-status event
      */
     public void createPlayer(PlayerStatusDto playerStatusDto, String transactionId) {
-        Player player = new Player(UUID.fromString(playerStatusDto.userId), 200);
+        Player player = new Player(UUID.fromString(playerStatusDto.playerId), 200);
         this.playerRepository.save(player);
         this.playerEventProducer.publishPlayerBankCreation(player.getPlayerId(), player.getMoneyAmount(), transactionId);
     }

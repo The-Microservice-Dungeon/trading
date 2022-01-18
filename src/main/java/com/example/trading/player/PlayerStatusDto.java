@@ -1,7 +1,6 @@
 package com.example.trading.player;
 
 public class PlayerStatusDto {
-    public String userId;
+    public String playerId;
     public String name;
-    public String lobbyAction;
 }
