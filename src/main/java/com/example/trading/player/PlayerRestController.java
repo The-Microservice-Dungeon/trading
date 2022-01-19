@@ -21,7 +21,12 @@ public class PlayerRestController {
 
     @GetMapping("/balances/{round}")
     public ResponseEntity<?> getPlayerBalancesForRound(@PathVariable int round) {
-        JSONArray balances = this.playerService.getPlayerBalancesForRound(round);
-        return new ResponseEntity<JSONArray>(balances, HttpStatus.OK);
+        try {
+            JSONArray balances = this.playerService.getPlayerBalancesForRound(round);
+            return new ResponseEntity<JSONArray>(balances, HttpStatus.OK);
+        } catch (Exception e) {
+            String errorMsg = "There are no balanceHistories for round " + round + " saved.";
+            return new ResponseEntity<String>(errorMsg, HttpStatus.NOT_FOUND);
+        }
     }
 }
