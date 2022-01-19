@@ -22,7 +22,7 @@ public class Player {
 
     @ElementCollection
     @MapKeyColumn(name="roundNumber")
-    @Column(name="amount")
+    @Column(name="balance")
     @Getter
     private Map<Integer, Integer> balanceHistory;
 
@@ -32,6 +32,7 @@ public class Player {
         this.playerId = playerId;
         this.moneyAmount = startMoney;
         this.balanceHistory = new HashMap<>();
+        this.addCurrentBalanceToHistory(0);
     }
 
     public void addCurrentBalanceToHistory(int currentRound) {

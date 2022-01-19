@@ -123,7 +123,11 @@ public class PlayerService {
             JSONObject jsonBalance = new JSONObject();
             jsonBalance.put("round", roundNumber);
             jsonBalance.put("player-id", player.getPlayerId().toString());
-            jsonBalance.put("balance", player.getMoneyAmountFromRound(roundNumber));
+            try {
+                jsonBalance.put("balance", player.getMoneyAmountFromRound(roundNumber));
+            } catch (Exception e) {
+                jsonBalance.put("balance", null);
+            }
             balances.appendElement(jsonBalance);
         }
 
