@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class GameEventConsumer {
     @Autowired
@@ -32,8 +33,11 @@ public class GameEventConsumer {
             this.domainEventService.saveDomainEvent(statusDto.toString(), consumerRecord.headers());
 
             if (Objects.equals(statusDto.status, "created")) {
-                this.gameService.startNewGame(statusDto.gameId);
+                this.gameService.createNewGame(UUID.fromString(statusDto.gameId));
+            } else if (Objects.equals(statusDto.status, "started")) {
+                this.gameService.startNewGame(UUID.fromString(statusDto.gameId));
             }
+
         } catch (Exception e) {
             this.kafkaErrorService.newKafkaError("(game-) status", consumerRecord.toString(), e.getMessage());
         }

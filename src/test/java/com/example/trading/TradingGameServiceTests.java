@@ -1,12 +1,11 @@
 package com.example.trading;
 
-import com.example.trading.game.RoundDto;
 import com.example.trading.game.GameService;
-import com.example.trading.player.Player;
 import com.example.trading.player.PlayerRepository;
-import com.example.trading.station.Station;
 import com.example.trading.station.StationRepository;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,31 +31,14 @@ public class TradingGameServiceTests {
         this.stationRepository = stationRepository;
     }
 
-    @AfterEach
-    public void clearRound() {
-        RoundDto dto = new RoundDto();
-        dto.roundNumber = 0;
-        dto.roundStatus = "init";
-        this.gameService.updateRound(dto);
-    }
-
     @Test
     @Transactional
-    public void initGameTest() {
-        assertEquals(0, this.gameService.getRoundCount());
-        assertEquals("init", this.gameService.getRoundStatus());
-    }
+    public void createGameTest() {
+        this.gameService.createNewGame(UUID.randomUUID());
 
-
-    @Test
-    @Transactional
-    public void startNewGameTest() {
-        this.playerRepository.save(new Player(UUID.randomUUID(), 200));
-        this.stationRepository.save(new Station(UUID.randomUUID()));
-
-        this.gameService.startNewGame(UUID.randomUUID().toString());
-
-        assertEquals("[]", this.playerRepository.findAll().toString());
-        assertEquals("[]", this.stationRepository.findAll().toString());
+        assertNotEquals(
+                "[]",
+                this.gameService.getGames().toString()
+        );
     }
 }

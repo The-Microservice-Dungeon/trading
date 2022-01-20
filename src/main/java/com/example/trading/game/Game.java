@@ -1,37 +1,50 @@
 package com.example.trading.game;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.util.UUID;
+
 /**
  * Game manages the round count and status for our service
  * needed for the calculation of item and resource prices
  * needed for the saving of item and resource histories
  */
+@Entity
+@Getter
+@NoArgsConstructor
 public class Game {
-    private static int currentRound = 0;
-    private static String status = null;
 
-    private static String currentGameId = null;
+    @Id
+    private UUID gameId;
 
-    public static void updateRoundCount(int newCount) {
-        currentRound = newCount;
+    private Boolean isCurrentGame;
+
+    private int currentRound;
+    private String roundStatus;
+
+    public Game(UUID newGame) {
+        this.gameId = newGame;
+        this.currentRound = 0;
+        this.roundStatus = "init";
+        this.isCurrentGame = false;
     }
 
-    public static void updateStatus(String newStatus) {
-        status = newStatus;
+    public void updateRoundCount(int newCount) {
+        this.currentRound = newCount;
     }
 
-    public static void updateGameId(String newGame) {
-        currentGameId = newGame;
+    public void updateRoundStatus(String newStatus) {
+        this.roundStatus = newStatus;
     }
 
-    public static int getCurrentRound() {
-        return currentRound;
+    public void stopGame() {
+        this.isCurrentGame = false;
     }
 
-    public static String getCurrentStatus() {
-        return status;
-    }
-
-    public static String getCurrentGameId() {
-        return currentGameId;
+    public void startGame() {
+        this.isCurrentGame = true;
     }
 }

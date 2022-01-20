@@ -8,9 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class GameService {
+
+    @Autowired
+    private GameRepository gameRepository;
 
     @Autowired
     private PlayerService playerService;
@@ -24,20 +29,25 @@ public class GameService {
     @Autowired
     private StationService stationService;
 
-    public GameService() {
-        Game.updateRoundCount(0);
-        Game.updateStatus("init");
+    public void createNewGame(UUID newGameId) {
+        Game newGame = new Game(newGameId);
+        this.gameRepository.save(newGame);
     }
 
-    public void startNewGame(String newGameId) {
-        this.itemService.resetItems();
-        this.resourceService.resetResources();
-        this.playerService.removePlayers();
-        this.stationService.removeStations();
+    public void startNewGame(UUID newGameId) {
+        Optional<Game> currentGame = this.gameRepository.findByIsCurrentGame(true);
+        if (currentGame.isPresent()) {
+            System.out.println("Stop old game: " + currentGame.get().getGameId());
+            currentGame.get().stopGame();
+            this.itemService.resetItems();
+            this.resourceService.resetResources();
+            this.playerService.removePlayers();
+            this.stationService.removeStations();
+        }
 
-        Game.updateGameId(newGameId);
-        Game.updateRoundCount(0);
-        Game.updateStatus("init");
+        Optional<Game> newGame = this.gameRepository.findById(newGameId);
+        newGame.get().startGame();
+        this.gameRepository.save(newGame.get());
     }
 
     public void updateRound(RoundDto roundDto) {
@@ -47,20 +57,29 @@ public class GameService {
             this.itemService.calculateNewItemPrices();
             this.resourceService.calculateNewResourcePrices();
         }
-        Game.updateStatus(roundDto.roundStatus);
-        Game.updateRoundCount(roundDto.roundNumber);
+
+        Optional<Game> newGame = this.gameRepository.findByIsCurrentGame(true);
+        newGame.get().updateRoundCount(roundDto.roundNumber);
+        newGame.get().updateRoundStatus(roundDto.roundStatus);
     }
 
     public int getRoundCount() {
-        return Game.getCurrentRound();
+        Optional<Game> newGame = this.gameRepository.findByIsCurrentGame(true);
+        return newGame.get().getCurrentRound();
     }
 
     public String getRoundStatus() {
-        return Game.getCurrentStatus();
+        Optional<Game> newGame = this.gameRepository.findByIsCurrentGame(true);
+        return newGame.get().getRoundStatus();
     }
 
-    public String getGameId() {
-        return Game.getCurrentGameId();
+    public UUID getCurrentGameId() {
+        Optional<Game> newGame = this.gameRepository.findByIsCurrentGame(true);
+        return newGame.get().getGameId();
+    }
+
+    public Iterable<Game> getGames() {
+        return this.gameRepository.findAll();
     }
 }
 
