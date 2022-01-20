@@ -107,7 +107,7 @@ public class ItemService {
 
         Map<String, String> returnData = new HashMap<>();
         returnData.put("moneyChangedBy", String.valueOf(-fullPrice));
-        returnData.put("message", buyResponse.getBody().toString());
+        returnData.put("message", "robot-buy successful");
         returnData.put("data", buyResponse.getBody().toString());
         return returnData;
     }
