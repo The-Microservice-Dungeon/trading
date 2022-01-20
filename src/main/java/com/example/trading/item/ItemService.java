@@ -93,7 +93,7 @@ public class ItemService {
 
         JSONObject requestPayload = new JSONObject();
         requestPayload.put("transactionId", transactionId);
-        requestPayload.put("player", transactionId);
+        requestPayload.put("player", playerId);
         requestPayload.put("planets", this.stationService.getRandomStations(robotAmount));
         requestPayload.put("quantity", robotAmount);
         ResponseEntity<?> buyResponse;
