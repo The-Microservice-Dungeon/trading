@@ -97,7 +97,9 @@ public class TradingIntegrationTest {
     @Test
     @Transactional
     public void updateRoundTest() {
-        RoundDto dto = new RoundDto(1, "started");
+        RoundDto dto = new RoundDto();
+        dto.roundNumber = 1;
+        dto.roundStatus = "started";
         this.gameService.updateRound(dto);
 
         assertEquals(1, this.gameService.getRoundCount());
@@ -107,12 +109,21 @@ public class TradingIntegrationTest {
     @Test
     @Transactional
     public void getSpecificRoundPlayerBalances() {
-        this.gameService.updateRound(new RoundDto(1, "started"));
+        RoundDto round1Start = new RoundDto();
+        round1Start.roundNumber = 1; round1Start.roundStatus = "started";
+        RoundDto round1End = new RoundDto();
+        round1End.roundNumber = 1; round1End.roundStatus = "ended";
+        RoundDto round2Start = new RoundDto();
+        round2Start.roundNumber = 2; round2Start.roundStatus = "started";
+        RoundDto round2End = new RoundDto();
+        round2End.roundNumber = 2; round2End.roundStatus = "ended";
+
+        this.gameService.updateRound(round1Start);
         UUID newPlayerId = this.playerService.createPlayer(200);
-        this.gameService.updateRound(new RoundDto(1, "ended"));
-        this.gameService.updateRound(new RoundDto(2, "started"));
+        this.gameService.updateRound(round1End);
+        this.gameService.updateRound(round2Start);
         this.playerService.reduceMoney(newPlayerId, 50);
-        this.gameService.updateRound(new RoundDto(2, "ended"));
+        this.gameService.updateRound(round2End);
 
         JSONArray round1 = this.playerService.getPlayerBalancesForRound(1);
         JSONObject playerRound1 = (JSONObject) round1.get(0);

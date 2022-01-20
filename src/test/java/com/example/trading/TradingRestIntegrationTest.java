@@ -149,9 +149,14 @@ public class TradingRestIntegrationTest {
     @Test
     @Transactional
     public void getBalancesForSpecificRoundRestTest() throws Exception {
-        this.gameService.updateRound(new RoundDto(1, "started"));
+        RoundDto round1Started = new RoundDto();
+        round1Started.roundNumber = 1; round1Started.roundStatus = "started";
+        RoundDto round1Ended = new RoundDto();
+        round1Ended.roundNumber = 1; round1Ended.roundStatus = "ended";
+
+        this.gameService.updateRound(round1Started);
         UUID playerId = this.playerService.createPlayer(200);
-        this.gameService.updateRound(new RoundDto(1, "ended"));
+        this.gameService.updateRound(round1Ended);
 
         MvcResult result = mockMvc
                 .perform(get("/balances/1").contentType(MediaType.APPLICATION_JSON))
