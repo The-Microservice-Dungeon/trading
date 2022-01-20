@@ -19,7 +19,9 @@ public class DomainEvent {
     @Id
     public String eventId;
 
+    @Column(length = 3000)
     public String payload;
+
     public String type;
     public String transactionId;
     public String version;

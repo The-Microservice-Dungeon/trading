@@ -21,6 +21,7 @@ public class KafkaError {
     private UUID id;
 
     @Getter
+    @Column(length = 3000)
     private String message;
 
     public KafkaError(String msg) {

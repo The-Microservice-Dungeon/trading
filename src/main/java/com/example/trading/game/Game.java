@@ -3,6 +3,7 @@ package com.example.trading.game;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.UUID;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class Game {
 
     @Id
+    @Column(columnDefinition = "BINARY(16)")
     private UUID gameId;
 
     private Boolean isCurrentGame;

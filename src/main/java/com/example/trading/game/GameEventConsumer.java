@@ -9,10 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.UUID;
 
+@Component
 public class GameEventConsumer {
     @Autowired
     private GameService gameService;
@@ -49,7 +51,6 @@ public class GameEventConsumer {
             RoundDto round = this.objectMapper.readValue(consumerRecord.value(), RoundDto.class);
             this.domainEventService.saveDomainEvent(round.toString(), consumerRecord.headers());
             this.gameService.updateRound(round);
-
         } catch (Exception e) {
             this.kafkaErrorService.newKafkaError("roundStatus", consumerRecord.toString(), e.getMessage());
         }

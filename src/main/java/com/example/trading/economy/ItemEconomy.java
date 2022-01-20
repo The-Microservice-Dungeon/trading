@@ -1,6 +1,7 @@
 package com.example.trading.economy;
 
 import lombok.Getter;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -20,10 +21,10 @@ public class ItemEconomy {
     private int roundCount;
     private int stock;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="itemHistory")
     @MapKeyColumn(name="roundNumber")
-    @Column(name="amount")
+    @Column(name="itemHistory")
     @Getter
     private Map<Integer, Integer> history;
 

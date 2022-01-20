@@ -3,6 +3,7 @@ package com.example.trading.core.kafka;
 import com.example.trading.core.BeanUtil;
 import com.example.trading.core.kafka.error.KafkaError;
 import com.example.trading.core.kafka.error.KafkaErrorRepository;
+import com.example.trading.core.kafka.error.KafkaErrorService;
 import com.example.trading.event.DomainEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -30,6 +31,9 @@ public class KafkaMessageProducer {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private KafkaErrorService kafkaErrorService;
+
     private final List<Pair<String, DomainEvent>> errors = new ArrayList<>();
 
     public void send(String topic, DomainEvent event) {
@@ -47,12 +51,15 @@ public class KafkaMessageProducer {
             public void onFailure(Throwable ex) {
                 String errorMessage = "Couldn't send message: " + record + "\n" + ex.getMessage();
                 errors.add(Pair.of(topic, event));
-//                beanUtil.getBean(KafkaErrorRepository.class).save(new KafkaError(errorMessage));
+//                kafkaErrorService.newKafkaError(topic, ex.getMessage());
+                KafkaErrorService kafkaErrorService = (KafkaErrorService) beanUtil.getBean(KafkaErrorService.class);
+                kafkaErrorService.newKafkaError(topic, ex.getMessage());
             }
 
             @Override
             public void onSuccess(SendResult<String, String> result) {
 //              ?
+                System.out.println("success on sending this shit");
             }
         });
     }

@@ -20,7 +20,7 @@ public class Player {
     @Getter
     private int moneyAmount;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="roundNumber")
     @Column(name="balance")
     @Getter

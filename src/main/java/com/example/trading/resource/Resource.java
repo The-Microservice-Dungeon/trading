@@ -30,7 +30,7 @@ public class Resource {
     @Getter
     private int originalPrice;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="roundNumber")
     @Column(name="price")
     @Getter

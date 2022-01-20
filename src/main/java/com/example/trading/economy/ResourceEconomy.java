@@ -20,10 +20,10 @@ public class ResourceEconomy {
     private int roundCount;
     private int demand;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="resourceHistory")
     @MapKeyColumn(name="roundNumber")
-    @Column(name="amount")
+    @Column(name="resourceHistory")
     @Getter
     private Map<Integer, Integer> history;
 
