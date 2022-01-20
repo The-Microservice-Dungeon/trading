@@ -2,11 +2,8 @@ package com.example.trading;
 
 import com.example.trading.game.RoundDto;
 import com.example.trading.game.GameService;
-import com.example.trading.item.ItemRepository;
-import com.example.trading.item.ItemService;
 import com.example.trading.player.Player;
 import com.example.trading.player.PlayerRepository;
-import com.example.trading.resource.ResourceRepository;
 import com.example.trading.station.Station;
 import com.example.trading.station.StationRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -37,7 +34,9 @@ public class TradingGameServiceTests {
 
     @AfterEach
     public void clearRound() {
-        RoundDto dto = new RoundDto(0, "init");
+        RoundDto dto = new RoundDto();
+        dto.roundNumber = 0;
+        dto.roundStatus = "init";
         this.gameService.updateRound(dto);
     }
 
