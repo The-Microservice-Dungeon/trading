@@ -82,4 +82,12 @@ public class Item {
 //        System.out.println("RoundAdjust: " + roundAdjust);
 //        System.out.println("NewPrice: " + this.currentPrice);
     }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                ", name='" + name + '\'' +
+                ", price=" + currentPrice +
+                '}';
+    }
 }

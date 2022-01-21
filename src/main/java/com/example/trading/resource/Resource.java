@@ -66,4 +66,12 @@ public class Resource {
 //        System.out.println("PriceFactor: " + priceFactor);
 //        System.out.println("NewPrice: " + this.currentPrice);
     }
+
+    @Override
+    public String toString() {
+        return "Resource{" +
+                "name='" + name + '\'' +
+                ", price=" + currentPrice +
+                '}';
+    }
 }
