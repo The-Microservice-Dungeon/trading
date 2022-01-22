@@ -30,14 +30,8 @@ public class GameService {
     private StationService stationService;
 
     public void createNewGame(UUID newGameId) {
-        Game newGame = new Game(newGameId);
-        this.gameRepository.save(newGame);
-    }
-
-    public void startNewGame(UUID newGameId) {
         Optional<Game> currentGame = this.gameRepository.findByIsCurrentGame(true);
         if (currentGame.isPresent()) {
-            System.out.println("Stop old game: " + currentGame.get().getGameId());
             currentGame.get().stopGame();
             this.itemService.resetItems();
             this.resourceService.resetResources();
@@ -45,14 +39,30 @@ public class GameService {
             this.stationService.removeStations();
         }
 
-        Optional<Game> newGame = this.gameRepository.findById(newGameId);
-        newGame.get().startGame();
-        this.gameRepository.save(newGame.get());
+        Game newGame = new Game(newGameId);
+        newGame.startGame();
+        this.gameRepository.save(newGame);
     }
+
+//    public void startNewGame(UUID newGameId) {
+//        Optional<Game> currentGame = this.gameRepository.findByIsCurrentGame(true);
+//        if (currentGame.isPresent()) {
+//            System.out.println("Stop old game: " + currentGame.get().getGameId());
+//            currentGame.get().stopGame();
+//            this.itemService.resetItems();
+//            this.resourceService.resetResources();
+//            this.playerService.removePlayers();
+//            this.stationService.removeStations();
+//        }
+//
+//        Optional<Game> newGame = this.gameRepository.findById(newGameId);
+//        newGame.get().startGame();
+//        this.gameRepository.save(newGame.get());
+//    }
 
     public void updateRound(RoundDto roundDto) {
         if (Objects.equals(roundDto.roundStatus, "ended")) {
-            this.playerService.updatePlayerBalanceHistories(getRoundCount());
+            this.playerService.updatePlayerBalanceHistories(roundDto.roundNumber);
         } else if (Objects.equals(roundDto.roundStatus, "started")) {
             this.itemService.calculateNewItemPrices();
             this.resourceService.calculateNewResourcePrices();

@@ -19,7 +19,7 @@ public class DomainEvent {
     @Id
     public String eventId;
 
-    @Column(length = 3000)
+    @Column(length = 10000)
     public String payload;
 
     public String type;

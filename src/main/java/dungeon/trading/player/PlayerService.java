@@ -6,6 +6,7 @@ import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -107,11 +108,10 @@ public class PlayerService {
         return balances;
     }
 
-    public void updatePlayerBalanceHistories(int currentRound) {
-        Iterable<Player> players = this.playerRepository.findAll();
-
-        for (Player player : players) {
-            player.addCurrentBalanceToHistory(currentRound);
+    @Transactional
+    public void updatePlayerBalanceHistories(int roundNumber) {
+        for (Player player : this.playerRepository.findAll()) {
+            player.addCurrentBalanceToHistory(roundNumber);
         }
     }
 

@@ -26,7 +26,10 @@ public class PlayerEventConsumer {
     public void listenToPlayerCreation(ConsumerRecord<String, String> consumerRecord) {
         try {
             PlayerStatusDto player = this.objectMapper.readValue(consumerRecord.value(), PlayerStatusDto.class);
-            String transactionID = this.domainEventService.saveDomainEvent(player.toString(), consumerRecord.headers());
+            String transactionID = this.domainEventService.saveDomainEvent(
+                    "{\"playerId\":" + player.playerId + ",\"name\":\"" + player.name + "\"}",
+                    consumerRecord.headers()
+            );
 
             this.playerService.createPlayer(player, transactionID);
         } catch (Exception e) {

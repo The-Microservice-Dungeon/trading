@@ -29,14 +29,14 @@ public class GameEventConsumer {
     public void listenToGameStatus(ConsumerRecord<String, String> consumerRecord) {
         try {
             GameStatusDto statusDto = this.objectMapper.readValue(consumerRecord.value(), GameStatusDto.class);
-            this.domainEventService.saveDomainEvent(statusDto.toString(), consumerRecord.headers());
+            this.domainEventService.saveDomainEvent(
+                    "{\"gameId\":" + statusDto.gameId + ",\"status\":\"" + statusDto.status + "\"}",
+                    consumerRecord.headers()
+            );
 
             if (Objects.equals(statusDto.status, "created")) {
                 this.gameService.createNewGame(UUID.fromString(statusDto.gameId));
-            } else if (Objects.equals(statusDto.status, "started")) {
-                this.gameService.startNewGame(UUID.fromString(statusDto.gameId));
             }
-
         } catch (Exception e) {
             this.kafkaErrorService.newKafkaError("(game-) status", consumerRecord.toString(), e.getMessage());
         }
@@ -46,7 +46,10 @@ public class GameEventConsumer {
     public void listenToRoundStarted(ConsumerRecord<String, String> consumerRecord) {
         try {
             RoundDto round = this.objectMapper.readValue(consumerRecord.value(), RoundDto.class);
-            this.domainEventService.saveDomainEvent(round.toString(), consumerRecord.headers());
+            this.domainEventService.saveDomainEvent(
+                    "{\"roundNumber\":" + round.roundNumber + ",\"roundStatus\":\"" + round.roundStatus + "\"}",
+                    consumerRecord.headers()
+            );
             this.gameService.updateRound(round);
         } catch (Exception e) {
             this.kafkaErrorService.newKafkaError("roundStatus", consumerRecord.toString(), e.getMessage());

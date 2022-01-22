@@ -26,7 +26,10 @@ public class StationEventConsumer {
     public void listenToSpaceStationCreation(ConsumerRecord<String, String> consumerRecord) {
         try {
             StationDto stationDto = this.objectMapper.readValue(consumerRecord.value(), StationDto.class);
-            this.domainEventService.saveDomainEvent(stationDto.toString(), consumerRecord.headers());
+            this.domainEventService.saveDomainEvent(
+                    "{\"station_id\":" + stationDto.planet_id + "}",
+                    consumerRecord.headers()
+            );
             this.stationService.createNewStation(stationDto);
         } catch (Exception e) {
             this.kafkaErrorService.newKafkaError("spacestation-created", consumerRecord.toString(), e.getMessage());
