@@ -85,10 +85,11 @@ public class ResourceService {
 
         JSONObject responseBody = (JSONObject) sellResponse.getBody();
 
-        Map<String, String> returnData = new HashMap<>();
+        Map<String, Object> returnData = new HashMap<>();
         if (responseBody == null) {
-            returnData.put("moneyChangedBy", String.valueOf(0));
+            returnData.put("moneyChangedBy", 0);
             returnData.put("message", "Robot inventory is empty");
+            returnData.put("data", null);
             return returnData;
         }
 
@@ -104,9 +105,9 @@ public class ResourceService {
 
         this.playerService.addMoney(playerId, fullAmount);
 
-        returnData.put("moneyChangedBy", String.valueOf(fullAmount));
+        returnData.put("moneyChangedBy", fullAmount);
         returnData.put("message", "resources sold");
-        returnData.put("data", responseBody.toString());
+        returnData.put("data", responseBody);
         return returnData;
     }
 

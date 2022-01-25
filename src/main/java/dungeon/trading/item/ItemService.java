@@ -77,7 +77,7 @@ public class ItemService {
      * @param robotAmount that should be bought
      * @return amount of money that has been deducted from the player
      */
-    public Map<String, ?> buyRobots(UUID transactionId, UUID playerId, int robotAmount) {
+    public Map<String, Object> buyRobots(UUID transactionId, UUID playerId, int robotAmount) {
         if (robotAmount <= 0)
             throw new IllegalArgumentException("Cannot buy " + robotAmount + " robots");
 
@@ -101,10 +101,10 @@ public class ItemService {
 
         int newAmount = this.playerService.reduceMoney(playerId, fullPrice);
 
-        Map<String, String> returnData = new HashMap<>();
-        returnData.put("moneyChangedBy", String.valueOf(-fullPrice));
+        Map<String, Object> returnData = new HashMap<>();
+        returnData.put("moneyChangedBy", -fullPrice);
         returnData.put("message", "robot-buy successful");
-        returnData.put("data", buyResponse.getBody().toString());
+        returnData.put("data", buyResponse.getBody());
         return returnData;
     }
 
@@ -153,9 +153,9 @@ public class ItemService {
 
         int newAmount = this.playerService.reduceMoney(playerId, item.get().getCurrentPrice());
 
-        Map<String, String> returnData = new HashMap<>();
-        returnData.put("moneyChangedBy", String.valueOf(-item.get().getCurrentPrice()));
-        returnData.put("message", buyResponse.getBody().toString());
+        Map<String, Object> returnData = new HashMap<>();
+        returnData.put("moneyChangedBy", -item.get().getCurrentPrice());
+        returnData.put("message", buyResponse.getBody());
         returnData.put("data", null);
         return returnData;
     }

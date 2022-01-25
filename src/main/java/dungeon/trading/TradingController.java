@@ -113,7 +113,7 @@ public class TradingController {
             }
 
             response.put("success", true);
-            response.put("moneyChangedBy", Integer.parseInt((String) result.get("moneyChangedBy")));
+            response.put("moneyChangedBy", result.get("moneyChangedBy"));
             response.put("message", result.get("message"));
             response.put("data", result.get("data"));
 //            Kafka produce
