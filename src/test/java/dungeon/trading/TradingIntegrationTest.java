@@ -133,6 +133,4 @@ public class TradingIntegrationTest {
         assertEquals(200, playerRound1.get("balance"));
         assertEquals(150, playerRound2.get("balance"));
     }
-
-
 }

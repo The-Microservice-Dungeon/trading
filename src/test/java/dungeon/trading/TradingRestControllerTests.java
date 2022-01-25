@@ -93,7 +93,7 @@ public class TradingRestControllerTests {
                 .andReturn();
 
         assertEquals(
-                "{\"price\":40,\"item-name\":\"ROCKET\",\"type\":\"item\"}",
+                "{\"itemName\":\"ROCKET\",\"price\":40,\"type\":\"item\"}",
                 result.getResponse().getContentAsString()
         );
     }
@@ -109,7 +109,7 @@ public class TradingRestControllerTests {
                 .andReturn();
 
         assertEquals(
-                "[{\"balance\":200,\"player-id\":\"" + playerId + "\"}]",
+                "[{\"balance\":200,\"playerId\":\"" + playerId + "\"}]",
                 result.getResponse().getContentAsString()
         );
     }

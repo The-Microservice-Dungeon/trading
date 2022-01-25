@@ -76,7 +76,7 @@ class TradingPlayerServiceTests {
         UUID newPlayerId = this.playerService.createPlayer(500);
 
         assertEquals(
-                "[{\"balance\":500,\"player-id\":\"" + newPlayerId + "\"}]",
+                "[{\"balance\":500,\"playerId\":\"" + newPlayerId + "\"}]",
                 this.playerService.getAllCurrentPlayerBalances().toString()
         );
     }

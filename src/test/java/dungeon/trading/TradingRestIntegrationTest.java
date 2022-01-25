@@ -164,7 +164,7 @@ public class TradingRestIntegrationTest {
                 .andReturn();
 
         assertEquals(
-                "[{\"round\":1,\"balance\":200,\"player-id\":\"" + playerId + "\"}]",
+                "[{\"round\":1,\"balance\":200,\"playerId\":\"" + playerId + "\"}]",
                 result.getResponse().getContentAsString()
         );
     }

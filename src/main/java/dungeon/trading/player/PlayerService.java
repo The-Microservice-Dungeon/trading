@@ -100,7 +100,7 @@ public class PlayerService {
 
         for (Player player : players) {
             JSONObject jsonBalance = new JSONObject();
-            jsonBalance.put("player-id", player.getPlayerId().toString());
+            jsonBalance.put("playerId", player.getPlayerId().toString());
             jsonBalance.put("balance", player.getMoneyAmount());
             balances.appendElement(jsonBalance);
         }
@@ -122,7 +122,7 @@ public class PlayerService {
         for (Player player : players) {
             JSONObject jsonBalance = new JSONObject();
             jsonBalance.put("round", roundNumber);
-            jsonBalance.put("player-id", player.getPlayerId().toString());
+            jsonBalance.put("playerId", player.getPlayerId().toString());
             jsonBalance.put("balance", player.getMoneyAmountFromRound(roundNumber));
             balances.appendElement(jsonBalance);
         }

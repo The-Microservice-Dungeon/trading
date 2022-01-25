@@ -188,7 +188,7 @@ public class ItemService {
         if (item.isEmpty()) throw new ItemDoesNotExistException(name);
 
         JSONObject returnItem = new JSONObject();
-        returnItem.put("item-name", item.get().getName());
+        returnItem.put("itemName", item.get().getName());
         returnItem.put("price", item.get().getCurrentPrice());
         returnItem.put("type", item.get().getItemType().toString().toLowerCase());
         return returnItem;
