@@ -39,7 +39,6 @@ public class GameEventConsumer {
             } else if (Objects.equals(statusDto.status, "ended")) {
                 this.gameService.stopGame(UUID.fromString(statusDto.gameId));
             }
-
         } catch (Exception e) {
             this.kafkaErrorService.newKafkaError("(game-) status", consumerRecord.toString(), e.getMessage());
         }

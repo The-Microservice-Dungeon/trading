@@ -57,6 +57,11 @@ public class GameService {
 
     @Transactional
     public void updateRound(RoundDto roundDto) {
+        if (roundDto.roundNumber == 1) {
+            if (this.itemService.getItems().isEmpty()) this.itemService.createAllItems();
+            if (this.resourceService.getResources().isEmpty()) this.resourceService.createResources();
+        }
+
         if (Objects.equals(roundDto.roundStatus, "ended")) {
             this.playerService.updatePlayerBalanceHistories(roundDto.roundNumber);
         } else if (Objects.equals(roundDto.roundStatus, "started")) {

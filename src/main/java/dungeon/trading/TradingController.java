@@ -24,9 +24,6 @@ public class TradingController {
     private ItemService itemService;
 
     @Autowired
-    private PlayerService playerService;
-
-    @Autowired
     private TradingEventProducer tradingEventProducer;
 
     /**
