@@ -1,26 +1,27 @@
 asyncapi: "2.2.0"
 info:
   title: Trading
-  version: "0.1.0"
-  description: |
+  version: "1.0.0"
+  description: A visualization of the events can be found here
+    <a href='https://github.com/The-Microservice-Dungeon/trading/wiki/Events-Sequences' target='_blank'>Trading Git-Wiki</a> 
 
 defaultContentType: application/json
 
 channels:
   bank-created:
-    publish:
+    subscribe:
       message:
         $ref: "#/components/messages/playerBanks"
   current-item-prices:
-    publish:
+    subscribe:
       message:
         $ref: "#/components/messages/current-item-prices"
   current-resource-prices:
-    publish:
+    subscribe:
       message:
         $ref: "#/components/messages/current-resource-prices"
   trades:
-    publish:
+    subscribe:
       message:
         $ref: "#/components/messages/trades"
 components:
