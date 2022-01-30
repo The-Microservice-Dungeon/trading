@@ -12,7 +12,7 @@
         "itemType": "item"
     },
     {
-        "name": "LONG_RANGE_BOMBARDEMENT",
+        "name": "LONG_RANGE_BOMBARDMENT",
         "description": "10 Damage to all robots on a specific planet",
         "price": 60,
         "itemType": "item"

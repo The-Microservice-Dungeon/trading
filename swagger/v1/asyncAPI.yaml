@@ -234,11 +234,11 @@ components:
               inventory:
                 maxStorage: 20
                 usedStorage: 5
-                coal: 3
-                iron: 2
-                gem: 0
-                gold: 0
-                platin: 0
+                storedCoal: 3
+                storedIron: 2
+                storedGem: 0
+                storedGold: 0
+                storedPlatin: 0
               items: 
                 rocket: 0
                 wormhole: 2
