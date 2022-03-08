@@ -12,6 +12,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,9 @@ public class ItemService {
 
     @Autowired
     private ItemEventProducer itemEventProducer;
+
+    @Value("${dungeon.services.robot}")
+    private String robotService;
 
     /**
      * creates item or returns item id if it already exists
@@ -94,7 +98,7 @@ public class ItemService {
         requestPayload.put("quantity", robotAmount);
         ResponseEntity<?> buyResponse;
 
-        buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots", requestPayload, JSONArray.class);
+        buyResponse = this.restService.post(this.robotService + "/robots", requestPayload, JSONArray.class);
 
         if (buyResponse.getStatusCode() != HttpStatus.CREATED)
             throw new RequestReturnedErrorException(buyResponse.getBody().toString());
@@ -134,17 +138,17 @@ public class ItemService {
 
         if (item.get().getItemType() == ItemType.ITEM) {
             requestPayload.put("itemType", itemName);
-            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/items", requestPayload, String.class);
+            buyResponse = this.restService.post(this.robotService + "/robots/" + robotId + "/inventory/items", requestPayload, String.class);
             item.get().addHistory(this.gameService.getRoundCount());
 
         } else if (item.get().getItemType() == ItemType.HEALTH || item.get().getItemType() == ItemType.ENERGY) {
             requestPayload.put("restorationType", itemName);
-            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/instant-restore", requestPayload, String.class);
+            buyResponse = this.restService.post(this.robotService + "/robots/" + robotId + "/instant-restore", requestPayload, String.class);
 
         } else {
             requestPayload.put("upgradeType", itemName.substring(0, itemName.length() - 1));
             requestPayload.put("targetLevel", itemName.substring(itemName.length() - 1));
-            buyResponse = this.restService.post(System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/upgrades", requestPayload, String.class);
+            buyResponse = this.restService.post(this.robotService + "/robots/" + robotId + "/upgrades", requestPayload, String.class);
         }
 
         if (buyResponse.getStatusCode() != HttpStatus.OK)

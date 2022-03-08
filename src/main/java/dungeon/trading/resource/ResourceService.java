@@ -10,6 +10,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,9 @@ public class ResourceService {
     @Autowired
     private ResourceEventProducer resourceEventProducer;
 
+    @Value("${dungeon.services.robot}")
+    private String robotService;
+
     /**
      * creates resource or returns the id if it already exists
      * @param name of the resource
@@ -75,7 +79,7 @@ public class ResourceService {
             throw new PlanetIsNotAStationException(planetId.toString());
 
         ResponseEntity<?> sellResponse = this.restService.post(
-                System.getenv("ROBOT_SERVICE") + "/robots/" + robotId + "/inventory/clearResources",
+                this.robotService + "/robots/" + robotId + "/inventory/clearResources",
                 null,
                 JSONObject.class
         );

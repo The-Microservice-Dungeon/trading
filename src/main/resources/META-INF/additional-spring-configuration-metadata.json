@@ -9,5 +9,10 @@
       "name": "spring",
       "type": "java.lang.String",
       "description": "Description for spring."
+    },
+    {
+      "name": "dungeon.services.robot",
+      "type": "java.lang.String",
+      "description": "Robot Service Host."
     }
   ] }
