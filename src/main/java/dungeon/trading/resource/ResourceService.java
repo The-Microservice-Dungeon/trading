@@ -22,6 +22,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class ResourceService {
   private String robotService;
 
   public ResourceService(ResourceRepository resourceRepository,
-      PlayerService playerService, StationService planetService, GameService gameService,
+      PlayerService playerService, StationService planetService, @Lazy GameService gameService,
       RestService restService, ResourceEventProducer resourceEventProducer) {
     this.resourceRepository = resourceRepository;
     this.playerService = playerService;
@@ -66,9 +67,9 @@ public class ResourceService {
    */
   public UUID createResource(String name, int price) {
     Optional<Resource> resource = this.resourceRepository.findByName(name);
-      if (resource.isPresent()) {
-          return resource.get().getResourceId();
-      }
+    if (resource.isPresent()) {
+      return resource.get().getResourceId();
+    }
 
     Resource newResource = new Resource(name, price);
     this.resourceRepository.save(newResource);
@@ -87,9 +88,9 @@ public class ResourceService {
    */
   public Map<String, ?> sellResources(UUID transactionId, UUID playerId, UUID robotId,
       UUID planetId) {
-      if (!this.planetService.checkIfGivenPlanetIsAStation(planetId)) {
-          throw new PlanetIsNotAStationException(planetId.toString());
-      }
+    if (!this.planetService.checkIfGivenPlanetIsAStation(planetId)) {
+      throw new PlanetIsNotAStationException(planetId.toString());
+    }
 
     ResponseEntity<?> sellResponse = this.restService.post(
         this.robotService + "/robots/" + robotId + "/inventory/clearResources",
@@ -97,9 +98,9 @@ public class ResourceService {
         JSONObject.class
     );
 
-      if (sellResponse.getStatusCode() != HttpStatus.OK) {
-          throw new RequestReturnedErrorException(sellResponse.getBody().toString());
-      }
+    if (sellResponse.getStatusCode() != HttpStatus.OK) {
+      throw new RequestReturnedErrorException(sellResponse.getBody().toString());
+    }
 
     JSONObject responseBody = (JSONObject) sellResponse.getBody();
 
@@ -115,9 +116,9 @@ public class ResourceService {
 
     for (var entry : responseBody.entrySet()) {
       Optional<Resource> resource = this.resourceRepository.findByName(entry.getKey());
-        if (resource.isEmpty()) {
-            continue;
-        }
+      if (resource.isEmpty()) {
+        continue;
+      }
 
       fullAmount += (Integer) entry.getValue() * resource.get().getCurrentPrice();
       resource.get().addHistory(this.gameService.getRoundCount(), (Integer) entry.getValue());
