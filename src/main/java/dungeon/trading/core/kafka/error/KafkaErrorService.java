@@ -5,8 +5,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaErrorService {
-    @Autowired
-    private KafkaErrorRepository kafkaErrorRepository;
+    private final KafkaErrorRepository kafkaErrorRepository;
+
+    public KafkaErrorService(
+        KafkaErrorRepository kafkaErrorRepository) {
+        this.kafkaErrorRepository = kafkaErrorRepository;
+    }
 
     public void newKafkaError(String topic, String exception) {
         String message = "Error while consuming '" + topic + "' event:\n"

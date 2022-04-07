@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PlayerRestController {
-    @Autowired
-    private PlayerService playerService;
+    private final PlayerService playerService;
+
+    public PlayerRestController(PlayerService playerService) {
+        this.playerService = playerService;
+    }
 
     @GetMapping("/balances")
     public ResponseEntity<?> getAllPlayerBalances() {

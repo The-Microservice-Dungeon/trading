@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ResourceRestController {
-    @Autowired
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
+
+    public ResourceRestController(
+        ResourceService resourceService) {
+        this.resourceService = resourceService;
+    }
 
     @GetMapping("/resources")
     public ResponseEntity<?> getInformationAboutAllResources() {

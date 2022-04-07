@@ -10,17 +10,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PlayerEventConsumer {
-    @Autowired
-    private PlayerService playerService;
+    private final PlayerService playerService;
 
-    @Autowired
-    private DomainEventService domainEventService;
+    private final DomainEventService domainEventService;
 
-    @Autowired
-    private KafkaErrorService kafkaErrorService;
+    private final KafkaErrorService kafkaErrorService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+
+    public PlayerEventConsumer(PlayerService playerService,
+        DomainEventService domainEventService, KafkaErrorService kafkaErrorService,
+        ObjectMapper objectMapper) {
+        this.playerService = playerService;
+        this.domainEventService = domainEventService;
+        this.kafkaErrorService = kafkaErrorService;
+        this.objectMapper = objectMapper;
+    }
 
     @KafkaListener(topics = "playerStatus", groupId = "trading", autoStartup = "true")
     public void listenToPlayerCreation(ConsumerRecord<String, String> consumerRecord) {

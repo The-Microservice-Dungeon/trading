@@ -18,20 +18,25 @@ import java.util.UUID;
 @Service
 public class GameService {
 
-    @Autowired
-    private GameRepository gameRepository;
+    private final GameRepository gameRepository;
 
-    @Autowired
-    private PlayerService playerService;
+    private final PlayerService playerService;
 
-    @Autowired
-    private ItemService itemService;
+    private final ItemService itemService;
 
-    @Autowired
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
 
-    @Autowired
-    private StationService stationService;
+    private final StationService stationService;
+
+    public GameService(GameRepository gameRepository,
+        PlayerService playerService, ItemService itemService, ResourceService resourceService,
+        StationService stationService) {
+        this.gameRepository = gameRepository;
+        this.playerService = playerService;
+        this.itemService = itemService;
+        this.resourceService = resourceService;
+        this.stationService = stationService;
+    }
 
     @Transactional
     public void createNewGame(UUID newGameId) {

@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 public class ItemRestController {
-    @Autowired
-    private ItemService itemService;
+    private final ItemService itemService;
+
+    public ItemRestController(ItemService itemService) {
+        this.itemService = itemService;
+    }
 
     @GetMapping("/items")
     public ResponseEntity<?> getInformationAboutAllItems() {

@@ -12,11 +12,15 @@ import java.util.UUID;
 
 @Service
 public class PlayerService {
-    @Autowired
-    private PlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
 
-    @Autowired
-    private PlayerEventProducer playerEventProducer;
+    private final PlayerEventProducer playerEventProducer;
+
+    public PlayerService(
+        PlayerRepository playerRepository, PlayerEventProducer playerEventProducer) {
+        this.playerRepository = playerRepository;
+        this.playerEventProducer = playerEventProducer;
+    }
 
     /**
      * creates player (used for testing)

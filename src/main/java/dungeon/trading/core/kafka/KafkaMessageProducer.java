@@ -23,19 +23,24 @@ import java.util.List;
 @Slf4j
 public class KafkaMessageProducer {
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Autowired
-    private BeanUtil beanUtil;
+    private final BeanUtil beanUtil;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private KafkaErrorService kafkaErrorService;
+    private final KafkaErrorService kafkaErrorService;
 
     private final List<Pair<String, DomainEvent>> errors = new ArrayList<>();
+
+    public KafkaMessageProducer(
+        KafkaTemplate<String, String> kafkaTemplate, BeanUtil beanUtil, ObjectMapper objectMapper,
+        KafkaErrorService kafkaErrorService) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.beanUtil = beanUtil;
+        this.objectMapper = objectMapper;
+        this.kafkaErrorService = kafkaErrorService;
+    }
 
     public void send(String topic, DomainEvent event) {
         ProducerRecord<String, String> record = new ProducerRecord<>(topic, event.eventId, event.payload);

@@ -15,17 +15,22 @@ import java.util.UUID;
 @Component
 @Slf4j
 public class GameEventConsumer {
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
 
-    @Autowired
-    private DomainEventService domainEventService;
+    private final DomainEventService domainEventService;
 
-    @Autowired
-    private KafkaErrorService kafkaErrorService;
+    private final KafkaErrorService kafkaErrorService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+
+    public GameEventConsumer(GameService gameService,
+        DomainEventService domainEventService, KafkaErrorService kafkaErrorService,
+        ObjectMapper objectMapper) {
+        this.gameService = gameService;
+        this.domainEventService = domainEventService;
+        this.kafkaErrorService = kafkaErrorService;
+        this.objectMapper = objectMapper;
+    }
 
     @KafkaListener(topics = "status", groupId = "trading", autoStartup = "true")
     public void listenToGameStatus(ConsumerRecord<String, String> consumerRecord) {

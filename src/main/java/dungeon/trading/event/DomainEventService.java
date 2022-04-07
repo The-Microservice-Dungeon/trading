@@ -11,10 +11,14 @@ import java.util.UUID;
 
 @Service
 public class DomainEventService {
-    @Autowired
-    private DomainEventRepository domainEventRepository;
+    private final DomainEventRepository domainEventRepository;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    public DomainEventService(
+        DomainEventRepository domainEventRepository) {
+        this.domainEventRepository = domainEventRepository;
+    }
 
     public String saveDomainEvent(String payload, Headers headers) {
         DomainEvent event = new DomainEvent(payload, headers);

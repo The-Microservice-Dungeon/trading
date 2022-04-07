@@ -11,11 +11,15 @@ import java.util.UUID;
 
 @Component
 public class PlayerEventProducer {
-    @Autowired
-    private KafkaMessageProducer kafkaMessageProducer;
+    private final KafkaMessageProducer kafkaMessageProducer;
 
-    @Autowired
-    private DomainEventService domainEventService;
+    private final DomainEventService domainEventService;
+
+    public PlayerEventProducer(
+        KafkaMessageProducer kafkaMessageProducer, DomainEventService domainEventService) {
+        this.kafkaMessageProducer = kafkaMessageProducer;
+        this.domainEventService = domainEventService;
+    }
 
     public void publishPlayerBankCreation(UUID newPlayerId, int moneyAmount, String transactionId) {
         JSONObject payload = new JSONObject();
