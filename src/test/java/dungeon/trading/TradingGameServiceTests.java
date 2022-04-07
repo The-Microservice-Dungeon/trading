@@ -1,6 +1,7 @@
 package dungeon.trading;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,7 +65,7 @@ class TradingGameServiceTests {
     verify(itemRepository).deleteAll();
     verify(resourceRepository).deleteAll();
     ArgumentCaptor<Game> gameArgument = ArgumentCaptor.forClass(Game.class);
-    verify(gameRepository).save(gameArgument.capture());
-    assertThat(gameArgument.getValue().getIsCurrentGame()).isFalse();
+    verify(gameRepository, times(2)).save(gameArgument.capture());
+    assertThat(gameArgument.getAllValues().get(1).getIsCurrentGame()).isFalse();
   }
 }
