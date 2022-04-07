@@ -19,14 +19,19 @@ import java.util.UUID;
 @RestController
 @Slf4j
 public class TradingController {
-    @Autowired
-    private ResourceService resourceService;
+    private final ResourceService resourceService;
 
-    @Autowired
-    private ItemService itemService;
+    private final ItemService itemService;
 
-    @Autowired
-    private TradingEventProducer tradingEventProducer;
+    private final TradingEventProducer tradingEventProducer;
+
+    public TradingController(
+        ResourceService resourceService, ItemService itemService,
+        TradingEventProducer tradingEventProducer) {
+        this.resourceService = resourceService;
+        this.itemService = itemService;
+        this.tradingEventProducer = tradingEventProducer;
+    }
 
     /**
      * main post controller for commands that have to be handled in trading

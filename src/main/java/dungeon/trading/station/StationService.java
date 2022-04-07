@@ -9,8 +9,12 @@ import java.util.*;
 
 @Service
 public class StationService {
-    @Autowired
-    private StationRepository stationRepository;
+    private final StationRepository stationRepository;
+
+    public StationService(
+        StationRepository stationRepository) {
+        this.stationRepository = stationRepository;
+    }
 
     /**
      * creates a planet (used for internal testing)

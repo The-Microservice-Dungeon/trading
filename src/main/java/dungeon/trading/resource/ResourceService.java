@@ -30,26 +30,31 @@ import java.util.UUID;
 @Slf4j
 public class ResourceService {
 
-    @Autowired
-    private ResourceRepository resourceRepository;
+    private final ResourceRepository resourceRepository;
 
-    @Autowired
-    private PlayerService playerService;
+    private final PlayerService playerService;
 
-    @Autowired
-    private StationService planetService;
+    private final StationService planetService;
 
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
 
-    @Autowired
-    private RestService restService;
+    private final RestService restService;
 
-    @Autowired
-    private ResourceEventProducer resourceEventProducer;
+    private final ResourceEventProducer resourceEventProducer;
 
     @Value("${dungeon.services.robot}")
     private String robotService;
+
+    public ResourceService(ResourceRepository resourceRepository,
+        PlayerService playerService, StationService planetService, GameService gameService,
+        RestService restService, ResourceEventProducer resourceEventProducer) {
+        this.resourceRepository = resourceRepository;
+        this.playerService = playerService;
+        this.planetService = planetService;
+        this.gameService = gameService;
+        this.restService = restService;
+        this.resourceEventProducer = resourceEventProducer;
+    }
 
     /**
      * creates resource or returns the id if it already exists

@@ -10,17 +10,21 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StationEventConsumer {
-    @Autowired
-    private StationService stationService;
+    private final StationService stationService;
 
-    @Autowired
-    private DomainEventService domainEventService;
+    private final DomainEventService domainEventService;
 
-    @Autowired
-    private KafkaErrorService kafkaErrorService;
+    private final KafkaErrorService kafkaErrorService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+
+    public StationEventConsumer(ObjectMapper objectMapper, StationService stationService,
+        DomainEventService domainEventService, KafkaErrorService kafkaErrorService) {
+        this.objectMapper = objectMapper;
+        this.stationService = stationService;
+        this.domainEventService = domainEventService;
+        this.kafkaErrorService = kafkaErrorService;
+    }
 
     @KafkaListener(topics = "spacestation-created", groupId = "trading", autoStartup = "true")
     public void listenToSpaceStationCreation(ConsumerRecord<String, String> consumerRecord) {

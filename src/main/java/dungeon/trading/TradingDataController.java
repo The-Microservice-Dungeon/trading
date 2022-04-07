@@ -20,20 +20,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TradingDataController {
-    @Autowired
-    private StationRepository stationRepository;
+    private final StationRepository stationRepository;
 
-    @Autowired
-    private PlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
 
-    @Autowired
-    private DomainEventRepository domainEventRepository;
+    private final DomainEventRepository domainEventRepository;
 
-    @Autowired
-    private KafkaErrorRepository kafkaErrorRepository;
+    private final KafkaErrorRepository kafkaErrorRepository;
 
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
+
+    public TradingDataController(
+        StationRepository stationRepository, PlayerRepository playerRepository,
+        DomainEventRepository domainEventRepository, KafkaErrorRepository kafkaErrorRepository,
+        GameService gameService) {
+        this.stationRepository = stationRepository;
+        this.playerRepository = playerRepository;
+        this.domainEventRepository = domainEventRepository;
+        this.kafkaErrorRepository = kafkaErrorRepository;
+        this.gameService = gameService;
+    }
 
     @GetMapping("/stations")
     public ResponseEntity<?> getStations() {

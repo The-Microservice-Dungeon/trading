@@ -8,11 +8,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TradingEventProducer {
-    @Autowired
-    private KafkaMessageProducer kafkaMessageProducer;
+    private final KafkaMessageProducer kafkaMessageProducer;
 
-    @Autowired
-    private DomainEventService domainEventService;
+    private final DomainEventService domainEventService;
+
+    public TradingEventProducer(
+        KafkaMessageProducer kafkaMessageProducer, DomainEventService domainEventService) {
+        this.kafkaMessageProducer = kafkaMessageProducer;
+        this.domainEventService = domainEventService;
+    }
 
     public void publishTradingResult(String payload, String transactionId, String eventType) {
         DomainEvent event = this.domainEventService.createDomainEvent(

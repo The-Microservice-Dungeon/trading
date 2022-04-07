@@ -11,11 +11,15 @@ import java.util.UUID;
 
 @Component
 public class ItemEventProducer {
-    @Autowired
-    private KafkaMessageProducer kafkaMessageProducer;
+    private final KafkaMessageProducer kafkaMessageProducer;
 
-    @Autowired
-    private DomainEventService domainEventService;
+    private final DomainEventService domainEventService;
+
+    public ItemEventProducer(
+        KafkaMessageProducer kafkaMessageProducer, DomainEventService domainEventService) {
+        this.kafkaMessageProducer = kafkaMessageProducer;
+        this.domainEventService = domainEventService;
+    }
 
     public void publishNewItemPrices(JSONArray items) {
         DomainEvent event = this.domainEventService.createDomainEvent(
