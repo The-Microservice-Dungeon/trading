@@ -23,6 +23,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class ItemService {
   private String robotService;
 
   public ItemService(ItemRepository itemRepository,
-      PlayerService playerService, StationService stationService, GameService gameService,
+      PlayerService playerService, StationService stationService, @Lazy GameService gameService,
       RestService restService, ItemEventProducer itemEventProducer) {
     this.itemRepository = itemRepository;
     this.playerService = playerService;
@@ -77,9 +78,9 @@ public class ItemService {
     }
 
     Optional<Item> item = this.itemRepository.findByName(name);
-      if (item.isPresent()) {
-          return item.get().getItemId();
-      }
+    if (item.isPresent()) {
+      return item.get().getItemId();
+    }
 
     Item newItem = new Item(name, description, itemType, price);
     this.itemRepository.save(newItem);
@@ -95,17 +96,17 @@ public class ItemService {
    * @return amount of money that has been deducted from the player
    */
   public Map<String, Object> buyRobots(UUID transactionId, UUID playerId, int robotAmount) {
-      if (robotAmount <= 0) {
-          throw new IllegalArgumentException("Cannot buy " + robotAmount + " robots");
-      }
+    if (robotAmount <= 0) {
+      throw new IllegalArgumentException("Cannot buy " + robotAmount + " robots");
+    }
 
     Optional<Item> item = this.itemRepository.findByName("ROBOT");
     int fullPrice = item.orElseThrow(() -> new RuntimeException("Could not find Robot Item"))
         .getCurrentPrice() * robotAmount;
 
-      if (!this.playerService.checkPlayerForMoney(playerId, fullPrice)) {
-          throw new PlayerMoneyTooLowException(playerId.toString(), fullPrice);
-      }
+    if (!this.playerService.checkPlayerForMoney(playerId, fullPrice)) {
+      throw new PlayerMoneyTooLowException(playerId.toString(), fullPrice);
+    }
 
     JSONObject requestPayload = new JSONObject();
     requestPayload.put("transactionId", transactionId);
@@ -150,12 +151,12 @@ public class ItemService {
     Item item = this.itemRepository.findByName(itemName)
         .orElseThrow(() -> new ItemDoesNotExistException(itemName));
 
-      if (!this.stationService.checkIfGivenPlanetIsAStation(planetId)) {
-          throw new PlanetIsNotAStationException(planetId.toString());
-      }
-      if (!this.playerService.checkPlayerForMoney(playerId, item.getCurrentPrice())) {
-          throw new PlayerMoneyTooLowException(playerId.toString(), item.getCurrentPrice());
-      }
+    if (!this.stationService.checkIfGivenPlanetIsAStation(planetId)) {
+      throw new PlanetIsNotAStationException(planetId.toString());
+    }
+    if (!this.playerService.checkPlayerForMoney(playerId, item.getCurrentPrice())) {
+      throw new PlayerMoneyTooLowException(playerId.toString(), item.getCurrentPrice());
+    }
 
     JSONObject requestPayload = new JSONObject();
     requestPayload.put("transactionId", transactionId);
@@ -183,9 +184,9 @@ public class ItemService {
           String.class);
     }
 
-      if (buyResponse.getStatusCode() != HttpStatus.OK) {
-          throw new RequestReturnedErrorException(buyResponse.getBody().toString());
-      }
+    if (buyResponse.getStatusCode() != HttpStatus.OK) {
+      throw new RequestReturnedErrorException(buyResponse.getBody().toString());
+    }
 
     int newAmount = this.playerService.reduceMoney(playerId, item.getCurrentPrice());
 
