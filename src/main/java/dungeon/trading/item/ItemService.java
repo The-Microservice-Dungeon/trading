@@ -267,7 +267,7 @@ public class ItemService {
      */
     @PostConstruct
     public void createAllItems() {
-        JSONParser parser = new JSONParser();
+        JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
         try {
             File file = ResourceUtils.getFile("classpath:items.json");
             InputStream in = new FileInputStream(file);
