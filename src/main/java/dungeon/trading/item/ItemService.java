@@ -5,9 +5,19 @@ import dungeon.trading.core.exceptions.ItemDoesNotExistException;
 import dungeon.trading.core.exceptions.PlanetIsNotAStationException;
 import dungeon.trading.core.exceptions.PlayerMoneyTooLowException;
 import dungeon.trading.core.exceptions.RequestReturnedErrorException;
-import dungeon.trading.player.PlayerService;
 import dungeon.trading.game.GameService;
+import dungeon.trading.player.PlayerService;
 import dungeon.trading.station.StationService;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -18,12 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
 
 @Service
 @Slf4j
@@ -52,10 +56,11 @@ public class ItemService {
 
     /**
      * creates item or returns item id if it already exists
-     * @param name of item
+     *
+     * @param name        of item
      * @param description of item
-     * @param type of item
-     * @param price of item
+     * @param type        of item
+     * @param price       of item
      * @return uuid of created item
      */
     public UUID createItem(String name, String description, String type, int price) {
@@ -67,8 +72,9 @@ public class ItemService {
             throw new IllegalArgumentException("ItemType is not valid");
         }
 
-        Optional<Item> item= this.itemRepository.findByName(name);
-        if (item.isPresent()) return item.get().getItemId();
+        Optional<Item> item = this.itemRepository.findByName(name);
+        if (item.isPresent())
+            return item.get().getItemId();
 
         Item newItem = new Item(name, description, itemType, price);
         this.itemRepository.save(newItem);
@@ -76,11 +82,11 @@ public class ItemService {
     }
 
     /**
-     * handler for robot buy command
-     * does a rest call to the robot-service
+     * handler for robot buy command does a rest call to the robot-service
+     *
      * @param transactionId from the command
-     * @param playerId from the command
-     * @param robotAmount that should be bought
+     * @param playerId      from the command
+     * @param robotAmount   that should be bought
      * @return amount of money that has been deducted from the player
      */
     public Map<String, Object> buyRobots(UUID transactionId, UUID playerId, int robotAmount) {
@@ -88,7 +94,8 @@ public class ItemService {
             throw new IllegalArgumentException("Cannot buy " + robotAmount + " robots");
 
         Optional<Item> item = this.itemRepository.findByName("ROBOT");
-        int fullPrice = item.get().getCurrentPrice() * robotAmount;
+        int fullPrice = item.orElseThrow(() -> new RuntimeException("Could not find Robot Item"))
+            .getCurrentPrice() * robotAmount;
 
         if (!this.playerService.checkPlayerForMoney(playerId, fullPrice))
             throw new PlayerMoneyTooLowException(playerId.toString(), fullPrice);
@@ -100,12 +107,19 @@ public class ItemService {
         requestPayload.put("quantity", robotAmount);
         ResponseEntity<?> buyResponse;
 
-        buyResponse = this.restService.post(this.robotService + "/robots", requestPayload, JSONArray.class);
+        buyResponse = this.restService.post(this.robotService + "/robots", requestPayload,
+            JSONArray.class);
 
-        if (buyResponse.getStatusCode() != HttpStatus.CREATED)
-            throw new RequestReturnedErrorException(buyResponse.getBody().toString());
+        if (buyResponse.getStatusCode() != HttpStatus.CREATED) {
+            var responseBody =
+                buyResponse.getBody() == null ? "" : buyResponse.getBody().toString();
+            var errorMessage = MessageFormat.format(
+                "Robot Service responded with an invalid response. Status Code: {}, Body: {}",
+                buyResponse.getStatusCode(), responseBody);
+            throw new RequestReturnedErrorException(errorMessage);
+        }
 
-        int newAmount = this.playerService.reduceMoney(playerId, fullPrice);
+        this.playerService.reduceMoney(playerId, fullPrice);
 
         Map<String, Object> returnData = new HashMap<>();
         returnData.put("moneyChangedBy", -fullPrice);
@@ -115,60 +129,66 @@ public class ItemService {
     }
 
     /**
-     * handler for item buy command
-     * does a rest-calls to the robot-service
+     * handler for item buy command does a rest-calls to the robot-service
+     *
      * @param transactionId from the command
-     * @param playerId from the command
-     * @param robotId from the command
-     * @param planetId from the command
-     * @param itemName that should be bought
+     * @param playerId      from the command
+     * @param robotId       from the command
+     * @param planetId      from the command
+     * @param itemName      that should be bought
      * @return amount of money that has been deducted from the player
      */
-    public Map<String, ?> buyItem(UUID transactionId, UUID playerId, UUID robotId, UUID planetId, String itemName) {
-        Optional<Item> item = this.itemRepository.findByName(itemName);
-        if (item.isEmpty()) throw new ItemDoesNotExistException(itemName);
+    public Map<String, ?> buyItem(UUID transactionId, UUID playerId, UUID robotId, UUID planetId,
+        String itemName) {
+        Item item = this.itemRepository.findByName(itemName)
+            .orElseThrow(() -> new ItemDoesNotExistException(itemName));
 
         if (!this.stationService.checkIfGivenPlanetIsAStation(planetId))
             throw new PlanetIsNotAStationException(planetId.toString());
-        if (!this.playerService.checkPlayerForMoney(playerId, item.get().getCurrentPrice()))
-            throw new PlayerMoneyTooLowException(playerId.toString(), item.get().getCurrentPrice());
+        if (!this.playerService.checkPlayerForMoney(playerId, item.getCurrentPrice()))
+            throw new PlayerMoneyTooLowException(playerId.toString(), item.getCurrentPrice());
 
         JSONObject requestPayload = new JSONObject();
         requestPayload.put("transactionId", transactionId);
 
         ResponseEntity<?> buyResponse = null;
 
-        if (item.get().getItemType() == ItemType.ITEM) {
+        if (item.getItemType() == ItemType.ITEM) {
             requestPayload.put("itemType", itemName);
-            buyResponse = this.restService.post(this.robotService + "/robots/" + robotId + "/inventory/items", requestPayload, String.class);
-            item.get().addHistory(this.gameService.getRoundCount());
+            buyResponse = this.restService.post(
+                this.robotService + "/robots/" + robotId + "/inventory/items", requestPayload,
+                String.class);
+            item.addHistory(this.gameService.getRoundCount());
 
-        } else if (item.get().getItemType() == ItemType.HEALTH || item.get().getItemType() == ItemType.ENERGY) {
+        } else if (item.getItemType() == ItemType.HEALTH || item.getItemType() == ItemType.ENERGY) {
             requestPayload.put("restorationType", itemName);
-            buyResponse = this.restService.post(this.robotService + "/robots/" + robotId + "/instant-restore", requestPayload, String.class);
+            buyResponse = this.restService.post(
+                this.robotService + "/robots/" + robotId + "/instant-restore", requestPayload,
+                String.class);
 
         } else {
             requestPayload.put("upgradeType", itemName.substring(0, itemName.length() - 1));
             requestPayload.put("targetLevel", itemName.substring(itemName.length() - 1));
-            buyResponse = this.restService.post(this.robotService + "/robots/" + robotId + "/upgrades", requestPayload, String.class);
+            buyResponse = this.restService.post(
+                this.robotService + "/robots/" + robotId + "/upgrades", requestPayload,
+                String.class);
         }
 
         if (buyResponse.getStatusCode() != HttpStatus.OK)
             throw new RequestReturnedErrorException(buyResponse.getBody().toString());
 
-
-        int newAmount = this.playerService.reduceMoney(playerId, item.get().getCurrentPrice());
+        int newAmount = this.playerService.reduceMoney(playerId, item.getCurrentPrice());
 
         Map<String, Object> returnData = new HashMap<>();
-        returnData.put("moneyChangedBy", -item.get().getCurrentPrice());
+        returnData.put("moneyChangedBy", -item.getCurrentPrice());
         returnData.put("message", buyResponse.getBody());
         returnData.put("data", null);
         return returnData;
     }
 
     /**
-     * returns all items with current prices
-     * used for the events and rest-calls
+     * returns all items with current prices used for the events and rest-calls
+     *
      * @return array with items
      */
     public JSONArray getItems() {
@@ -185,24 +205,25 @@ public class ItemService {
     }
 
     /**
-     * returns a specific item
-     * used for rest-calls
+     * returns a specific item used for rest-calls
+     *
      * @return object with item or exception
      */
     public JSONObject getItem(String name) {
-        Optional<Item> item = this.itemRepository.findByName(name);
-        if (item.isEmpty()) throw new ItemDoesNotExistException(name);
+        Item item = this.itemRepository.findByName(name)
+            .orElseThrow(() -> new ItemDoesNotExistException(name));
 
         JSONObject returnItem = new JSONObject();
-        returnItem.put("itemName", item.get().getName());
-        returnItem.put("price", item.get().getCurrentPrice());
-        returnItem.put("type", item.get().getItemType().toString().toLowerCase());
+        returnItem.put("itemName", item.getName());
+        returnItem.put("price", item.getCurrentPrice());
+        returnItem.put("type", item.getItemType().toString().toLowerCase());
         return returnItem;
     }
 
     /**
-     * returns all special items with their complete price history
-     * used for the according rest-call /items/history/price
+     * returns all special items with their complete price history used for the according rest-call
+     * /items/history/price
+     *
      * @return JSONArray
      */
     public JSONArray getItemPriceHistory() {
@@ -219,8 +240,9 @@ public class ItemService {
     }
 
     /**
-     * returns all special items with their complete buy history
-     * used for the according rest-call /items/history/buy
+     * returns all special items with their complete buy history used for the according rest-call
+     * /items/history/buy
+     *
      * @return JSONArray
      */
     public JSONArray getItemBuyHistory() {
@@ -268,8 +290,9 @@ public class ItemService {
     @PostConstruct
     public void createAllItems() {
         JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-        try(var in = new FileInputStream(ResourceUtils.getFile("classpath:items.json"))) {
-            JSONArray itemArray = (JSONArray) parser.parse(new InputStreamReader(in, StandardCharsets.UTF_8));
+        try (var in = new FileInputStream(ResourceUtils.getFile("classpath:items.json"))) {
+            JSONArray itemArray = (JSONArray) parser.parse(
+                new InputStreamReader(in, StandardCharsets.UTF_8));
 
             for (Object item : itemArray) {
                 JSONObject jsonItem = (JSONObject) item;
