@@ -36,13 +36,14 @@ public class GameService {
   }
 
   @Transactional
-  public void createNewGame(UUID newGameId) {
+  public Game createNewGame(UUID newGameId) {
     this.gameRepository.findByIsCurrentGame(true)
         .ifPresent(game -> stopGame(game.getGameId()));
 
     Game newGame = new Game(newGameId);
     newGame.startGame();
     this.gameRepository.save(newGame);
+    return newGame;
   }
 
   @Transactional

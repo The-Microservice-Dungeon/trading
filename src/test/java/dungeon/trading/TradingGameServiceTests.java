@@ -2,6 +2,7 @@ package dungeon.trading;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import dungeon.trading.game.Game;
 import dungeon.trading.game.GameRepository;
@@ -10,6 +11,7 @@ import dungeon.trading.item.ItemRepository;
 import dungeon.trading.player.PlayerRepository;
 import dungeon.trading.resource.ResourceRepository;
 import dungeon.trading.station.StationRepository;
+import java.util.Optional;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -50,7 +52,9 @@ class TradingGameServiceTests {
   @Test
   void stopGameShouldClearDatabase() {
     var gameID = UUID.randomUUID();
-    this.gameService.createNewGame(gameID);
+    var game = this.gameService.createNewGame(gameID);
+    when(gameRepository.findByIsCurrentGame(true)).thenReturn(Optional.of(game));
+    when(gameRepository.findById(gameID)).thenReturn(Optional.of(game));
 
     this.gameService.stopGame(gameID);
 
