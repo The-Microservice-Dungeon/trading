@@ -4,6 +4,8 @@ import dungeon.trading.core.BeanUtil;
 import dungeon.trading.core.kafka.error.KafkaErrorService;
 import dungeon.trading.event.DomainEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 public class KafkaMessageProducer {
 
     @Autowired
@@ -56,8 +59,7 @@ public class KafkaMessageProducer {
 
             @Override
             public void onSuccess(SendResult<String, String> result) {
-//              ?
-                System.out.println("success on sending this shit");
+                log.debug("Successfully sent event");
             }
         });
     }
