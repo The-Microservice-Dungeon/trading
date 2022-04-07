@@ -6,6 +6,7 @@ import dungeon.trading.core.exceptions.RequestReturnedErrorException;
 import dungeon.trading.player.PlayerService;
 import dungeon.trading.game.GameService;
 import dungeon.trading.station.StationService;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class ResourceService {
 
     @Autowired
@@ -211,7 +213,7 @@ public class ResourceService {
                 );
             }
         } catch (Exception e) {
-            System.out.println("Could not find File");
+            log.error("Could not find resource file", e);
         }
     }
 

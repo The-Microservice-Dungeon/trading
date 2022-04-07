@@ -3,6 +3,7 @@ package dungeon.trading;
 import dungeon.trading.item.ItemService;
 import dungeon.trading.player.PlayerService;
 import dungeon.trading.resource.ResourceService;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -16,6 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @RestController
+@Slf4j
 public class TradingController {
     @Autowired
     private ResourceService resourceService;
@@ -38,7 +40,7 @@ public class TradingController {
         try {
             commandsArray = (JSONArray) parser.parse(commands);
         } catch (Exception e) {
-            System.out.println("Cant Parse String: " + e.getMessage());
+            log.error("Couldn't parse string: {}", commands, e);
         }
 
         JSONObject response = new JSONObject();
@@ -59,6 +61,7 @@ public class TradingController {
                     item = (String) payload.get("itemName");
                 } catch (Exception e) {
                     this.sendErrorEvent(e.getMessage(), transactionId, "buy-error");
+                    log.error(e.getMessage(), e);
                     continue;
                 }
 
@@ -72,6 +75,7 @@ public class TradingController {
                         eventType = "buy-robot";
                     } catch (Exception e) {
                         this.sendErrorEvent(e.getMessage(), transactionId, "buy-error");
+                        log.error(e.getMessage(), e);
                         continue;
                     }
 
@@ -87,11 +91,12 @@ public class TradingController {
                         eventType = "buy-item";
                     } catch (Exception e) {
                         this.sendErrorEvent(e.getMessage(), transactionId, "buy-error");
+                        log.error(e.getMessage(), e);
                         continue;
                     }
 
                 } else {
-                    System.out.println("itemName not given");
+                    log.debug("itemName not given");
                 }
 
             } else if (Objects.equals(payload.get("commandType"), "sell")) {
@@ -105,6 +110,7 @@ public class TradingController {
                     eventType = "sell-resource";
                 } catch (Exception e) {
                     this.sendErrorEvent(e.getMessage(), transactionId, "sell-error");
+                    log.error(e.getMessage(), e);
                     continue;
                 }
             }

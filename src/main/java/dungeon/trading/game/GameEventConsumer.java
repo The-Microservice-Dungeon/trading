@@ -3,6 +3,7 @@ package dungeon.trading.game;
 import dungeon.trading.core.kafka.error.KafkaErrorService;
 import dungeon.trading.event.DomainEventService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -12,6 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Component
+@Slf4j
 public class GameEventConsumer {
     @Autowired
     private GameService gameService;
@@ -40,6 +42,7 @@ public class GameEventConsumer {
                 this.gameService.stopGame(UUID.fromString(statusDto.gameId));
             }
         } catch (Exception e) {
+            log.error("Error during 'status' event consumption", e);
             this.kafkaErrorService.newKafkaError("(game-) status", consumerRecord.toString(), e.getMessage());
         }
     }
@@ -57,6 +60,7 @@ public class GameEventConsumer {
             this.domainEventService.saveDomainEvent(payload, consumerRecord.headers());
             this.gameService.updateRound(round);
         } catch (Exception e) {
+            log.error("Error during 'roundStatus' event consumption", e);
             this.kafkaErrorService.newKafkaError("roundStatus", consumerRecord.toString(), e.getMessage());
         }
     }

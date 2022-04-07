@@ -1,5 +1,6 @@
 package dungeon.trading.item;
 
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Slf4j
 public class ItemRestController {
     @Autowired
     private ItemService itemService;
@@ -24,6 +26,7 @@ public class ItemRestController {
             JSONObject foundItem = this.itemService.getItem(itemId);
             return new ResponseEntity<JSONObject>(foundItem, HttpStatus.OK);
         } catch (Exception e) {
+            log.error("Could not retrieve Item {}", itemId, e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

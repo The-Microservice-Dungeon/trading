@@ -8,6 +8,7 @@ import dungeon.trading.core.exceptions.RequestReturnedErrorException;
 import dungeon.trading.player.PlayerService;
 import dungeon.trading.game.GameService;
 import dungeon.trading.station.StationService;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -25,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
+@Slf4j
 public class ItemService {
 
     @Autowired
@@ -282,7 +284,7 @@ public class ItemService {
                 );
             }
         } catch (Exception e) {
-            System.out.println("Probably couldn't find file or some duplicate in ItemService: " + e.getMessage());
+            log.error("Probably couldn't find file or some duplicate in ItemService", e);
         }
     }
 
