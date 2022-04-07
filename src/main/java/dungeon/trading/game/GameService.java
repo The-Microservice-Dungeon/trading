@@ -37,14 +37,8 @@ public class GameService {
 
   @Transactional
   public void createNewGame(UUID newGameId) {
-    Optional<Game> currentGame = this.gameRepository.findByIsCurrentGame(true);
-    if (currentGame.isPresent()) {
-      currentGame.get().stopGame();
-      this.itemService.resetItems();
-      this.resourceService.resetResources();
-      this.playerService.removePlayers();
-      this.stationService.removeStations();
-    }
+    this.gameRepository.findByIsCurrentGame(true)
+        .ifPresent(game -> stopGame(game.getGameId()));
 
     Game newGame = new Game(newGameId);
     newGame.startGame();
@@ -53,19 +47,24 @@ public class GameService {
 
   @Transactional
   public void stopGame(UUID gameId) {
-    Optional<Game> game = this.gameRepository.findById(gameId);
-    game.ifPresent(Game::stopGame);
+    Game game = this.gameRepository.findById(gameId).orElseThrow();
+    game.stopGame();
+    this.itemService.resetItems();
+    this.resourceService.resetResources();
+    this.playerService.removePlayers();
+    this.stationService.removeStations();
+    this.gameRepository.save(game);
   }
 
   @Transactional
   public void updateRound(RoundDto roundDto) {
     if (roundDto.roundNumber == 1) {
-        if (this.itemService.getItems().isEmpty()) {
-            this.itemService.createAllItems();
-        }
-        if (this.resourceService.getResources().isEmpty()) {
-            this.resourceService.createResources();
-        }
+      if (this.itemService.getItems().isEmpty()) {
+        this.itemService.createAllItems();
+      }
+      if (this.resourceService.getResources().isEmpty()) {
+        this.resourceService.createResources();
+      }
     }
 
     if (Objects.equals(roundDto.roundStatus, "ended")) {
