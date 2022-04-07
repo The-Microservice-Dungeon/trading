@@ -1,7 +1,6 @@
 package dungeon.trading;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.verify;
 
 import dungeon.trading.game.Game;
@@ -38,13 +37,14 @@ class TradingGameServiceTests {
 
   @Test
   @Transactional
-  void createGameTest() {
-    this.gameService.createNewGame(UUID.randomUUID());
+  void shouldCreateAndStartGame() {
+    var gameId = UUID.randomUUID();
+    this.gameService.createNewGame(gameId);
 
-    assertNotEquals(
-        "[]",
-        this.gameService.getGames().toString()
-    );
+    ArgumentCaptor<Game> gameArgument = ArgumentCaptor.forClass(Game.class);
+    verify(gameRepository).save(gameArgument.capture());
+    assertThat(gameArgument.getValue().getIsCurrentGame()).isTrue();
+    assertThat(gameArgument.getValue().getGameId()).isEqualTo(gameId);
   }
 
   @Test
