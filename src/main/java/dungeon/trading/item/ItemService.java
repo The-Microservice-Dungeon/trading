@@ -146,6 +146,7 @@ public class ItemService {
    * @param itemName      that should be bought
    * @return amount of money that has been deducted from the player
    */
+  /*
   public Map<String, ?> buyItem(UUID transactionId, UUID playerId, UUID robotId, UUID planetId,
       String itemName) {
     Item item = this.itemRepository.findByName(itemName)
@@ -196,7 +197,7 @@ public class ItemService {
     returnData.put("data", null);
     return returnData;
   }
-
+*/
   /**
    * returns all items with current prices used for the events and rest-calls
    *

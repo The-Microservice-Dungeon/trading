@@ -59,7 +59,7 @@ public class TradingItemServiceTests {
         assertNotEquals("[]", items);
     }
 
-    @Test
+ /*  @Test
     @Transactional
     public void buyNonExistentItemTest() {
         UUID playerId = this.playerService.createPlayer(200);
@@ -93,7 +93,7 @@ public class TradingItemServiceTests {
             () -> this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "ROCKET")
         );
     }
-
+*/
     @Test
     @Transactional
     public void buyNegativeAmountOfRobotsTest() {

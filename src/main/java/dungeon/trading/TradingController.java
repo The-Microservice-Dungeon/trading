@@ -83,7 +83,7 @@ public class TradingController {
                         log.error(e.getMessage(), e);
                         continue;
                     }
-
+/*
                 } else if (item != null) {
                     try {
                         result = this.itemService.buyItem(
@@ -99,7 +99,7 @@ public class TradingController {
                         log.error(e.getMessage(), e);
                         continue;
                     }
-
+*/
                 } else {
                     log.debug("itemName not given");
                 }

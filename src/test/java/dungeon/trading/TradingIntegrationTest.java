@@ -73,7 +73,7 @@ public class TradingIntegrationTest {
         Map<String, ?> moneyChangedBy = this.itemService.buyRobots(UUID.randomUUID(), playerId, 2);
         assertEquals(-200, moneyChangedBy.get("moneyChangedBy"));
     }
-
+/*
     @Test
     @Transactional
     public void buyNormalItemTest() {
@@ -93,7 +93,7 @@ public class TradingIntegrationTest {
         Map<String, ?> moneyChangedBy = this.itemService.buyItem(UUID.randomUUID(), playerId, UUID.randomUUID(), planetId, "MINING_1");
         assertEquals(-50, moneyChangedBy.get("moneyChangedBy"));
     }
-
+*/
     @Test
     @Transactional
     public void updateRoundTest() {
